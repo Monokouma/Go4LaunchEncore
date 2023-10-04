@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">Go4LaunchEncore</string>
+    <string name="app_name">Go 4 Launch</string>
+    <string name="find_a_nice_restaurant_and_invite_your_co_workers_for_lunch">Find a nice restaurant and invite your co-workers for lunch !</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_with_facebook">Sign in with Facebook</string>
+    <string name="sign_in_with_github">Sign in with Github</string>
+    <string name="sign_in_with_mail_and_password">Sign in with mail and password</string>
+    <string name="connect_with_mail_password">Connect with mail/password</string>
+    <string name="connect">Connect</string>
+    <string name="password">Password</string>
+    <string name="mail">Mail</string>
+    <string name="error_occurred">An error has occurred</string>
+    <string name="error_credentials_empty">Credentials could not be empty</string>
 </resources>

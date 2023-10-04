@@ -1,0 +1,68 @@
+package com.despaircorp.data.firestore
+
+import com.despaircorp.data.firestore.dto.FirestoreUserDto
+import com.despaircorp.data.utils.CoroutineDispatcherProvider
+import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firestore.FirestoreDomainRepository
+import com.despaircorp.domain.firestore.model.FirestoreUserEntity
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import kotlin.coroutines.resume
+
+class FirestoreDataRepository @Inject constructor(
+    private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+    private val firestore: FirebaseFirestore,
+) : FirestoreDomainRepository {
+    override suspend fun insertUser(authenticateUserEntity: AuthenticateUserEntity): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            suspendCancellableCoroutine { cont ->
+                firestore
+                    .collection("users")
+                    .document(authenticateUserEntity.uid)
+                    .set(authenticateUserEntity)
+                    .addOnCompleteListener {
+                        if (it.exception == null) {
+                            cont.resume(it.isSuccessful)
+                        } else {
+                            cont.resume(false)
+                        }
+                    }
+            }
+        }
+    
+    override suspend fun isUserExist(uid: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            suspendCancellableCoroutine { cont ->
+                firestore.collection("users").document(uid).get().addOnCompleteListener {
+                    if (it.exception == null) {
+                        cont.resume(it.result.exists())
+                    } else {
+                        cont.resume(false)
+                    }
+                }
+            }
+        }
+    
+    override suspend fun getUser(uid: String): FirestoreUserEntity =
+        withContext(coroutineDispatcherProvider.io) {
+            suspendCancellableCoroutine { cont ->
+                firestore.collection("users").document(uid).addSnapshotListener { value, _ ->
+                    val firestoreUserDto = value?.toObject<FirestoreUserDto>()
+                    cont.resume(
+                        FirestoreUserEntity(
+                            picture = firestoreUserDto?.picture
+                                ?: "https://w0.peakpx.com/wallpaper/733/998/HD-wallpaper-hedgedog-on-cloth-in-blur-green-bokeh-background-animals.jpg",
+                            displayName = firestoreUserDto?.displayName ?: "none",
+                            mailAddress = firestoreUserDto?.mailAddress
+                                ?: return@addSnapshotListener,
+                            uid = firestoreUserDto.uid ?: return@addSnapshotListener
+                        )
+                    )
+                    
+                }
+            }
+        }
+}
