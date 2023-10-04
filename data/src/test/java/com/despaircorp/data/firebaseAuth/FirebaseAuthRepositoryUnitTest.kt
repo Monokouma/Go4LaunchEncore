@@ -7,6 +7,7 @@ import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import com.despaircorp.data.utils.TestCoroutineRule
 import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.facebook.AccessToken
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -19,6 +20,7 @@ import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.slot
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -275,28 +277,28 @@ class FirebaseAuthRepositoryUnitTest {
             }
             confirmVerified(firebaseAuth)
         }
-    
-    @Ignore("uuuuuuh")
+
     @Test
     fun `nominal case - signin with token`() = testCoroutineRule.runTest {
-        val task: Task<AuthResult> = mockk()
+        val task = mockk<Task<AuthResult>>()
         val slot = slot<OnCompleteListener<AuthResult>>()
-        
-        every { android.text.TextUtils.isEmpty(any()) } returns mockk()
-        justRun { FacebookAuthProvider.getCredential(DEFAULT_TOKEN) }
+
         every { task.isSuccessful } returns true
         every { task.exception } returns null
         
         every {
-            firebaseAuth.signInWithCredential(any())
-                .addOnCompleteListener(capture(slot))
+            firebaseAuth.signInWithCredential(any()).addOnCompleteListener(capture(slot))
         } answers {
             slot.captured.onComplete(task)
             task
         }
+
+        val accessToken = mockk<AccessToken> {
+            every { token } returns DEFAULT_TOKEN
+        }
         
-        val result = repository.signInTokenUser(mockk())
+        val result = repository.signInTokenUser(accessToken)
         
-        println(result)
+        assertTrue(result)
     }
 }
