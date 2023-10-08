@@ -7,4 +7,5 @@ interface FirestoreDomainRepository {
     suspend fun insertUser(authenticateUserEntity: AuthenticateUserEntity): Boolean
     suspend fun isUserExist(uid: String): Boolean
     suspend fun getUser(uid: String): FirestoreUserEntity
+    suspend fun updateUsername(username: String, uid: String): Boolean
 }

@@ -1,0 +1,7 @@
+<fade
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <targets>
+        <!-- Exclude the shared element from the fade so it can move -->
+        <target android:excludeId="@id/activity_login_ImageView_logo" />
+    </targets>
+</fade>

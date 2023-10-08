@@ -1,7 +1,9 @@
 package com.despaircorp.ui.login
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Fade
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -10,6 +12,7 @@ import androidx.core.widget.addTextChangedListener
 import com.despaircorp.ui.R
 import com.despaircorp.ui.databinding.ActivityLoginBinding
 import com.despaircorp.ui.databinding.LoginPopUpBinding
+import com.despaircorp.ui.username.ChoseUsernameActivity
 import com.despaircorp.ui.utils.viewBinding
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -24,6 +27,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -95,6 +99,12 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         
+        val fade = Fade().apply {
+            excludeTarget(binding.activityLoginImageViewLogo, true)
+            duration = 2000
+        }
+        window.exitTransition = fade
+        
         viewModel.viewAction.observe(this) {
             when (val action = it.getContentIfNotHandled()) {
                 
@@ -108,6 +118,14 @@ class LoginActivity : AppCompatActivity() {
                 
                 LoginAction.ChoseUsername -> {
                     Log.i("Monokouma", "To chose name")
+                    startActivity(
+                        ChoseUsernameActivity.navigate(this),
+                        ActivityOptions.makeSceneTransitionAnimation(
+                            this@LoginActivity,
+                            binding.activityLoginImageViewLogo,
+                            "activity_login_ImageView_logo"
+                        ).toBundle()
+                    )
                 }
                 
                 else -> {
