@@ -11,4 +11,8 @@
     <string name="mail">Mail</string>
     <string name="error_occurred">An error has occurred</string>
     <string name="error_credentials_empty">Credentials could not be empty</string>
+    <string name="please_chose_a_username">Please, chose a username</string>
+    <string name="username">Username</string>
+    <string name="call_me_like_this">Call me like this</string>
+    <string name="error_username_empty">Username could not be empty</string>
 </resources>

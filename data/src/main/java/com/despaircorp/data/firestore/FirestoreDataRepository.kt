@@ -7,7 +7,9 @@ import com.despaircorp.domain.firestore.FirestoreDomainRepository
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -51,18 +53,35 @@ class FirestoreDataRepository @Inject constructor(
             suspendCancellableCoroutine { cont ->
                 firestore.collection("users").document(uid).addSnapshotListener { value, _ ->
                     val firestoreUserDto = value?.toObject<FirestoreUserDto>()
-                    cont.resume(
-                        FirestoreUserEntity(
-                            picture = firestoreUserDto?.picture
-                                ?: "https://w0.peakpx.com/wallpaper/733/998/HD-wallpaper-hedgedog-on-cloth-in-blur-green-bokeh-background-animals.jpg",
-                            displayName = firestoreUserDto?.displayName ?: "none",
-                            mailAddress = firestoreUserDto?.mailAddress
-                                ?: return@addSnapshotListener,
-                            uid = firestoreUserDto.uid ?: return@addSnapshotListener
+                    if (cont.isActive) {
+                        cont.resume(
+                            FirestoreUserEntity(
+                                picture = firestoreUserDto?.picture
+                                    ?: "https://w0.peakpx.com/wallpaper/733/998/HD-wallpaper-hedgedog-on-cloth-in-blur-green-bokeh-background-animals.jpg",
+                                displayName = firestoreUserDto?.displayName ?: "none",
+                                mailAddress = firestoreUserDto?.mailAddress
+                                    ?: return@addSnapshotListener,
+                                uid = firestoreUserDto.uid ?: return@addSnapshotListener
+                            )
                         )
-                    )
-                    
+                    }
                 }
+            }
+        }
+    
+    override suspend fun updateUsername(username: String, uid: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            try {
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("displayName", username)
+                    .await()
+                true
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
+                e.printStackTrace()
+                false
             }
         }
 }
