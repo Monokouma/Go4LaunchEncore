@@ -14,6 +14,7 @@ import com.despaircorp.ui.databinding.ActivityLoginBinding
 import com.despaircorp.ui.databinding.LoginPopUpBinding
 import com.despaircorp.ui.username.ChoseUsernameActivity
 import com.despaircorp.ui.utils.viewBinding
+import com.despaircorp.ui.welcome.WelcomeActivity
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -113,11 +114,19 @@ class LoginActivity : AppCompatActivity() {
                 }
                 
                 LoginAction.GoToWelcome -> {
-                    Log.i("Monokouma", "To welcome")
+                    startActivity(
+                        WelcomeActivity.navigate(this),
+                        ActivityOptions.makeSceneTransitionAnimation(
+                            this@LoginActivity,
+                            binding.activityLoginImageViewLogo,
+                            "activity_login_ImageView_logo"
+                        ).toBundle()
+                    )
+                    
+                    
                 }
                 
                 LoginAction.ChoseUsername -> {
-                    Log.i("Monokouma", "To chose name")
                     startActivity(
                         ChoseUsernameActivity.navigate(this),
                         ActivityOptions.makeSceneTransitionAnimation(

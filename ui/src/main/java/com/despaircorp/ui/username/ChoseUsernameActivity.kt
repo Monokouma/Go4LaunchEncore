@@ -1,16 +1,17 @@
 package com.despaircorp.ui.username
 
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.despaircorp.ui.databinding.ActivityChoseUsernameBinding
 import com.despaircorp.ui.utils.viewBinding
+import com.despaircorp.ui.welcome.WelcomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,6 +28,7 @@ class ChoseUsernameActivity : AppCompatActivity() {
             duration = 2000
             
         }
+        window.exitTransition = fade
         window.enterTransition = fade
         
         binding.activityChoseUsernameTextInputEditTextUsername.addTextChangedListener {
@@ -40,7 +42,16 @@ class ChoseUsernameActivity : AppCompatActivity() {
         viewModel.viewAction.observe(this) {
             when (val action = it.getContentIfNotHandled()) {
                 ChoseUsernameAction.Continue -> {
-                    Log.i("Monokouma", "OKKKKK")
+                    startActivity(
+                        WelcomeActivity.navigate(this),
+                        ActivityOptions.makeSceneTransitionAnimation(
+                            this@ChoseUsernameActivity,
+                            binding.activityChoseUsernameImageViewLogo,
+                            "activity_login_ImageView_logo"
+                        ).toBundle()
+                    )
+                    
+                    
                 }
                 
                 is ChoseUsernameAction.Error -> Toast.makeText(

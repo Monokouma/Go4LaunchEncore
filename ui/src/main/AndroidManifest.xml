@@ -12,6 +12,14 @@
         android:usesCleartextTraffic="true"
         >
         <activity
+            android:name=".main.bottom_bar.BottomBarActivity"
+            android:exported="false"
+            />
+        <activity
+            android:name=".welcome.WelcomeActivity"
+            android:exported="false"
+            />
+        <activity
             android:name=".username.ChoseUsernameActivity"
             android:exported="false"
             />
