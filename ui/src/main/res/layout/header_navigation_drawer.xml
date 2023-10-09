@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_purple"
+    android:fitsSystemWindows="true"
+    >
+    
+    <ImageView
+        android:id="@+id/navigation_drawer_ImageView_background"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:adjustViewBounds="true"
+        android:alpha="0.5"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    
+    <TextView
+        android:id="@+id/navigation_drawer_TextView_app_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:fontFamily="@font/advent_pro_bold"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textColor="@color/baby_powder"
+        android:textSize="52sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/navigation_drawer_ImageView_background"
+        app:layout_constraintStart_toStartOf="@id/navigation_drawer_ImageView_background"
+        app:layout_constraintTop_toTopOf="@id/navigation_drawer_ImageView_background"
+        />
+    
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/navigation_drawer_ImageView_user_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="16dp"
+        android:background="@color/black"
+        android:scaleType="centerCrop"
+        android:theme="@style/ShapeAppearance.M3.Sys.Shape.Corner.Full"
+        app:layout_constraintBottom_toTopOf="@id/header_navigation_drawer_Divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/navigation_drawer_TextView_app_name"
+        app:layout_constraintVertical_bias="1.0"
+        tools:srcCompat="@drawable/user_image"
+        />
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_navigation_drawer_ConstraintLayout_user_infos_root"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:layout_constraintBottom_toTopOf="@id/header_navigation_drawer_Divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/navigation_drawer_ImageView_user_image"
+        app:layout_constraintTop_toBottomOf="@id/navigation_drawer_TextView_app_name"
+        app:layout_constraintVertical_bias="0.76"
+        >
+        
+        <TextView
+            android:id="@+id/navigation_drawer_TextView_user_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/advent_pro"
+            android:textAlignment="viewStart"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/navigation_drawer_TextView_user_mail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Monokouma"
+            />
+        
+        <TextView
+            android:id="@+id/navigation_drawer_TextView_user_mail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/advent_pro"
+            android:textAlignment="viewStart"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/navigation_drawer_TextView_user_name"
+            tools:text="aurange.thomas@gmail.com"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/header_navigation_drawer_Divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:dividerColor="@color/black"
+        app:dividerThickness="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
