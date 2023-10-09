@@ -15,4 +15,5 @@
     <string name="username">Username</string>
     <string name="call_me_like_this">Call me like this</string>
     <string name="error_username_empty">Username could not be empty</string>
+    <string name="welcome">Welcome</string>
 </resources>
