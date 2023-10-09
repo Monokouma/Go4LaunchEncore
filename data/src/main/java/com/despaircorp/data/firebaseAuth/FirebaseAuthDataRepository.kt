@@ -97,4 +97,13 @@ class FirebaseAuthDataRepository @Inject constructor(
                     }
             }
         }
+    
+    override suspend fun disconnectUser(): Boolean = withContext(coroutineDispatcherProvider.io) {
+        try {
+            firebaseAuth.signOut()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

@@ -11,18 +11,15 @@ import com.facebook.AccessToken
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import io.mockk.coEvery
+import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
-import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.slot
-import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -277,12 +274,12 @@ class FirebaseAuthRepositoryUnitTest {
             }
             confirmVerified(firebaseAuth)
         }
-
+    
     @Test
     fun `nominal case - signin with token`() = testCoroutineRule.runTest {
         val task = mockk<Task<AuthResult>>()
         val slot = slot<OnCompleteListener<AuthResult>>()
-
+        
         every { task.isSuccessful } returns true
         every { task.exception } returns null
         
@@ -292,13 +289,77 @@ class FirebaseAuthRepositoryUnitTest {
             slot.captured.onComplete(task)
             task
         }
-
+        
         val accessToken = mockk<AccessToken> {
             every { token } returns DEFAULT_TOKEN
         }
         
         val result = repository.signInTokenUser(accessToken)
         
-        assertTrue(result)
+        assertThat(result).isTrue()
+        
+        coVerify {
+            firebaseAuth.signInWithCredential(any()).addOnCompleteListener(any())
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - signin with token with failure`() = testCoroutineRule.runTest {
+        val task = mockk<Task<AuthResult>>()
+        val slot = slot<OnCompleteListener<AuthResult>>()
+        
+        every { task.isSuccessful } returns true
+        every { task.exception } returns Exception()
+        
+        every {
+            firebaseAuth.signInWithCredential(any()).addOnCompleteListener(capture(slot))
+        } answers {
+            slot.captured.onComplete(task)
+            task
+        }
+        
+        val accessToken = mockk<AccessToken> {
+            every { token } returns DEFAULT_TOKEN
+        }
+        
+        val result = repository.signInTokenUser(accessToken)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firebaseAuth.signInWithCredential(any()).addOnCompleteListener(any())
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - disconnect user success`() = testCoroutineRule.runTest {
+        coJustRun { firebaseAuth.signOut() }
+        
+        val result = repository.disconnectUser()
+        
+        assertThat(result).isTrue()
+        
+        coVerify {
+            firebaseAuth.signOut()
+        }
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - disconnect user failure`() = testCoroutineRule.runTest {
+        coEvery { firebaseAuth.signOut() } throws Exception()
+        
+        val result = repository.disconnectUser()
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firebaseAuth.signOut()
+        }
+        confirmVerified(firebaseAuth)
     }
 }

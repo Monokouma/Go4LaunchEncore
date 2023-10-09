@@ -8,32 +8,117 @@
     tools:context=".main.bottom_bar.BottomBarActivity"
     >
     
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/activity_bottom_bar_DrawerLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="match_parent"
+        
         >
         
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             >
             
-            <ImageView
-                android:id="@+id/toolbar_logo"
-                android:layout_width="wrap_content"
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/activity_bottom_bar_AppBarLayout_root"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/lunchbox_toolbar_size"
-                android:transitionName="activity_login_ImageView_logo"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+                
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/activity_bottom_bar_Toolbar_root"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/black"
+                    android:padding="4dp"
+                    app:menu="@menu/top_menu"
+                    app:navigationIcon="@drawable/baseline_dehaze_24"
+                    >
+                    
+                    <ImageView
+                        android:id="@+id/activity_bottom_bar_ImageView_logo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/lunchbox_toolbar_size"
+                        android:transitionName="activity_login_ImageView_logo"
+                        />
+                
+                </androidx.appcompat.widget.Toolbar>
+            
+            </com.google.android.material.appbar.AppBarLayout>
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                >
+                
+                <FrameLayout
+                    android:id="@+id/activity_bottom_bar_FrameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@id/activity_bottom_bar_BottomBar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+                
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/activity_bottom_bar_BottomBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@color/black"
+                    app:itemIconTint="@color/dark_purple"
+                    app:itemRippleColor="@color/white"
+                    app:itemTextColor="@color/dark_purple"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:menu="@menu/bottom_nav_menu"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         
-        </androidx.appcompat.widget.Toolbar>
-    
-    </com.google.android.material.appbar.AppBarLayout>
+        
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/activity_bottom_bar_NavigationView_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:backgroundTint="@color/dark_purple"
+            app:headerLayout="@layout/header_navigation_drawer"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:menu="@menu/drawer_menu"
+            >
+            
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:src="@drawable/lunchbox_toolbar_size"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
+            
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.navigation.NavigationView>
+    </androidx.drawerlayout.widget.DrawerLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

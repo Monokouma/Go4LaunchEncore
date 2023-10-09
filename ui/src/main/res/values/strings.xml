@@ -16,4 +16,13 @@
     <string name="call_me_like_this">Call me like this</string>
     <string name="error_username_empty">Username could not be empty</string>
     <string name="welcome">Welcome</string>
+    <string name="map_view">Map View</string>
+    <string name="list_view">List View</string>
+    <string name="workmates">Workmates</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="your_lunch">Your lunch</string>
+    <string name="search">Search</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

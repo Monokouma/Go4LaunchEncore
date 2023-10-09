@@ -1,6 +1,7 @@
 package com.despaircorp.ui.login
 
 import android.app.ActivityOptions
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
@@ -168,5 +169,11 @@ class LoginActivity : AppCompatActivity() {
     
     companion object {
         private const val GOOGLE_SIGN_IN = 9001
+        
+        fun navigate(context: Context) = Intent(
+            context,
+            LoginActivity::class.java
+        )
+        
     }
 }
