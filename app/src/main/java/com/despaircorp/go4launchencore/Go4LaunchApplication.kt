@@ -4,4 +4,4 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class Go4LaunchApplication: Application()
+class Go4LaunchApplication : Application()

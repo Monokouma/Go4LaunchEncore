@@ -4,6 +4,8 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
     id "org.jetbrains.kotlinx.kover"
+    id 'com.google.devtools.ksp'
+
 }
 
 android {
@@ -35,6 +37,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = '11'
     }
@@ -45,7 +48,7 @@ dependencies {
     implementation project(path: ':ui')
     implementation project(path: ':data')
     implementation project(path: ':domain')
-
+    
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation 'com.google.firebase:firebase-auth-ktx' // Firebase Auth
     implementation 'androidx.appcompat:appcompat:1.6.1'

@@ -12,6 +12,11 @@ import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
 import com.despaircorp.domain.firestore.InsertUserInFirestoreUseCase
 import com.despaircorp.domain.firestore.IsFirestoreUserExistUseCase
+import com.despaircorp.domain.room.InitUserPreferencesUseCase
+import com.despaircorp.domain.room.IsNotificationsEnabledUseCase
+import com.despaircorp.domain.room.IsUserPreferencesTableExistUseCase
+import com.despaircorp.domain.room.model.NotificationsStateEnum
+import com.despaircorp.domain.room.model.UserPreferencesDomainEntity
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.TestCoroutineRule
 import com.despaircorp.ui.utils.observeForTesting
@@ -39,6 +44,9 @@ class LoginViewModelTest {
     private val isUserWithCredentialsSignedInUseCase: IsUserWithCredentialsSignedInUseCase = mockk()
     private val createCredentialsUserUseCase: CreateCredentialsUserUseCase = mockk()
     private val accessToken: AccessToken = mockk()
+    private val isNotificationsEnabledUseCase: IsNotificationsEnabledUseCase = mockk()
+    private val initUserPreferencesUseCase: InitUserPreferencesUseCase = mockk()
+    private val isUserPreferencesTableExistUseCase: IsUserPreferencesTableExistUseCase = mockk()
     
     private lateinit var viewModel: LoginViewModel
     
@@ -49,6 +57,10 @@ class LoginViewModelTest {
         private const val DEFAULT_PASSWORD = "DEFAULT_PASSWORD"
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
         private const val DEFAULT_TOKEN = "DEFAULT_TOKEN"
+        
+        private val DEFAULT_NOTIF_STATE_NOT_KNOW = NotificationsStateEnum.NOT_KNOW
+        private val DEFAULT_NOTIF_STATE_ENABLED = NotificationsStateEnum.ENABLED
+        private val DEFAULT_NOTIF_STATE_DISABLED = NotificationsStateEnum.DISABLED
     }
     
     @Before
@@ -76,14 +88,20 @@ class LoginViewModelTest {
             insertUserInFirestoreUseCase = insertUserInFirestoreUseCase,
             isUserAlreadyAuthUseCase = isUserAlreadyAuthUseCase,
             isUserWithCredentialsSignedInUseCase = isUserWithCredentialsSignedInUseCase,
-            createCredentialsUserUseCase = createCredentialsUserUseCase
+            createCredentialsUserUseCase = createCredentialsUserUseCase,
+            isNotificationsEnabledUseCase = isNotificationsEnabledUseCase,
+            initUserPreferencesUseCase = initUserPreferencesUseCase,
+            isUserPreferencesTableExistUseCase = isUserPreferencesTableExistUseCase
         )
     }
     
     @Test
     fun `nominal case - auth with facebook existing user`() = testCoroutineRule.runTest {
         coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
-        
+        coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+        coEvery { isNotificationsEnabledUseCase.invoke() } returns UserPreferencesDomainEntity(
+            NotificationsStateEnum.ENABLED
+        )
         viewModel.onFacebookConnection(accessToken)
         
         viewModel.viewAction.observeForTesting(this) {
@@ -106,6 +124,11 @@ class LoginViewModelTest {
     
     @Test
     fun `edge case - auth with facebook unexisting user`() = testCoroutineRule.runTest {
+        coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+        coEvery { isNotificationsEnabledUseCase.invoke() } returns UserPreferencesDomainEntity(
+            NotificationsStateEnum.ENABLED
+        )
+        
         viewModel.onFacebookConnection(accessToken)
         
         viewModel.viewAction.observeForTesting(this) {
@@ -151,7 +174,10 @@ class LoginViewModelTest {
     @Test
     fun `nominal case - already auth user`() = testCoroutineRule.runTest {
         coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
-        
+        coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+        coEvery { isNotificationsEnabledUseCase.invoke() } returns UserPreferencesDomainEntity(
+            NotificationsStateEnum.ENABLED
+        )
         viewModel.viewAction.observeForTesting(this) {
             assertThat(it.value?.peekContent()).isEqualTo(LoginAction.GoToWelcome)
         }
@@ -179,6 +205,10 @@ class LoginViewModelTest {
     
     @Test
     fun `edge case - already auth user exist`() = testCoroutineRule.runTest {
+        coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+        coEvery { isNotificationsEnabledUseCase.invoke() } returns UserPreferencesDomainEntity(
+            NotificationsStateEnum.ENABLED
+        )
         coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
         coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
         
@@ -331,6 +361,10 @@ class LoginViewModelTest {
                     DEFAULT_PASSWORD
                 )
             } returns false
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke() } returns UserPreferencesDomainEntity(
+                NotificationsStateEnum.ENABLED
+            )
             coEvery {
                 createCredentialsUserUseCase.invoke(
                     DEFAULT_MAIL,
@@ -373,6 +407,10 @@ class LoginViewModelTest {
     @Test
     fun `nominal case user is already signed go to welcome have name`() =
         testCoroutineRule.runTest {
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke() } returns UserPreferencesDomainEntity(
+                NotificationsStateEnum.ENABLED
+            )
             coEvery {
                 isUserWithCredentialsSignedInUseCase.invoke(
                     DEFAULT_MAIL,
@@ -417,6 +455,10 @@ class LoginViewModelTest {
                 DEFAULT_PASSWORD
             )
         } returns true
+        coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+        coEvery { isNotificationsEnabledUseCase.invoke() } returns UserPreferencesDomainEntity(
+            NotificationsStateEnum.ENABLED
+        )
         coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
         viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
         viewModel.onMailTextChanged(DEFAULT_MAIL)
@@ -447,8 +489,549 @@ class LoginViewModelTest {
             viewModel.viewAction.observeForTesting(this) {
                 assertThat(it.value?.peekContent()).isEqualTo(LoginAction.ChoseUsername)
             }
-            
         }
+    
+    @Test
+    fun `nominal case user is already signed existing user and not know notif`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_PASSWORD
+                )
+            } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke().isNotificationsEnabled } returns DEFAULT_NOTIF_STATE_NOT_KNOW
+            
+            
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.EnableNotifications)
+            }
+        }
+    
+    @Test
+    fun `nominal case - already auth user with display name and notif not know`() =
+        testCoroutineRule.runTest {
+            coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke() } returns provideUserPreferencesDomainEntity(
+                DEFAULT_NOTIF_STATE_NOT_KNOW
+            )
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.EnableNotifications
+                )
+            }
+        }
+    
+    @Test
+    fun `nominal case - already auth user with display name and unexisting table`() =
+        testCoroutineRule.runTest {
+            coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery { isNotificationsEnabledUseCase.invoke() } returns provideUserPreferencesDomainEntity(
+                DEFAULT_NOTIF_STATE_NOT_KNOW
+            )
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns true
+            
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.EnableNotifications
+                )
+            }
+        }
+    
+    @Test
+    fun `error case - already auth user with display name and unexisting table`() =
+        testCoroutineRule.runTest {
+            coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery { isNotificationsEnabledUseCase.invoke() } returns provideUserPreferencesDomainEntity(
+                DEFAULT_NOTIF_STATE_NOT_KNOW
+            )
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns false
+            
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.Error(R.string.error_occurred)
+                )
+            }
+        }
+    
+    @Test
+    fun `nominal case - not auth user with display name and notif not know`() =
+        testCoroutineRule.runTest {
+            coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke() } returns provideUserPreferencesDomainEntity(
+                DEFAULT_NOTIF_STATE_NOT_KNOW
+            )
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.EnableNotifications
+                )
+            }
+        }
+    
+    @Test
+    fun `nominal case - not auth user with display name and unexisting table`() =
+        testCoroutineRule.runTest {
+            coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery { isNotificationsEnabledUseCase.invoke() } returns provideUserPreferencesDomainEntity(
+                DEFAULT_NOTIF_STATE_NOT_KNOW
+            )
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns true
+            
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.EnableNotifications
+                )
+            }
+        }
+    
+    @Test
+    fun `error case - not auth user with display name and unexisting table`() =
+        testCoroutineRule.runTest {
+            coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery { isNotificationsEnabledUseCase.invoke() } returns provideUserPreferencesDomainEntity(
+                DEFAULT_NOTIF_STATE_NOT_KNOW
+            )
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns false
+            
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.Error(R.string.error_occurred)
+                )
+            }
+        }
+    
+    @Test
+    fun `nominal case - on connect with credentials and unexsisting table`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_PASSWORD
+                )
+            } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns true
+            
+            
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.EnableNotifications
+                )
+            }
+        }
+    
+    @Test
+    fun `error case - on connect with credentials and unexsisting table`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_PASSWORD
+                )
+            } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns false
+            
+            
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.Error(R.string.error_occurred)
+                )
+            }
+        }
+    
+    
+    @Test
+    fun `nominal case - on connect with credentials and unexisting user and unexsisting table`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_PASSWORD
+                )
+            } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke().isNotificationsEnabled } returns DEFAULT_NOTIF_STATE_NOT_KNOW
+            
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.EnableNotifications
+                )
+            }
+        }
+    
+    @Test
+    fun `nominal case - singed in user with credentials not created in firestore with existing preferences table`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_PASSWORD
+                )
+            } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke().isNotificationsEnabled } returns DEFAULT_NOTIF_STATE_NOT_KNOW
+            
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.EnableNotifications
+                )
+            }
+        }
+    
+    @Test
+    fun `error case - singed in user with credentials not created in firestore with unexisting preferences table`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_PASSWORD
+                )
+            } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns false
+            
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(
+                    LoginAction.Error(R.string.error_occurred)
+                )
+            }
+        }
+    
+    @Test
+    fun `nominal case - user not signed in with display name with table created and not know notifications state`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_UID
+                )
+            } returns false
+            coEvery { createCredentialsUserUseCase.invoke(DEFAULT_MAIL, DEFAULT_UID) } returns true
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke().isNotificationsEnabled } returns DEFAULT_NOTIF_STATE_NOT_KNOW
+            
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.EnableNotifications)
+            }
+        }
+    
+    @Test
+    fun `nominal case - user not signed in with display name with table not created and not know notifications state`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_UID
+                )
+            } returns false
+            coEvery { createCredentialsUserUseCase.invoke(DEFAULT_MAIL, DEFAULT_UID) } returns true
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns true
+            
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.EnableNotifications)
+            }
+        }
+    
+    @Test
+    fun `nominal case - facebook user signed in with account and display name with table created and notification state not know`() =
+        testCoroutineRule.runTest {
+            coEvery { signInTokenUserUseCase.invoke(accessToken) } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke().isNotificationsEnabled } returns DEFAULT_NOTIF_STATE_NOT_KNOW
+            
+            viewModel.onFacebookConnection(accessToken)
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.EnableNotifications)
+                
+            }
+        }
+    
+    @Test
+    fun `nominal case - facebook user signed in with account and display name with table not created and notification state not know`() =
+        testCoroutineRule.runTest {
+            coEvery { signInTokenUserUseCase.invoke(accessToken) } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns true
+            
+            viewModel.onFacebookConnection(accessToken)
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.EnableNotifications)
+                
+            }
+        }
+    
+    @Test
+    fun `error case - facebook user signed in with account and display name with table not created and notification state not know`() =
+        testCoroutineRule.runTest {
+            coEvery { signInTokenUserUseCase.invoke(accessToken) } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns false
+            
+            viewModel.onFacebookConnection(accessToken)
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.Error(R.string.error_occurred))
+                
+            }
+        }
+    
+    @Test
+    fun `error case - user not signed in with display name with table not created and not know notifications state`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                isUserWithCredentialsSignedInUseCase.invoke(
+                    DEFAULT_MAIL,
+                    DEFAULT_UID
+                )
+            } returns false
+            coEvery { createCredentialsUserUseCase.invoke(DEFAULT_MAIL, DEFAULT_UID) } returns true
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns false
+            
+            viewModel.onMailTextChanged(DEFAULT_MAIL)
+            viewModel.onPasswordTextChanged(DEFAULT_PASSWORD)
+            viewModel.onConnectWithCredentialsClicked()
+            
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.Error(R.string.error_occurred))
+            }
+        }
+    
+    @Test
+    fun `nominal case - facebook user signed in without account and display name with table created and notification state not know`() =
+        testCoroutineRule.runTest {
+            coEvery { signInTokenUserUseCase.invoke(accessToken) } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
+            coEvery { isNotificationsEnabledUseCase.invoke().isNotificationsEnabled } returns DEFAULT_NOTIF_STATE_NOT_KNOW
+            
+            
+            viewModel.onFacebookConnection(accessToken)
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.EnableNotifications)
+                
+            }
+        }
+    
+    @Test
+    fun `nominal case - facebook user signed in without account and display name with table not created and notification state not know`() =
+        testCoroutineRule.runTest {
+            coEvery { signInTokenUserUseCase.invoke(accessToken) } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns true
+            
+            viewModel.onFacebookConnection(accessToken)
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.EnableNotifications)
+                
+            }
+        }
+    
+    @Test
+    fun `error case - facebook user signed in without account and display name with table not created and notification state not know`() =
+        testCoroutineRule.runTest {
+            coEvery { signInTokenUserUseCase.invoke(accessToken) } returns true
+            coEvery { isFirestoreUserExistUseCase.invoke(DEFAULT_UID) } returns false
+            coEvery { insertUserInFirestoreUseCase.invoke(provideAuthenticatedUserEntity()) } returns true
+            coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
+            coEvery { isUserPreferencesTableExistUseCase.invoke() } returns false
+            coEvery {
+                initUserPreferencesUseCase.invoke(
+                    provideUserPreferencesDomainEntity(
+                        DEFAULT_NOTIF_STATE_NOT_KNOW
+                    )
+                )
+            } returns false
+            
+            viewModel.onFacebookConnection(accessToken)
+            viewModel.viewAction.observeForTesting(this) {
+                assertThat(it.value?.peekContent()).isEqualTo(LoginAction.Error(R.string.error_occurred))
+                
+            }
+        }
+    
+    private fun provideUserPreferencesDomainEntity(state: NotificationsStateEnum): UserPreferencesDomainEntity {
+        return when (state) {
+            NotificationsStateEnum.ENABLED -> UserPreferencesDomainEntity(isNotificationsEnabled = DEFAULT_NOTIF_STATE_ENABLED)
+            NotificationsStateEnum.DISABLED -> UserPreferencesDomainEntity(isNotificationsEnabled = DEFAULT_NOTIF_STATE_DISABLED)
+            NotificationsStateEnum.NOT_KNOW -> UserPreferencesDomainEntity(isNotificationsEnabled = DEFAULT_NOTIF_STATE_NOT_KNOW)
+            else -> UserPreferencesDomainEntity(isNotificationsEnabled = DEFAULT_NOTIF_STATE_NOT_KNOW)
+        }
+    }
     
     private fun provideAuthenticatedUserEntity() = AuthenticateUserEntity(
         picture = DEFAULT_PICTURE,

@@ -5,12 +5,18 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     
     <application
         android:supportsRtl="true"
         android:theme="@style/Theme.Go4LaunchEncore"
         android:usesCleartextTraffic="true"
         >
+        
+        <activity
+            android:name=".notification_preferences.NotificationsPreferencesActivity"
+            android:exported="false"
+            />
         <activity
             android:name=".main.bottom_bar.BottomBarActivity"
             android:exported="false"
@@ -29,7 +35,7 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-    
+                
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

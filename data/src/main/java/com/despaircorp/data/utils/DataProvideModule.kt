@@ -2,6 +2,8 @@ package com.despaircorp.data.utils
 
 import android.app.Application
 import android.content.res.Resources
+import com.despaircorp.data.room.dao.UserPreferencesDao
+import com.despaircorp.data.room.database.Go4LunchRoomDatabase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
@@ -50,4 +52,16 @@ class DataProvideModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+    
+    @Provides
+    @Singleton
+    fun provideRoomDataBase(application: Application): Go4LunchRoomDatabase =
+        Go4LunchRoomDatabase.getDatabase(application.applicationContext)
+    
+    @Provides
+    @Singleton
+    fun provideUserPreferencesDao(application: Application): UserPreferencesDao =
+        Go4LunchRoomDatabase.getDatabase(application.applicationContext).userPreferencesDao()
+    
+    
 }

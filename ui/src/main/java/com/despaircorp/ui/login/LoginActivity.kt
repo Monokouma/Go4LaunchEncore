@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +12,7 @@ import androidx.core.widget.addTextChangedListener
 import com.despaircorp.ui.R
 import com.despaircorp.ui.databinding.ActivityLoginBinding
 import com.despaircorp.ui.databinding.LoginPopUpBinding
+import com.despaircorp.ui.notification_preferences.NotificationsPreferencesActivity
 import com.despaircorp.ui.username.ChoseUsernameActivity
 import com.despaircorp.ui.utils.viewBinding
 import com.despaircorp.ui.welcome.WelcomeActivity
@@ -138,10 +138,19 @@ class LoginActivity : AppCompatActivity() {
                     )
                 }
                 
-                else -> {
-                    Log.i("Monokouma", "else")
-                    Unit
+                LoginAction.EnableNotifications -> {
+                    startActivity(
+                        NotificationsPreferencesActivity.navigate(this),
+                        ActivityOptions.makeSceneTransitionAnimation(
+                            this@LoginActivity,
+                            binding.activityLoginImageViewLogo,
+                            "activity_login_ImageView_logo"
+                        ).toBundle()
+                    )
                 }
+                
+                else -> Unit
+                
             }
         }
     }

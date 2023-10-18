@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.despaircorp.ui.databinding.ActivityChoseUsernameBinding
+import com.despaircorp.ui.notification_preferences.NotificationsPreferencesActivity
 import com.despaircorp.ui.utils.viewBinding
 import com.despaircorp.ui.welcome.WelcomeActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,6 +60,17 @@ class ChoseUsernameActivity : AppCompatActivity() {
                     getString(action.message),
                     Toast.LENGTH_SHORT
                 ).show()
+                
+                ChoseUsernameAction.EnableNotifications -> {
+                    startActivity(
+                        NotificationsPreferencesActivity.navigate(this),
+                        ActivityOptions.makeSceneTransitionAnimation(
+                            this@ChoseUsernameActivity,
+                            binding.activityChoseUsernameImageViewLogo,
+                            "activity_login_ImageView_logo"
+                        ).toBundle()
+                    )
+                }
                 
                 else -> Unit
             }

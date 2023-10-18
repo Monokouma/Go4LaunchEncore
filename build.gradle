@@ -7,6 +7,7 @@ plugins {
     id 'org.jetbrains.kotlinx.kover' version '0.6.1'
     id 'com.google.gms.google-services' version '4.3.15' apply false
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1'
+    id 'com.google.devtools.ksp' version '1.9.0-1.0.13' apply false
 
 }
 
@@ -50,6 +51,7 @@ koverMerged {
                             "com.despaircorp.ui.utils.*",
                             "com.despaircorp.ui.databinding.*",
                             "com.despaircorp.go4launchencore.Go4LaunchApplication",
+                            "com.despaircorp.data.room.database.*",
                             // TODO: Remove below when Kover can handle Android integration tests!
                             // Android UI
                             "*MainApplication",
