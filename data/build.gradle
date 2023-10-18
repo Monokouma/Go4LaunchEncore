@@ -5,6 +5,8 @@ plugins {
     id 'kotlin-kapt'
     id "org.jetbrains.kotlinx.kover"
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'com.google.devtools.ksp'
+
 }
 
 android {
@@ -20,7 +22,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -36,6 +38,8 @@ android {
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
         ]
     }
+
+
     testOptions {
         unitTests {
             returnDefaultValues = true
@@ -44,10 +48,15 @@ android {
 }
 
 dependencies {
+    ksp 'androidx.room:room-compiler:2.5.2'
+    implementation("androidx.room:room-ktx:2.5.2")
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
     implementation project(path: ':domain')
+
+    implementation "androidx.room:room-runtime:2.5.2" // Room library
+    annotationProcessor "androidx.room:room-compiler:2.5.2" // Room annotation processor
 
     // Provides Tasks.await() coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.0"
