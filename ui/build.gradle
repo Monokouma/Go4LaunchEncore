@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace 'com.despaircorp.ui'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 26
@@ -51,12 +51,12 @@ dependencies {
 
     // Android
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Kotlin
-    implementation "androidx.core:core-ktx:1.10.1"
+    implementation "androidx.core:core-ktx:1.12.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     // Provides lifecycle and coroutines scopes
@@ -82,7 +82,7 @@ dependencies {
         // Removes the Mockito dependency bundled with arch core (wtf android ??)
         exclude group: "org.mockito", module: "mockito-core"
     }
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0'
     testImplementation "io.mockk:mockk:1.13.3"
     testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.25'
 }

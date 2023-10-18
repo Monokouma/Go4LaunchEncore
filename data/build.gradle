@@ -11,7 +11,7 @@ plugins {
 
 android {
     namespace 'com.despaircorp.data'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 26
@@ -83,7 +83,7 @@ dependencies {
     testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.25'
     testImplementation 'app.cash.turbine:turbine:0.13.0'
     testImplementation 'com.squareup.retrofit2:retrofit-mock:2.9.0'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0'
 }
 
 kover {
