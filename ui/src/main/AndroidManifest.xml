@@ -12,7 +12,10 @@
         android:theme="@style/Theme.Go4LaunchEncore"
         android:usesCleartextTraffic="true"
         >
-        
+        <activity
+            android:name=".main.settings.UserSettingsActivity"
+            android:exported="false"
+            />
         <activity
             android:name=".notification_preferences.NotificationsPreferencesActivity"
             android:exported="false"
@@ -35,7 +38,7 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                
+    
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

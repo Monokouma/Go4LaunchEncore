@@ -8,6 +8,7 @@ import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firebaseAuth.IsUserAlreadyAuthUseCase
 import com.despaircorp.domain.firebaseAuth.IsUserWithCredentialsSignedInUseCase
 import com.despaircorp.domain.firebaseAuth.SignInTokenUserUseCase
+import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
 import com.despaircorp.domain.firestore.InsertUserInFirestoreUseCase
 import com.despaircorp.domain.firestore.IsFirestoreUserExistUseCase
@@ -249,12 +250,20 @@ class LoginViewModel @Inject constructor(
                                 viewAction.value = Event(LoginAction.Error(R.string.error_occurred))
                             }
                         }
-                        
                     } else {
                         viewAction.value = Event(LoginAction.ChoseUsername)
                     }
                 } else {
-                    if (insertUserInFirestoreUseCase.invoke(getAuthenticatedUserUseCase.invoke())) {
+                    if (insertUserInFirestoreUseCase.invoke(
+                            AuthenticateUserEntity(
+                                picture = "https://graph.facebook.com${getAuthenticatedUserUseCase.invoke().picture}?type=large&access_token=${AccessToken.getCurrentAccessToken()?.token}",
+                                displayName = getAuthenticatedUserUseCase.invoke().displayName,
+                                mailAddress = getAuthenticatedUserUseCase.invoke().mailAddress,
+                                uid = getAuthenticatedUserUseCase.invoke().uid
+                            
+                            )
+                        )
+                    ) {
                         
                         if (getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).displayName != "none") {
                             //Had chose a display name can continue

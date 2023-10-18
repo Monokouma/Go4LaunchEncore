@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.despaircorp.ui.R
@@ -21,8 +22,10 @@ import com.despaircorp.ui.login.LoginActivity
 import com.despaircorp.ui.main.coworkers.CoworkersFragment
 import com.despaircorp.ui.main.map.MapFragment
 import com.despaircorp.ui.main.restaurants.list.RestaurantsFragment
+import com.despaircorp.ui.main.settings.UserSettingsActivity
 import com.despaircorp.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class BottomBarActivity : AppCompatActivity() {
@@ -31,14 +34,23 @@ class BottomBarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        
+        val headerBinding = HeaderNavigationDrawerBinding.bind(
+            binding.activityBottomBarNavigationViewProfile.getHeaderView(0)
+        )
+        
         val fade = Fade().apply {
             duration = 2000
         }
         window.enterTransition = fade
+        
         setSupportActionBar(binding.activityBottomBarToolbarRoot)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        
         getLocationPermission()
+        
         loadFragment(MapFragment())
+        
         binding.activityBottomBarBottomBar.selectedItemId =
             savedInstanceState?.getInt(KEY_BOTTOM_NAV_BAR_SELECTED_ITEM_ID, R.id.navigation_map)
                 ?: R.id.navigation_map
@@ -69,7 +81,34 @@ class BottomBarActivity : AppCompatActivity() {
         binding.activityBottomBarNavigationViewProfile.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.your_lunch -> Log.i("Monokouma", "your lunch")
-                R.id.settings -> Log.i("Monokouma", "settings")
+                R.id.settings -> {
+                    val intent = UserSettingsActivity.navigate(this).apply {
+                        putExtra(
+                            binding.activityBottomBarImageViewLogo.transitionName,
+                            binding.activityBottomBarImageViewLogo.transitionName
+                        )
+                        putExtra(
+                            headerBinding.navigationDrawerImageViewUserImage.transitionName,
+                            headerBinding.navigationDrawerImageViewUserImage.transitionName
+                        )
+                        putExtra(
+                            headerBinding.navigationDrawerTextViewUserName.transitionName,
+                            headerBinding.navigationDrawerTextViewUserName.transitionName
+                        )
+                        putExtra(
+                            headerBinding.navigationDrawerTextViewUserMail.transitionName,
+                            headerBinding.navigationDrawerTextViewUserMail.transitionName
+                        )
+                        
+                    }
+                    
+                    startActivity(
+                        intent,
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle()
+                    )
+                    
+                }
+                
                 R.id.logout -> {
                     viewModel.onDisconnectUser()
                 }
@@ -78,9 +117,7 @@ class BottomBarActivity : AppCompatActivity() {
             true
         }
         
-        val headerBinding = HeaderNavigationDrawerBinding.bind(
-            binding.activityBottomBarNavigationViewProfile.getHeaderView(0)
-        )
+        
         
         viewModel.viewState.observe(this) {
             Glide.with(headerBinding.navigationDrawerImageViewUserImage).load(it.userImage)
