@@ -46,7 +46,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:src="@drawable/lunchbox_toolbar_size"
-                        android:transitionName="activity_login_ImageView_logo"
                         />
                 
                 </androidx.appcompat.widget.Toolbar>
