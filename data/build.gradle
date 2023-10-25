@@ -50,6 +50,8 @@ android {
 dependencies {
     ksp 'androidx.room:room-compiler:2.5.2'
     implementation("androidx.room:room-ktx:2.5.2")
+    implementation 'com.google.firebase:firebase-storage:20.0.0'
+    // Check the latest version on Firebase website
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 

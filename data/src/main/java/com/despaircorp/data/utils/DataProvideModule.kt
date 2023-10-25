@@ -8,6 +8,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -63,5 +64,8 @@ class DataProvideModule {
     fun provideUserPreferencesDao(application: Application): UserPreferencesDao =
         Go4LunchRoomDatabase.getDatabase(application.applicationContext).userPreferencesDao()
     
-    
+    @Provides
+    @Singleton
+    fun provideFirebaseStorageReference(): FirebaseStorage =
+        FirebaseStorage.getInstance()
 }

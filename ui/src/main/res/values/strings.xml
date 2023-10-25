@@ -11,7 +11,9 @@
     <string name="mail">Mail</string>
     <string name="error_occurred">An error has occurred</string>
     <string name="error_credentials_empty">Credentials could not be empty</string>
+    <string name="error_mail_empty">Email address could not be empty</string>
     <string name="please_chose_a_username">Please, chose a username</string>
+    <string name="error_password_empty">Password could not be empty</string>
     <string name="username">Username</string>
     <string name="call_me_like_this">Call me like this</string>
     <string name="error_username_empty">Username could not be empty</string>
@@ -33,4 +35,8 @@
     <string name="email_address">Email address :</string>
     <string name="enable_disable_notifications">Enable/Disable notifications</string>
     <string name="change_password">Change password</string>
+    <string name="edit_username">Edit username</string>
+    <string name="save">Save</string>
+    <string name="edit_mail_address">Edit mail address</string>
+    <string name="edit_password">Edit password</string>
 </resources>

@@ -111,4 +111,36 @@ class FirestoreDataRepository @Inject constructor(
         
         awaitClose { registration.remove() }
     }.flowOn(coroutineDispatcherProvider.io)
+    
+    override suspend fun updateMailAddress(uid: String, newMailAddress: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            try {
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("mailAddress", newMailAddress)
+                    .await()
+                true
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
+                e.printStackTrace()
+                false
+            }
+        }
+    
+    override suspend fun updateUserImage(uid: String, pictureUrl: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            try {
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("picture", pictureUrl)
+                    .await()
+                true
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
+                e.printStackTrace()
+                false
+            }
+        }
 }

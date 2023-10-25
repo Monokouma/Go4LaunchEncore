@@ -5,12 +5,14 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.despaircorp.domain.firebaseAuth.DisconnectUserUseCase
 import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
-import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
+import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
+import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.TestCoroutineRule
 import com.despaircorp.ui.utils.observeForTesting
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,7 +25,7 @@ class BottomBarViewModelUnitTest {
     val testCoroutineRule = TestCoroutineRule()
     
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase = mockk()
-    private val getFirestoreUserUseCase: GetFirestoreUserUseCase = mockk()
+    private val getFirestoreUserUseCase: GetFirestoreUserAsFlowUseCase = mockk()
     private val disconnectUserUseCase: DisconnectUserUseCase = mockk()
     
     private lateinit var viewModel: BottomBarViewModel
@@ -39,15 +41,21 @@ class BottomBarViewModelUnitTest {
     @Before
     fun setup() {
         coEvery { getAuthenticatedUserUseCase.invoke().uid } returns DEFAULT_UID
-        coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
-        coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).picture } returns DEFAULT_PICTURE
-        coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID).mailAddress } returns DEFAULT_EMAIL
+        coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID) } returns flowOf(
+            FirestoreUserEntity(
+                DEFAULT_PICTURE,
+                DEFAULT_DISPLAY_NAME,
+                DEFAULT_EMAIL,
+                DEFAULT_UID
+            )
+        )
+        
         coEvery { disconnectUserUseCase.invoke() } returns true
         
         viewModel = BottomBarViewModel(
             getAuthenticatedUserUseCase = getAuthenticatedUserUseCase,
-            getFirestoreUserUseCase = getFirestoreUserUseCase,
-            disconnectUserUseCase = disconnectUserUseCase
+            disconnectUserUseCase = disconnectUserUseCase,
+            getFirestoreUserAsFlowUseCase = getFirestoreUserUseCase,
         )
     }
     

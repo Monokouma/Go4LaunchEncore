@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".main.settings.UserSettingsActivity"
     >
-
+    
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/activity_user_settings_AppBarLayout_root"
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         >
-
+        
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/activity_user_settings_Toolbar_root"
             android:layout_width="match_parent"
@@ -25,7 +25,7 @@
             android:padding="4dp"
             app:navigationIcon="@drawable/baseline_keyboard_backspace_24"
             >
-
+            
             <ImageView
                 android:id="@+id/activity_user_settings_ImageView_logo"
                 android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
                 />
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
-
+    
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/activity_user_settings_ImageView_user_image"
         android:layout_width="100dp"
@@ -50,7 +50,7 @@
         app:layout_constraintVertical_bias="1.0"
         tools:srcCompat="@drawable/user_image"
         />
-
+    
     <ImageView
         android:id="@+id/activity_user_settings_ImageView_user_image_edit"
         android:layout_width="0dp"
@@ -62,7 +62,7 @@
         app:layout_constraintStart_toStartOf="@id/activity_user_settings_ImageView_user_image"
         app:layout_constraintTop_toTopOf="@id/activity_user_settings_ImageView_user_image"
         />
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_user_settings_ConstraintLayout_display_name_root"
         android:layout_width="0dp"
@@ -72,7 +72,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_user_settings_ImageView_user_image"
         >
-
+        
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/activity_user_settings_Divider_display_name"
             android:layout_width="0dp"
@@ -83,7 +83,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
-
+        
         <TextView
             android:id="@+id/activity_user_settings_TextView_display_name_place_holder"
             android:layout_width="0dp"
@@ -97,7 +97,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_user_settings_Divider_display_name"
             />
-
+        
         <TextView
             android:id="@+id/activity_user_settings_TextView_display_name"
             android:layout_width="0dp"
@@ -108,15 +108,28 @@
             android:textSize="20sp"
             android:transitionName="navigation_drawer_TextView_user_name"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/activity_user_settings_ImageView_edit_display_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_user_settings_TextView_display_name_place_holder"
             tools:text="Monokouma"
             />
-
-
+        
+        <ImageView
+            android:id="@+id/activity_user_settings_ImageView_edit_display_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:src="@drawable/edit"
+            app:layout_constraintBottom_toBottomOf="@id/activity_user_settings_TextView_display_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/activity_user_settings_TextView_display_name"
+            app:layout_constraintTop_toTopOf="@id/activity_user_settings_TextView_display_name"
+            app:tint="@color/white"
+            />
+    
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_user_settings_ConstraintLayout_email_root"
         android:layout_width="0dp"
@@ -126,7 +139,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_user_settings_ConstraintLayout_display_name_root"
         >
-
+        
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/activity_user_settings_Divider_email"
             android:layout_width="0dp"
@@ -137,7 +150,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
-
+        
         <TextView
             android:id="@+id/activity_user_settings_TextView_email_place_holder"
             android:layout_width="0dp"
@@ -151,7 +164,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_user_settings_Divider_email"
             />
-
+        
         <TextView
             android:id="@+id/activity_user_settings_TextView_email"
             android:layout_width="0dp"
@@ -162,13 +175,26 @@
             android:textSize="20sp"
             android:transitionName="navigation_drawer_TextView_user_mail"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/activity_user_settings_ImageView_edit_email"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_user_settings_TextView_email_place_holder"
             tools:text="monokouma@despairCorp.com"
             />
+        
+        <ImageView
+            android:id="@+id/activity_user_settings_ImageView_edit_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:src="@drawable/edit"
+            app:layout_constraintBottom_toBottomOf="@id/activity_user_settings_TextView_email"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/activity_user_settings_TextView_email"
+            app:layout_constraintTop_toTopOf="@id/activity_user_settings_TextView_email"
+            app:tint="@color/white"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_user_settings_ConstraintLayout_notif_root"
         android:layout_width="0dp"
@@ -178,7 +204,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/activity_user_settings_ConstraintLayout_email_root"
         >
-
+        
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/activity_user_settings_Divider_notif"
             android:layout_width="0dp"
@@ -189,7 +215,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
-
+        
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/activity_user_settings_Switch_notif"
             android:layout_width="0dp"
@@ -204,9 +230,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_user_settings_Divider_notif"
             />
-
+    
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    
     <com.google.android.material.button.MaterialButton
         android:id="@+id/activity_user_settings_MaterialButton_change_password"
         android:layout_width="0dp"
