@@ -74,7 +74,7 @@ class BottomBarViewModelUnitTest {
         viewModel.onDisconnectUser()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(BottomBarAction.OnDisconnect)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(BottomBarAction.OnDisconnect)
         }
     }
     
@@ -95,7 +95,7 @@ class BottomBarViewModelUnitTest {
         viewModel.onDisconnectUser()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(BottomBarAction.Error(message = R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(BottomBarAction.Error(message = R.string.error_occurred))
         }
     }
 }

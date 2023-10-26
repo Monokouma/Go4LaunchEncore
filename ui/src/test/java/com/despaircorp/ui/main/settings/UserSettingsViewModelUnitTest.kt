@@ -141,7 +141,7 @@ class UserSettingsViewModelUnitTest {
         }
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.ModificationsSuccess)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.ModificationsSuccess)
         }
     }
     
@@ -152,7 +152,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onValidateUsernameButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_username_empty))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_username_empty))
         }
     }
     
@@ -162,7 +162,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onValidateUsernameButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_username_empty))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_username_empty))
         }
     }
     
@@ -173,7 +173,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onValidateUsernameButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
         }
     }
     
@@ -182,7 +182,7 @@ class UserSettingsViewModelUnitTest {
     fun `nominal case - update email null mail`() = testCoroutineRule.runTest {
         viewModel.onValidateMailButtonClicked()
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_mail_empty))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_mail_empty))
         }
     }
     
@@ -191,7 +191,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onMailAddressTextChanged("")
         viewModel.onValidateMailButtonClicked()
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_mail_empty))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_mail_empty))
         }
     }
     
@@ -209,7 +209,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onValidateMailButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.ModificationsSuccess)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.ModificationsSuccess)
         }
     }
     
@@ -227,7 +227,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onValidateMailButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
         }
     }
     
@@ -245,7 +245,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onValidateMailButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
         }
     }
     
@@ -254,7 +254,7 @@ class UserSettingsViewModelUnitTest {
     fun `nominal case - update password null mail`() = testCoroutineRule.runTest {
         viewModel.onValidatePasswordButtonClicked()
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_password_empty))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_password_empty))
         }
     }
     
@@ -263,7 +263,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onPasswordTextChanged("")
         viewModel.onValidatePasswordButtonClicked()
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_password_empty))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_password_empty))
         }
     }
     
@@ -276,7 +276,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onValidatePasswordButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.ModificationsSuccess)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.ModificationsSuccess)
         }
     }
     
@@ -288,7 +288,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onValidatePasswordButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
         }
     }
     
@@ -298,7 +298,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onSwitchChanged(true)
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.ModificationsSuccess)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.ModificationsSuccess)
         }
     }
     
@@ -308,7 +308,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onSwitchChanged(true)
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
         }
     }
     
@@ -332,7 +332,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onUserImageChange(DEFAULT_PICTURE_URI)
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.ModificationsSuccess)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.ModificationsSuccess)
         }
     }
     
@@ -356,7 +356,7 @@ class UserSettingsViewModelUnitTest {
         viewModel.onUserImageChange(DEFAULT_PICTURE_URI)
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(UserSettingsAction.Error(R.string.error_occurred))
         }
     }
     

@@ -7,5 +7,5 @@ class SignInTokenUserUseCase @Inject constructor(
     private val firebaseAuthDomainRepository: FirebaseAuthDomainRepository,
     
     ) {
-    suspend fun invoke(token: AccessToken) = firebaseAuthDomainRepository.signInTokenUser(token)
+    suspend fun invoke(token: AccessToken): Boolean = firebaseAuthDomainRepository.signInTokenUser(token)
 }

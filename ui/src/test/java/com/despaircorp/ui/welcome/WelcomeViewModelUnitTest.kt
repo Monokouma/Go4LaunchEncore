@@ -54,7 +54,7 @@ class WelcomeViewModelUnitTest {
         }
         delay(2.seconds)
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(WelcomeViewAction.Continue)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(WelcomeViewAction.Continue)
         }
     }
 }

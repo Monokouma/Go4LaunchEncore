@@ -142,4 +142,6 @@ class FirebaseAuthDataRepository @Inject constructor(
                 }
             }
         }
+
+    override fun getCurrentFacebookAccessToken(): String? = AccessToken.getCurrentAccessToken()?.token
 }

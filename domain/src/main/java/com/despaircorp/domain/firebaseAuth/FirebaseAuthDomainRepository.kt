@@ -16,4 +16,6 @@ interface FirebaseAuthDomainRepository {
     suspend fun disconnectUser(): Boolean
     suspend fun updateMailAddress(newMailAddress: String): Boolean
     suspend fun updatePassword(newPassword: String): Boolean
+
+    fun getCurrentFacebookAccessToken(): String?
 }
