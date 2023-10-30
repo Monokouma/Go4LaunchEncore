@@ -3,14 +3,17 @@ package com.despaircorp.data.firebaseStorage
 import android.net.Uri
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import com.despaircorp.data.utils.TestCoroutineRule
-import com.despaircorp.data.utils.safeAwait
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
-import io.mockk.coEvery
+import com.google.firebase.storage.UploadTask
 import io.mockk.coVerify
 import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.mockk
-import org.junit.Ignore
+import io.mockk.slot
 import org.junit.Rule
 import org.junit.Test
 
@@ -31,27 +34,107 @@ class FirebaseStorageDataRepositoryUnitTest {
         firebaseStorage = firebaseStorage
     )
     
-    @Ignore
     @Test
     fun `nominal case - update user image success`() = testCoroutineRule.runTest {
-        coEvery {
-            firebaseStorage.reference.child(DEFAULT_UID).putFile(DEFAULT_PICTURE_URI).safeAwait()
-        } returns mockk()
-        coEvery {
-            firebaseStorage.reference.child(DEFAULT_UID).downloadUrl.safeAwait()?.toString()
-        } returns DEFAULT_PICURE_STRING
+        val uploadTask: UploadTask = mockk()
+        val uploadSlot = slot<OnCompleteListener<UploadTask.TaskSnapshot>>()
+        
+        every { uploadTask.isComplete } returns true
+        every { uploadTask.isSuccessful } returns true
+        every { uploadTask.isCanceled } returns false
+        every { uploadTask.exception } returns null
+        every { uploadTask.result } returns mockk()
+        
+        every {
+            firebaseStorage.reference.child(DEFAULT_UID).putFile(DEFAULT_PICTURE_URI)
+        } answers {
+            every { uploadTask.addOnCompleteListener(capture(uploadSlot)) } answers {
+                uploadSlot.captured.onComplete(uploadTask)
+                uploadTask
+            }
+            uploadTask
+        }
+        
+        val downloadTask: Task<Uri> = mockk()
+        val downloadSlot = slot<OnCompleteListener<Uri>>()
+        
+        every { downloadTask.isComplete } returns true
+        every { downloadTask.isSuccessful } returns true
+        every { downloadTask.isCanceled } returns false
+        every { downloadTask.exception } returns null
+        every { downloadTask.result } returns DEFAULT_PICTURE_URI
+        
+        every {
+            firebaseStorage.reference.child(DEFAULT_UID).downloadUrl
+        } answers {
+            every { downloadTask.addOnCompleteListener(capture(downloadSlot)) } answers {
+                downloadSlot.captured.onComplete(downloadTask)
+                downloadTask
+            }
+            downloadTask
+        }
         
         val result = repository.updateUserImage(DEFAULT_UID, DEFAULT_PICTURE_URI)
         
-        assertThat(result).isEqualTo(DEFAULT_PICURE_STRING)
+        assertThat(result).isEqualTo("$DEFAULT_PICTURE_URI")
         
         coVerify {
-            firebaseStorage.reference.child(DEFAULT_UID).putFile(DEFAULT_PICTURE_URI).safeAwait()
-            firebaseStorage.reference.child(DEFAULT_UID).downloadUrl.safeAwait()?.toString()
+            firebaseStorage.reference.child(DEFAULT_UID).putFile(DEFAULT_PICTURE_URI)
+            firebaseStorage.reference.child(DEFAULT_UID).downloadUrl
         }
         
         confirmVerified(firebaseStorage)
     }
     
-    
+    @Test
+    fun `nominal case - update user image failure`() = testCoroutineRule.runTest {
+        val uploadTask: UploadTask = mockk()
+        val uploadSlot = slot<OnCompleteListener<UploadTask.TaskSnapshot>>()
+        
+        every { uploadTask.isComplete } returns true
+        every { uploadTask.isSuccessful } returns true
+        every { uploadTask.isCanceled } returns false
+        every { uploadTask.exception } returns null
+        every { uploadTask.result } returns mockk()
+        
+        every {
+            firebaseStorage.reference.child(DEFAULT_UID).putFile(DEFAULT_PICTURE_URI)
+        } answers {
+            every { uploadTask.addOnCompleteListener(capture(uploadSlot)) } answers {
+                uploadSlot.captured.onComplete(uploadTask)
+                uploadTask
+            }
+            uploadTask
+        }
+        
+        val downloadTask: Task<Uri> = mockk()
+        val downloadSlot = slot<OnCompleteListener<Uri>>()
+        
+        every { downloadTask.isComplete } returns true
+        every { downloadTask.isSuccessful } returns true
+        every { downloadTask.isCanceled } returns false
+        every { downloadTask.exception } returns null
+        every { downloadTask.result } returns null
+        
+        every {
+            firebaseStorage.reference.child(DEFAULT_UID).downloadUrl
+        } answers {
+            every { downloadTask.addOnCompleteListener(capture(downloadSlot)) } answers {
+                downloadSlot.captured.onComplete(downloadTask)
+                downloadTask
+            }
+            downloadTask
+        }
+        
+        val result = repository.updateUserImage(DEFAULT_UID, DEFAULT_PICTURE_URI)
+        
+        assertThat(result).isNull()
+        
+        coVerify {
+            firebaseStorage.reference.child(DEFAULT_UID).putFile(DEFAULT_PICTURE_URI)
+            firebaseStorage.reference.child(DEFAULT_UID).downloadUrl
+        }
+        
+        confirmVerified(firebaseStorage)
+    }
 }
