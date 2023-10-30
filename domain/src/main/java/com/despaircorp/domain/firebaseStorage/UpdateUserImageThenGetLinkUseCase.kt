@@ -8,5 +8,5 @@ class UpdateUserImageThenGetLinkUseCase @Inject constructor(
     
     ) {
     suspend fun invoke(uid: String, image: Uri): String =
-        firebaseStorageDomainRepository.updateUserImage(uid, image)
+        firebaseStorageDomainRepository.updateUserImage(uid, image) ?: "Error"
 }
