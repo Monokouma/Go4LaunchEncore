@@ -68,7 +68,8 @@ class MapViewModelUnitTest {
     
     private fun provideMapViewState() = MapViewState(
         mapViewStateItems = provideMapViewStateItems(),
-        provideLocationEntity().userLatLng
+        provideLocationEntity().userLatLng,
+        provideMapViewStateItems().count()
     )
     
     private fun provideMapViewStateItems() = List(3) {
