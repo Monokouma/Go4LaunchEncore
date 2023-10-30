@@ -68,7 +68,7 @@ class ChoseUsernameViewModelUnitTest {
         viewModel.onContinueButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(ChoseUsernameAction.Continue)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(ChoseUsernameAction.Continue)
         }
     }
     
@@ -78,7 +78,7 @@ class ChoseUsernameViewModelUnitTest {
         viewModel.onContinueButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(ChoseUsernameAction.Error(R.string.error_username_empty))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(ChoseUsernameAction.Error(R.string.error_username_empty))
         }
     }
     
@@ -90,7 +90,7 @@ class ChoseUsernameViewModelUnitTest {
         viewModel.onContinueButtonClicked()
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(ChoseUsernameAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(ChoseUsernameAction.Error(R.string.error_occurred))
         }
     }
     
@@ -104,7 +104,7 @@ class ChoseUsernameViewModelUnitTest {
             viewModel.onContinueButtonClicked()
             
             viewModel.viewAction.observeForTesting(this) {
-                assertThat(it.value?.peekContent()).isEqualTo(ChoseUsernameAction.EnableNotifications)
+                assertThat(it.value?.getContentIfNotHandled()).isEqualTo(ChoseUsernameAction.EnableNotifications)
             }
         }
     
@@ -124,7 +124,7 @@ class ChoseUsernameViewModelUnitTest {
             viewModel.onContinueButtonClicked()
             
             viewModel.viewAction.observeForTesting(this) {
-                assertThat(it.value?.peekContent()).isEqualTo(ChoseUsernameAction.EnableNotifications)
+                assertThat(it.value?.getContentIfNotHandled()).isEqualTo(ChoseUsernameAction.EnableNotifications)
             }
         }
     
@@ -144,7 +144,7 @@ class ChoseUsernameViewModelUnitTest {
             viewModel.onContinueButtonClicked()
             
             viewModel.viewAction.observeForTesting(this) {
-                assertThat(it.value?.peekContent()).isEqualTo(ChoseUsernameAction.Error(R.string.error_occurred))
+                assertThat(it.value?.getContentIfNotHandled()).isEqualTo(ChoseUsernameAction.Error(R.string.error_occurred))
             }
         }
     

@@ -6,13 +6,18 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
     
     <application
         android:supportsRtl="true"
         android:theme="@style/Theme.Go4LaunchEncore"
         android:usesCleartextTraffic="true"
         >
-        
+        <activity
+            android:name=".main.settings.UserSettingsActivity"
+            android:exported="false"
+            />
         <activity
             android:name=".notification_preferences.NotificationsPreferencesActivity"
             android:exported="false"

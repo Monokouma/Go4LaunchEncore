@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace 'com.despaircorp.domain'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         minSdk 26
@@ -25,12 +25,12 @@ android {
     }
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
         freeCompilerArgs += [
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
         ]
@@ -47,7 +47,7 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:15.2.0' // Facebook Auth
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0'
     testImplementation 'app.cash.turbine:turbine:0.13.0'
     testImplementation "io.mockk:mockk:1.13.3"
     testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.25'

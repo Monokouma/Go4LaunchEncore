@@ -40,7 +40,7 @@ class NotificationsPreferencesViewModelUnitTest {
         viewModel.onNotificationStateChanged(true)
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(NotificationsPreferencesAction.Success)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(NotificationsPreferencesAction.Success)
         }
     }
     
@@ -52,7 +52,7 @@ class NotificationsPreferencesViewModelUnitTest {
         viewModel.onNotificationStateChanged(false)
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(NotificationsPreferencesAction.Success)
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(NotificationsPreferencesAction.Success)
         }
     }
     
@@ -63,7 +63,7 @@ class NotificationsPreferencesViewModelUnitTest {
         viewModel.onNotificationStateChanged(true)
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(NotificationsPreferencesAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(NotificationsPreferencesAction.Error(R.string.error_occurred))
         }
     }
     
@@ -74,7 +74,7 @@ class NotificationsPreferencesViewModelUnitTest {
         viewModel.onNotificationStateChanged(false)
         
         viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.peekContent()).isEqualTo(NotificationsPreferencesAction.Error(R.string.error_occurred))
+            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(NotificationsPreferencesAction.Error(R.string.error_occurred))
         }
     }
 }

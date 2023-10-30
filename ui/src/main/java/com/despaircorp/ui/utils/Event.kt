@@ -1,7 +1,5 @@
 package com.despaircorp.ui.utils
 
-import androidx.annotation.VisibleForTesting
-
 open class Event<out T>(private val content: T) {
 
     private var hasBeenHandled = false
@@ -15,7 +13,4 @@ open class Event<out T>(private val content: T) {
         hasBeenHandled = true
         content
     }
-
-    @VisibleForTesting
-    fun peekContent(): T = content
 }

@@ -362,4 +362,196 @@ class FirebaseAuthRepositoryUnitTest {
         }
         confirmVerified(firebaseAuth)
     }
+    
+    @Test
+    fun `nominal case - update email address success`() = testCoroutineRule.runTest {
+        val task = mockk<Task<Void>>()
+        val slot = slot<OnCompleteListener<Void>>()
+        
+        every { task.isSuccessful } returns true
+        every { task.exception } returns null
+        
+        every {
+            firebaseAuth.currentUser?.updateEmail(DEFAULT_MAIL)
+                ?.addOnCompleteListener(capture(slot))
+        } answers {
+            slot.captured.onComplete(task)
+            task
+        }
+        
+        val result = repository.updateMailAddress(DEFAULT_MAIL)
+        
+        assertThat(result).isTrue()
+        
+        coVerify {
+            firebaseAuth.currentUser?.updateEmail(DEFAULT_MAIL)?.addOnCompleteListener(any())
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - update email address failure`() = testCoroutineRule.runTest {
+        val task = mockk<Task<Void>>()
+        val slot = slot<OnCompleteListener<Void>>()
+        
+        every { task.isSuccessful } returns false
+        every { task.exception } returns null
+        
+        every {
+            firebaseAuth.currentUser?.updateEmail(DEFAULT_MAIL)
+                ?.addOnCompleteListener(capture(slot))
+        } answers {
+            slot.captured.onComplete(task)
+            task
+        }
+        
+        val result = repository.updateMailAddress(DEFAULT_MAIL)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firebaseAuth.currentUser?.updateEmail(DEFAULT_MAIL)?.addOnCompleteListener(any())
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - update email address exception`() = testCoroutineRule.runTest {
+        val task = mockk<Task<Void>>()
+        val slot = slot<OnCompleteListener<Void>>()
+        
+        every { task.isSuccessful } returns false
+        every { task.exception } returns Exception()
+        
+        every {
+            firebaseAuth.currentUser?.updateEmail(DEFAULT_MAIL)
+                ?.addOnCompleteListener(capture(slot))
+        } answers {
+            slot.captured.onComplete(task)
+            task
+        }
+        
+        val result = repository.updateMailAddress(DEFAULT_MAIL)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firebaseAuth.currentUser?.updateEmail(DEFAULT_MAIL)?.addOnCompleteListener(any())
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `error case - update email address with null user`() = testCoroutineRule.runTest {
+        every { firebaseAuth.currentUser } returns null
+        
+        val result = repository.updateMailAddress(DEFAULT_MAIL)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firebaseAuth.currentUser
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - update password success`() = testCoroutineRule.runTest {
+        val task = mockk<Task<Void>>()
+        val slot = slot<OnCompleteListener<Void>>()
+        
+        every { task.isSuccessful } returns true
+        every { task.exception } returns null
+        
+        every {
+            firebaseAuth.currentUser?.updatePassword(DEFAULT_PASSWORD)
+                ?.addOnCompleteListener(capture(slot))
+        } answers {
+            slot.captured.onComplete(task)
+            task
+        }
+        
+        val result = repository.updatePassword(DEFAULT_PASSWORD)
+        
+        assertThat(result).isTrue()
+        
+        coVerify {
+            firebaseAuth.currentUser?.updatePassword(DEFAULT_PASSWORD)?.addOnCompleteListener(any())
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - update password failure`() = testCoroutineRule.runTest {
+        val task = mockk<Task<Void>>()
+        val slot = slot<OnCompleteListener<Void>>()
+        
+        every { task.isSuccessful } returns false
+        every { task.exception } returns null
+        
+        every {
+            firebaseAuth.currentUser?.updatePassword(DEFAULT_PASSWORD)
+                ?.addOnCompleteListener(capture(slot))
+        } answers {
+            slot.captured.onComplete(task)
+            task
+        }
+        
+        val result = repository.updatePassword(DEFAULT_PASSWORD)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firebaseAuth.currentUser?.updatePassword(DEFAULT_PASSWORD)?.addOnCompleteListener(any())
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - update password exception`() = testCoroutineRule.runTest {
+        val task = mockk<Task<Void>>()
+        val slot = slot<OnCompleteListener<Void>>()
+        
+        every { task.isSuccessful } returns false
+        every { task.exception } returns Exception()
+        
+        every {
+            firebaseAuth.currentUser?.updatePassword(DEFAULT_PASSWORD)
+                ?.addOnCompleteListener(capture(slot))
+        } answers {
+            slot.captured.onComplete(task)
+            task
+        }
+        
+        val result = repository.updatePassword(DEFAULT_PASSWORD)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firebaseAuth.currentUser?.updatePassword(DEFAULT_PASSWORD)?.addOnCompleteListener(any())
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
+    
+    @Test
+    fun `nominal case - update password null user`() = testCoroutineRule.runTest {
+        every { firebaseAuth.currentUser } returns null
+        
+        val result = repository.updatePassword(DEFAULT_PASSWORD)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firebaseAuth.currentUser
+        }
+        
+        confirmVerified(firebaseAuth)
+    }
 }

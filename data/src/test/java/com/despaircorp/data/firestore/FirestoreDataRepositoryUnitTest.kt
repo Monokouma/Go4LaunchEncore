@@ -1,5 +1,6 @@
 package com.despaircorp.data.firestore
 
+import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
@@ -306,6 +307,152 @@ class FirestoreDataRepositoryUnitTest {
                 .collection("users")
                 .document(DEFAULT_UID)
                 .update("displayName", DEFAULT_DISPLAY_NAME)
+        }
+        
+        confirmVerified(firestore)
+    }
+    
+    @Test
+    fun `nominal case - get user as flow`() = testCoroutineRule.runTest {
+        val slot = slot<EventListener<DocumentSnapshot>>()
+        val documentSnapshot = mockk<DocumentSnapshot>() {
+            every { toObject(FirestoreUserDto::class.java) } returns provideFirestoreUserDto()
+        }
+        
+        every {
+            firestore.collection("users").document(DEFAULT_UID).addSnapshotListener(capture(slot))
+        } returns mockk()
+        
+        repository.getUserAsFlow(DEFAULT_UID).test {
+            runCurrent()
+            slot.captured.onEvent(documentSnapshot, null)
+            cancel()
+            val result = awaitItem()
+            awaitComplete()
+            
+            assertThat(result).isEqualTo(provideFirestoreUserEntity())
+            
+            coVerify {
+                firestore.collection("users").document(DEFAULT_UID).addSnapshotListener(any())
+            }
+            confirmVerified(firestore)
+        }
+    }
+    
+    @Test
+    fun `nominal case - get user as flow exception`() = testCoroutineRule.runTest {
+        val slot = slot<EventListener<DocumentSnapshot>>()
+        val documentSnapshot = mockk<DocumentSnapshot>() {
+            every { toObject(FirestoreUserDto::class.java) } throws Exception()
+        }
+        
+        every {
+            firestore.collection("users").document(DEFAULT_UID).addSnapshotListener(capture(slot))
+        } returns mockk()
+        
+        repository.getUserAsFlow(DEFAULT_UID).test {
+            runCurrent()
+            slot.captured.onEvent(documentSnapshot, null)
+            cancel()
+            awaitComplete()
+            
+            
+            coVerify {
+                firestore.collection("users").document(DEFAULT_UID).addSnapshotListener(any())
+            }
+            confirmVerified(firestore)
+        }
+    }
+    
+    @Test
+    fun `nominal case - update mail address success`() = testCoroutineRule.runTest {
+        coEvery {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("mailAddress", DEFAULT_MAIL)
+        } returns getDefaultSetUserTask()
+        
+        val result = repository.updateMailAddress(DEFAULT_UID, DEFAULT_MAIL)
+        
+        assertThat(result).isTrue()
+        
+        coVerify {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("mailAddress", DEFAULT_MAIL)
+        }
+        
+        confirmVerified(firestore)
+        
+    }
+    
+    @Test
+    fun `nominal case - update mail address exception`() = testCoroutineRule.runTest {
+        coEvery {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("mailAddress", DEFAULT_MAIL)
+        } returns getDefaultSetUserTaskWithException()
+        
+        val result = repository.updateMailAddress(DEFAULT_UID, DEFAULT_MAIL)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("mailAddress", DEFAULT_MAIL)
+        }
+        
+        confirmVerified(firestore)
+    }
+    
+    @Test
+    fun `nominal case - update user image success`() = testCoroutineRule.runTest {
+        coEvery {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("picture", DEFAULT_PICTURE)
+        } returns getDefaultSetUserTask()
+        
+        val result = repository.updateUserImage(DEFAULT_UID, DEFAULT_PICTURE)
+        
+        assertThat(result).isTrue()
+        
+        coVerify {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("picture", DEFAULT_PICTURE)
+        }
+        
+        confirmVerified(firestore)
+        
+    }
+    
+    @Test
+    fun `nominal case - update user image exception`() = testCoroutineRule.runTest {
+        coEvery {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("picture", DEFAULT_PICTURE)
+        } returns getDefaultSetUserTaskWithException()
+        
+        val result = repository.updateUserImage(DEFAULT_UID, DEFAULT_PICTURE)
+        
+        assertThat(result).isFalse()
+        
+        coVerify {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("picture", DEFAULT_PICTURE)
         }
         
         confirmVerified(firestore)

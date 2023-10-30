@@ -6,7 +6,7 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.despaircorp.domain.firebaseAuth.DisconnectUserUseCase
 import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
-import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
+import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,19 +16,21 @@ import javax.inject.Inject
 @HiltViewModel
 class BottomBarViewModel @Inject constructor(
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase,
-    private val getFirestoreUserUseCase: GetFirestoreUserUseCase,
     private val disconnectUserUseCase: DisconnectUserUseCase,
-    
-    ) : ViewModel() {
+    private val getFirestoreUserAsFlowUseCase: GetFirestoreUserAsFlowUseCase
+) : ViewModel() {
     
     val viewState = liveData<BottomBarViewState> {
-        emit(
-            BottomBarViewState(
-                username = getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).displayName,
-                emailAddress = getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).mailAddress,
-                userImage = getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).picture,
+        getFirestoreUserAsFlowUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).collect {
+            emit(
+                BottomBarViewState(
+                    username = it.displayName,
+                    emailAddress = it.mailAddress,
+                    userImage = it.picture,
+                )
             )
-        )
+        }
+        
     }
     
     val viewAction = MutableLiveData<Event<BottomBarAction>>()

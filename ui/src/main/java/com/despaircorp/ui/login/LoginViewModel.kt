@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.despaircorp.domain.firebaseAuth.CreateCredentialsUserUseCase
 import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebaseAuth.GetCurrentFacebookAccessToken
 import com.despaircorp.domain.firebaseAuth.IsUserAlreadyAuthUseCase
 import com.despaircorp.domain.firebaseAuth.IsUserWithCredentialsSignedInUseCase
 import com.despaircorp.domain.firebaseAuth.SignInTokenUserUseCase
+import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
 import com.despaircorp.domain.firestore.InsertUserInFirestoreUseCase
 import com.despaircorp.domain.firestore.IsFirestoreUserExistUseCase
@@ -36,13 +38,13 @@ class LoginViewModel @Inject constructor(
     private val isNotificationsEnabledUseCase: IsNotificationsEnabledUseCase,
     private val initUserPreferencesUseCase: InitUserPreferencesUseCase,
     private val isUserPreferencesTableExistUseCase: IsUserPreferencesTableExistUseCase,
-    
-    ) : ViewModel() {
+    private val getCurrentFacebookAccessToken: GetCurrentFacebookAccessToken,
+) : ViewModel() {
     private var userMailAddress: String? = null
     private var userPassword: String? = null
-    
+
     val viewAction = MutableLiveData<Event<LoginAction>>()
-    
+
     init {
         viewModelScope.launch {
             if (isUserAlreadyAuthUseCase.invoke()) {
@@ -106,15 +108,15 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun onMailTextChanged(mailInput: String) {
         userMailAddress = mailInput
     }
-    
+
     fun onPasswordTextChanged(passwordInput: String) {
         userPassword = passwordInput
     }
-    
+
     fun onConnectWithCredentialsClicked() {
         viewModelScope.launch {
             if (userPassword.isNullOrEmpty() || userMailAddress.isNullOrEmpty()) {
@@ -148,13 +150,13 @@ class LoginViewModel @Inject constructor(
                                         Event(LoginAction.Error(R.string.error_occurred))
                                 }
                             }
-                            
+
                         } else {
                             viewAction.value = Event(LoginAction.ChoseUsername)
                         }
                     } else {
                         if (insertUserInFirestoreUseCase.invoke(getAuthenticatedUserUseCase.invoke())) {
-                            
+
                             if (getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).displayName != "none") {
                                 //Had chose a display name can continue
                                 if (isUserPreferencesTableExistUseCase.invoke()) { //Table created
@@ -189,7 +191,7 @@ class LoginViewModel @Inject constructor(
                         )
                     ) {
                         if (insertUserInFirestoreUseCase.invoke(getAuthenticatedUserUseCase.invoke())) {
-                            
+
                             if (getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).displayName != "none") {
                                 //Had chose a display name can continue
                                 if (isUserPreferencesTableExistUseCase.invoke()) { //Table created
@@ -222,70 +224,67 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun onFacebookConnection(token: AccessToken) {
         viewModelScope.launch {
-            if (signInTokenUserUseCase.invoke(token)) {
-                if (isFirestoreUserExistUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid)) {
+            viewAction.value = if (signInTokenUserUseCase.invoke(token)) {
+                val authenticatedUser = getAuthenticatedUserUseCase.invoke()
+                if (isFirestoreUserExistUseCase.invoke(authenticatedUser.uid)) {
                     //Check display name
-                    
-                    if (getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).displayName != "none") {
+
+                    if (getFirestoreUserUseCase.invoke(authenticatedUser.uid).displayName != "none") {
                         //Had chose a display name can continue
                         if (isUserPreferencesTableExistUseCase.invoke()) { //Table created
                             if (isNotificationsEnabledUseCase.invoke().isNotificationsEnabled == NotificationsStateEnum.NOT_KNOW) {
-                                viewAction.value = Event(LoginAction.EnableNotifications)
+                                Event(LoginAction.EnableNotifications)
                             } else {
-                                viewAction.value = Event(LoginAction.GoToWelcome)
+                                Event(LoginAction.GoToWelcome)
                             }
+                        } else if (initUserPreferencesUseCase.invoke(UserPreferencesDomainEntity(NotificationsStateEnum.NOT_KNOW))) {
+                            Event(LoginAction.EnableNotifications)
                         } else {
-                            if (initUserPreferencesUseCase.invoke(
+                            Event(LoginAction.Error(R.string.error_occurred))
+                        }
+                    } else {
+                        Event(LoginAction.ChoseUsername)
+                    }
+                } else {
+                    if (insertUserInFirestoreUseCase.invoke(
+                            AuthenticateUserEntity(
+                                picture = "https://graph.facebook.com${authenticatedUser.picture}?type=large&access_token=${getCurrentFacebookAccessToken.invoke()}",
+                                displayName = authenticatedUser.displayName,
+                                mailAddress = authenticatedUser.mailAddress,
+                                uid = authenticatedUser.uid
+                            )
+                        )
+                    ) {
+                        if (getFirestoreUserUseCase.invoke(authenticatedUser.uid).displayName != "none") {
+                            //Had chose a display name can continue
+                            if (isUserPreferencesTableExistUseCase.invoke()) { //Table created
+                                if (isNotificationsEnabledUseCase.invoke().isNotificationsEnabled == NotificationsStateEnum.NOT_KNOW) {
+                                    Event(LoginAction.EnableNotifications)
+                                } else {
+                                    Event(LoginAction.GoToWelcome)
+                                }
+                            } else if (initUserPreferencesUseCase.invoke(
                                     UserPreferencesDomainEntity(
                                         NotificationsStateEnum.NOT_KNOW
                                     )
                                 )
                             ) {
-                                viewAction.value = Event(LoginAction.EnableNotifications)
+                                Event(LoginAction.EnableNotifications)
                             } else {
-                                viewAction.value = Event(LoginAction.Error(R.string.error_occurred))
-                            }
-                        }
-                        
-                    } else {
-                        viewAction.value = Event(LoginAction.ChoseUsername)
-                    }
-                } else {
-                    if (insertUserInFirestoreUseCase.invoke(getAuthenticatedUserUseCase.invoke())) {
-                        
-                        if (getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).displayName != "none") {
-                            //Had chose a display name can continue
-                            if (isUserPreferencesTableExistUseCase.invoke()) { //Table created
-                                if (isNotificationsEnabledUseCase.invoke().isNotificationsEnabled == NotificationsStateEnum.NOT_KNOW) {
-                                    viewAction.value = Event(LoginAction.EnableNotifications)
-                                } else {
-                                    viewAction.value = Event(LoginAction.GoToWelcome)
-                                }
-                            } else {
-                                if (initUserPreferencesUseCase.invoke(
-                                        UserPreferencesDomainEntity(
-                                            NotificationsStateEnum.NOT_KNOW
-                                        )
-                                    )
-                                ) {
-                                    viewAction.value = Event(LoginAction.EnableNotifications)
-                                } else {
-                                    viewAction.value =
-                                        Event(LoginAction.Error(R.string.error_occurred))
-                                }
+                                Event(LoginAction.Error(R.string.error_occurred))
                             }
                         } else {
-                            viewAction.value = Event(LoginAction.ChoseUsername)
+                            Event(LoginAction.ChoseUsername)
                         }
                     } else {
-                        viewAction.value = Event(LoginAction.Error(R.string.error_occurred))
+                        Event(LoginAction.Error(R.string.error_occurred))
                     }
                 }
             } else {
-                viewAction.value = Event(LoginAction.Error(R.string.error_occurred))
+                Event(LoginAction.Error(R.string.error_occurred))
             }
         }
     }

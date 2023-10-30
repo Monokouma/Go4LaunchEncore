@@ -106,4 +106,42 @@ class FirebaseAuthDataRepository @Inject constructor(
             false
         }
     }
+    
+    override suspend fun updateMailAddress(newMailAddress: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            suspendCancellableCoroutine { cont ->
+                if (firebaseAuth.currentUser == null) {
+                    cont.resume(false)
+                } else {
+                    firebaseAuth.currentUser?.updateEmail(newMailAddress)
+                        ?.addOnCompleteListener { task ->
+                            if (task.exception == null) {
+                                cont.resume(task.isSuccessful)
+                            } else {
+                                cont.resume(false)
+                            }
+                        }
+                }
+            }
+        }
+    
+    override suspend fun updatePassword(newPassword: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            suspendCancellableCoroutine { cont ->
+                if (firebaseAuth.currentUser == null) {
+                    cont.resume(false)
+                } else {
+                    firebaseAuth.currentUser?.updatePassword(newPassword)
+                        ?.addOnCompleteListener { task ->
+                            if (task.exception == null) {
+                                cont.resume(task.isSuccessful)
+                            } else {
+                                cont.resume(false)
+                            }
+                        }
+                }
+            }
+        }
+
+    override fun getCurrentFacebookAccessToken(): String? = AccessToken.getCurrentAccessToken()?.token
 }

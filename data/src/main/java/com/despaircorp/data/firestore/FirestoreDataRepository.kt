@@ -7,7 +7,11 @@ import com.despaircorp.domain.firestore.FirestoreDomainRepository
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -76,6 +80,61 @@ class FirestoreDataRepository @Inject constructor(
                     .collection("users")
                     .document(uid)
                     .update("displayName", username)
+                    .await()
+                true
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
+                e.printStackTrace()
+                false
+            }
+        }
+    
+    override fun getUserAsFlow(uid: String): Flow<FirestoreUserEntity> = callbackFlow {
+        val registration = firestore.collection("users")
+            .document(uid)
+            .addSnapshotListener { documentSnapshot, _ ->
+                val userDto = try {
+                    documentSnapshot?.toObject<FirestoreUserDto>()
+                } catch (e: Exception) {
+                    null
+                }
+                
+                trySend(
+                    FirestoreUserEntity(
+                        picture = userDto?.picture ?: return@addSnapshotListener,
+                        displayName = userDto.displayName ?: return@addSnapshotListener,
+                        mailAddress = userDto.mailAddress ?: return@addSnapshotListener,
+                        uid = userDto.uid ?: return@addSnapshotListener
+                    )
+                )
+            }
+        
+        awaitClose { registration.remove() }
+    }.flowOn(coroutineDispatcherProvider.io)
+    
+    override suspend fun updateMailAddress(uid: String, newMailAddress: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            try {
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("mailAddress", newMailAddress)
+                    .await()
+                true
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
+                e.printStackTrace()
+                false
+            }
+        }
+    
+    override suspend fun updateUserImage(uid: String, pictureUrl: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            try {
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("picture", pictureUrl)
                     .await()
                 true
             } catch (e: Exception) {
