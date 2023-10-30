@@ -70,7 +70,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.7.0' // Google Auth
     implementation 'com.facebook.android:facebook-android-sdk:15.2.0' // Facebook Auth
 
-    implementation 'com.google.android.gms:play-services-maps:18.1.0' // Google Maps
+    implementation 'com.google.android.gms:play-services-maps:18.2.0' // Google Maps
 
     implementation 'com.github.bumptech.glide:glide:4.14.2'
 

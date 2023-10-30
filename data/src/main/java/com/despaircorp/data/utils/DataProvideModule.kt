@@ -2,6 +2,7 @@ package com.despaircorp.data.utils
 
 import android.app.Application
 import android.content.res.Resources
+import com.despaircorp.data.retrofit.GooglePlacesApi
 import com.despaircorp.data.room.dao.UserPreferencesDao
 import com.despaircorp.data.room.database.Go4LunchRoomDatabase
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -52,6 +53,12 @@ class DataProvideModule {
             .baseUrl("https://maps.googleapis.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideGooglePlaceApi(retrofit: Retrofit): GooglePlacesApi {
+        return retrofit.create(GooglePlacesApi::class.java)
     }
     
     @Provides

@@ -3,10 +3,14 @@ package com.despaircorp.data.utils
 import com.despaircorp.data.firebaseAuth.FirebaseAuthDataRepository
 import com.despaircorp.data.firebaseStorage.FirebaseStorageDataRepository
 import com.despaircorp.data.firestore.FirestoreDataRepository
+import com.despaircorp.data.location.LocationDataRepository
+import com.despaircorp.data.restaurants.RestaurantsDataRepository
 import com.despaircorp.data.room.RoomDataRepository
 import com.despaircorp.domain.firebaseAuth.FirebaseAuthDomainRepository
 import com.despaircorp.domain.firebaseStorage.FirebaseStorageDomainRepository
 import com.despaircorp.domain.firestore.FirestoreDomainRepository
+import com.despaircorp.domain.location.LocationDomainRepository
+import com.despaircorp.domain.restaurants.RestaurantsDomainRepository
 import com.despaircorp.domain.room.RoomDomainRepository
 import dagger.Binds
 import dagger.Module
@@ -33,4 +37,12 @@ abstract class DataBindModule {
     @Binds
     @Singleton
     abstract fun bindRoomRepository(impl: RoomDataRepository): RoomDomainRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindRestaurantsRepository(impl: RestaurantsDataRepository): RestaurantsDomainRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindLocationRepository(impl: LocationDataRepository): LocationDomainRepository
 }
