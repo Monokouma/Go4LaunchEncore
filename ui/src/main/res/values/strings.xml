@@ -39,4 +39,7 @@
     <string name="save">Save</string>
     <string name="edit_mail_address">Edit mail address</string>
     <string name="edit_password">Edit password</string>
+    <string name="opened">Open</string>
+    <string name="closed">Close\n</string>
+    <string name="nearby_restaurants_count">Restaurants nearby :</string>
 </resources>

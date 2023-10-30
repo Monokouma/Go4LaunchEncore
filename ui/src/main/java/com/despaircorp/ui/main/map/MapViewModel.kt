@@ -27,7 +27,8 @@ class MapViewModel @Inject constructor(
                         longitude = it.longitude,
                     )
                 },
-                userLocation = userLocation.userLatLng
+                userLocation = userLocation.userLatLng,
+                getNearbyRestaurantsEntityUseCase.invoke(userLocation).count()
             )
         )
     }
