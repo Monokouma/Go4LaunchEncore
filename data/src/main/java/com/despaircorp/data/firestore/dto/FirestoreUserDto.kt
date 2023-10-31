@@ -9,5 +9,7 @@ data class FirestoreUserDto(
     val displayName: String? = null,
     val mailAddress: String? = null,
     val picture: String? = null,
-    val uid: String? = null
+    val uid: String? = null,
+    val currentlyEating: Boolean? = null,
+    val eatingPlaceId: String? = null,
 )

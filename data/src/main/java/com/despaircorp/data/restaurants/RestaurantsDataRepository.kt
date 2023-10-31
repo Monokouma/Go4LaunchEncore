@@ -1,5 +1,6 @@
 package com.despaircorp.data.restaurants
 
+import com.despaircorp.data.BuildConfig
 import com.despaircorp.data.retrofit.GooglePlacesApi
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
 import com.despaircorp.domain.location.model.LocationEntity
@@ -18,7 +19,7 @@ class RestaurantsDataRepository @Inject constructor(
             val dto = googlePlacesApi.getPlaces(
                 location = "${userLocationEntity.userLatLng.latitude}, ${userLocationEntity.userLatLng.longitude}",
                 radius = 1_000,
-                apiKey = "AIzaSyDiJLrfSr0LbHYBplzQvB-IxyWzBDjGAN8",
+                apiKey = BuildConfig.MAPS_API_KEY,
                 type = "restaurant"
             )
             
@@ -35,8 +36,26 @@ class RestaurantsDataRepository @Inject constructor(
                     rating = result.rating as Double?
                 )
             }
+        }
+    
+    override suspend fun getRestaurantByPlaceId(placeId: String): RestaurantEntity? =
+        withContext(coroutineDispatcherProvider.io) {
+            val dto = googlePlacesApi.getPlacesDetails(
+                apiKey = BuildConfig.MAPS_API_KEY,
+                placeId = placeId
+            )
             
-            
+            RestaurantEntity(
+                id = dto?.result?.placeId ?: return@withContext null,
+                name = dto.result.name ?: return@withContext null,
+                photoUrl = dto.result.photos?.firstOrNull()?.photoReference,
+                latitude = dto.result.geometry?.location?.lat ?: return@withContext null,
+                longitude = dto.result.geometry.location.lng ?: return@withContext null,
+                isOpenedNow = true,
+                workmateInside = 4,
+                vicinity = dto.result.vicinity ?: return@withContext null,
+                rating = dto.result.rating as Double?
+            )
         }
     
 }

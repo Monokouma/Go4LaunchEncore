@@ -3,7 +3,7 @@ package com.despaircorp.ui.welcome
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
 import com.despaircorp.ui.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel

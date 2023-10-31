@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.despaircorp.domain.firebaseAuth.DisconnectUserUseCase
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.DisconnectUserUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.Event

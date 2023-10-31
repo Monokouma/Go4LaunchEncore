@@ -23,7 +23,8 @@ class GetFirestoreUserUseCaseUnitTest {
         private const val DEFAULT_DISPLAY_NAME = "DEFAULT_DISPLAY_NAME"
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
         private const val DEFAULT_TOKEN = "DEFAULT_TOKEN"
-        
+        private const val DEFAULT_CURRENTLY_EATING = false
+        private val DEFAULT_EATING_PLACE_IDE = null
     }
     
     private val firestoreDomainRepository: FirestoreDomainRepository = mockk()
@@ -55,7 +56,9 @@ class GetFirestoreUserUseCaseUnitTest {
         picture = DEFAULT_PICTURE,
         displayName = DEFAULT_DISPLAY_NAME,
         mailAddress = DEFAULT_MAIL,
-        uid = DEFAULT_UID
+        uid = DEFAULT_UID,
+        currentlyEating = DEFAULT_CURRENTLY_EATING,
+        eatingPlaceId = DEFAULT_EATING_PLACE_IDE
     )
     
     //End region out

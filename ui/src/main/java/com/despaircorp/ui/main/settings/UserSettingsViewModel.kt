@@ -5,10 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
-import com.despaircorp.domain.firebaseAuth.UpdateAuthMailAddressUseCase
-import com.despaircorp.domain.firebaseAuth.UpdateAuthPasswordUseCase
-import com.despaircorp.domain.firebaseStorage.UpdateUserImageThenGetLinkUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.UpdateAuthMailAddressUseCase
+import com.despaircorp.domain.firebase_auth.UpdateAuthPasswordUseCase
+import com.despaircorp.domain.firebase_storage.UpdateUserImageThenGetLinkUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.domain.firestore.UpdateFirestoreMailAddressUseCase
 import com.despaircorp.domain.firestore.UpdateUserImageUseCase

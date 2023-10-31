@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/black"
+    app:cardCornerRadius="0dp"
+    app:strokeWidth="0dp"
+    >
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/coworkers_list_items_ShapeableImageView_coworker_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:theme="@style/ShapeAppearance.M3.Sys.Shape.Corner.Full"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/coworkers_list_items_TextView_coworker_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/user_image"
+            />
+        
+        <TextView
+            android:id="@+id/coworkers_list_items_TextView_coworker_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/advent_pro_bold"
+            android:textColor="@color/baby_powder"
+            app:layout_constraintBottom_toBottomOf="@id/coworkers_list_items_ShapeableImageView_coworker_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/coworkers_list_items_ShapeableImageView_coworker_image"
+            app:layout_constraintTop_toTopOf="@id/coworkers_list_items_ShapeableImageView_coworker_image"
+            tools:text="Monokouma is eating (Chamas Tacos)"
+            />
+        
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/coworkers_list_items_Divider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/coworkers_list_items_TextView_coworker_name"
+            app:layout_constraintTop_toBottomOf="@id/coworkers_list_items_ShapeableImageView_coworker_image"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

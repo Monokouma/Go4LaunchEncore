@@ -7,13 +7,14 @@ import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import com.despaircorp.data.firestore.dto.FirestoreUserDto
 import com.despaircorp.data.utils.TestCoroutineRule
-import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -33,10 +34,13 @@ class FirestoreDataRepositoryUnitTest {
     companion object {
         private const val DEFAULT_UID = "DEFAULT_UID"
         private const val DEFAULT_MAIL = "DEFAULT_MAIL"
-        private const val DEFAULT_PASSWORD = "DEFAULT_PASSWORD"
         private const val DEFAULT_DISPLAY_NAME = "DEFAULT_DISPLAY_NAME"
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
         private const val DEFAULT_TOKEN = "DEFAULT_TOKEN"
+        private const val DEFAULT_CURRENTLY_EATING = false
+        private val DEFAULT_EATING_PLACE_ID = null
+        private const val DEFAULT_EATING_PLACE_ID_NOT_NULL = "DEFAULT_EATING_PLACE_ID_NOT_NULL"
+        
     }
     
     private val firestore: FirebaseFirestore = mockk()
@@ -245,7 +249,9 @@ class FirestoreDataRepositoryUnitTest {
                     picture = "https://w0.peakpx.com/wallpaper/733/998/HD-wallpaper-hedgedog-on-cloth-in-blur-green-bokeh-background-animals.jpg",
                     displayName = "none",
                     mailAddress = DEFAULT_MAIL,
-                    uid = DEFAULT_UID
+                    uid = DEFAULT_UID,
+                    currentlyEating = DEFAULT_CURRENTLY_EATING,
+                    eatingPlaceId = DEFAULT_EATING_PLACE_ID
                 )
             )
         }
@@ -316,7 +322,10 @@ class FirestoreDataRepositoryUnitTest {
     fun `nominal case - get user as flow`() = testCoroutineRule.runTest {
         val slot = slot<EventListener<DocumentSnapshot>>()
         val documentSnapshot = mockk<DocumentSnapshot>() {
-            every { toObject(FirestoreUserDto::class.java) } returns provideFirestoreUserDto()
+            every { toObject(FirestoreUserDto::class.java) } returns provideFirestoreUserDto().copy(
+                currentlyEating = true,
+                eatingPlaceId = DEFAULT_EATING_PLACE_ID_NOT_NULL
+            )
         }
         
         every {
@@ -330,7 +339,12 @@ class FirestoreDataRepositoryUnitTest {
             val result = awaitItem()
             awaitComplete()
             
-            assertThat(result).isEqualTo(provideFirestoreUserEntity())
+            assertThat(result).isEqualTo(
+                provideFirestoreUserEntity().copy(
+                    currentlyEating = true,
+                    eatingPlaceId = DEFAULT_EATING_PLACE_ID_NOT_NULL
+                )
+            )
             
             coVerify {
                 firestore.collection("users").document(DEFAULT_UID).addSnapshotListener(any())
@@ -458,6 +472,30 @@ class FirestoreDataRepositoryUnitTest {
         confirmVerified(firestore)
     }
     
+    @Test
+    fun `nominal case - get all firestore users`() = testCoroutineRule.runTest {
+        val slot = slot<EventListener<QuerySnapshot>>()
+        val documentSnapshot: DocumentSnapshot = mockk() {
+            every { toObject(FirestoreUserDto::class.java) } returns provideFirestoreUserDto()
+        }
+        val querySnapshot = mockk<QuerySnapshot>() {
+            every { documents } returns listOf(documentSnapshot)
+        }
+        coEvery { firestore.collection("users").addSnapshotListener(capture(slot)) } returns mockk()
+        
+        repository.getAllFirestoreUsers().test {
+            runCurrent()
+            slot.captured.onEvent(querySnapshot, null)
+            cancel()
+            awaitComplete()
+            
+            coVerify {
+                firestore.collection("users").addSnapshotListener(any())
+            }
+            confirmVerified(firestore)
+        }
+    }
+    
     //Region Out
     private inline fun getDefaultSetUserTask(crossinline mockkBlock: Task<Void>.() -> Unit = {}): Task<Void> =
         mockk {
@@ -483,7 +521,9 @@ class FirestoreDataRepositoryUnitTest {
         picture = DEFAULT_PICTURE,
         displayName = DEFAULT_DISPLAY_NAME,
         mailAddress = DEFAULT_MAIL,
-        uid = DEFAULT_UID
+        uid = DEFAULT_UID,
+        currentlyEating = DEFAULT_CURRENTLY_EATING,
+        eatingPlaceId = DEFAULT_EATING_PLACE_ID
     )
     
     private fun provideFirestoreUserDto() = FirestoreUserDto(
@@ -497,7 +537,9 @@ class FirestoreDataRepositoryUnitTest {
         picture = DEFAULT_PICTURE,
         displayName = DEFAULT_DISPLAY_NAME,
         mailAddress = DEFAULT_MAIL,
-        uid = DEFAULT_UID
+        uid = DEFAULT_UID,
+        currentlyEating = DEFAULT_CURRENTLY_EATING,
+        eatingPlaceId = DEFAULT_EATING_PLACE_ID
     )
     //End region out
 }

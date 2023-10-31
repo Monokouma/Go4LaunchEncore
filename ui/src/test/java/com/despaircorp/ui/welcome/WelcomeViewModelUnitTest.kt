@@ -3,7 +3,7 @@ package com.despaircorp.ui.welcome
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
 import com.despaircorp.ui.utils.TestCoroutineRule
 import com.despaircorp.ui.utils.observeForTesting

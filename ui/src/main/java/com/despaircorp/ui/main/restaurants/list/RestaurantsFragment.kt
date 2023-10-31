@@ -1,6 +1,7 @@
 package com.despaircorp.ui.main.restaurants.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -31,6 +32,6 @@ class RestaurantsFragment : Fragment(R.layout.fragment_restaurants), Restaurants
     }
     
     override fun onRestaurantClick(placeId: String) {
-    
+        Log.i("Monokouma", placeId)
     }
 }

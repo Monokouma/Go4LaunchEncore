@@ -2,10 +2,12 @@ package com.despaircorp.data.restaurants
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.despaircorp.data.restaurants.dto.details.Geometry
-import com.despaircorp.data.restaurants.dto.details.PhotosItem
-import com.despaircorp.data.restaurants.dto.list.Location
+import com.despaircorp.data.restaurants.dto.details.Location
+import com.despaircorp.data.restaurants.dto.details.RestaurantDetailsDto
+import com.despaircorp.data.restaurants.dto.details.Result
+import com.despaircorp.data.restaurants.dto.list.Geometry
 import com.despaircorp.data.restaurants.dto.list.OpeningHours
+import com.despaircorp.data.restaurants.dto.list.PhotosItem
 import com.despaircorp.data.restaurants.dto.list.RestaurantsDto
 import com.despaircorp.data.restaurants.dto.list.ResultsItem
 import com.despaircorp.data.retrofit.GooglePlacesApi
@@ -49,6 +51,9 @@ class RestaurantsDataRepositoryUnitTest {
         private const val DEFAULT_RADIUS = 1_000
         private const val DEFAULT_PLACES_TYPE = "restaurant"
         
+        private const val DEFAULT_PLACE_ID = "DEFAULT_PLACE_ID"
+        private const val DEFAULT_WEBSITE_URL = "DEFAULT_WEBSITE_URL"
+        private const val DEFAULT_PHONE_NUMBER = "DEFAULT_PHONE_NUMBER"
     }
     
     @Before
@@ -68,7 +73,7 @@ class RestaurantsDataRepositoryUnitTest {
         val result = repository.getNearbyRestaurants(provideLocationEntity())
         
         assertThat(result).isEqualTo(
-            provideRestaurantsEntity()
+            provideRestaurantsEntityAsList()
         )
         
         coVerify {
@@ -83,8 +88,65 @@ class RestaurantsDataRepositoryUnitTest {
         confirmVerified(googlePlacesApi)
     }
     
+    @Test
+    fun `nominal case - get restaurants details by place id`() = testCoroutineRule.runTest {
+        coEvery {
+            googlePlacesApi.getPlacesDetails(
+                any(),
+                DEFAULT_PLACE_ID
+            )
+        } returns provideRestaurantDetailsDto()
+        
+        val result = repository.getRestaurantByPlaceId(DEFAULT_PLACE_ID)
+        
+        assertThat(result).isEqualTo(provideRestaurantsEntity().copy(id = DEFAULT_PLACE_ID))
+        
+        coVerify {
+            googlePlacesApi.getPlacesDetails(
+                any(),
+                DEFAULT_PLACE_ID
+            )
+        }
+        
+        confirmVerified(googlePlacesApi)
+    }
+    
     //Region OUT
-    private fun provideRestaurantsEntity() = List(1) {
+    
+    private fun provideRestaurantDetailsDto() = RestaurantDetailsDto(
+        result = Result(
+            placeId = DEFAULT_PLACE_ID,
+            name = DEFAULT_NAME,
+            rating = DEFAULT_RATING,
+            vicinity = DEFAULT_VICINITY,
+            photos = listOf(
+                PhotosItem(
+                    photoReference = DEFAULT_PHOTO_URL
+                )
+            ),
+            geometry = Geometry(
+                location = Location(
+                    lat = DEFAULT_RESTAURANTS_LATITUDE,
+                    lng = DEFAULT_RESTAURANTS_LONGITUDE
+                )
+            )
+        )
+    )
+    
+    private fun provideRestaurantsEntity() = RestaurantEntity(
+        id = DEFAULT_ID,
+        name = DEFAULT_NAME,
+        photoUrl = DEFAULT_PHOTO_URL,
+        latitude = DEFAULT_RESTAURANTS_LATITUDE,
+        longitude = DEFAULT_RESTAURANTS_LONGITUDE,
+        isOpenedNow = DEFAULT_IS_OPENED_NOW,
+        workmateInside = DEFAULT_WORKMATE_INSIDE,
+        vicinity = DEFAULT_VICINITY,
+        rating = DEFAULT_RATING,
+    )
+    
+    
+    private fun provideRestaurantsEntityAsList() = List(1) {
         RestaurantEntity(
             id = DEFAULT_ID,
             name = DEFAULT_NAME,
@@ -112,7 +174,7 @@ class RestaurantsDataRepositoryUnitTest {
         )
     )
     
-    private fun provideGeometry() = Geometry(
+    private fun provideGeometry() = com.despaircorp.data.restaurants.dto.details.Geometry(
         location = getDefaultLocation()
     )
     
@@ -120,16 +182,17 @@ class RestaurantsDataRepositoryUnitTest {
         openNow = DEFAULT_IS_OPENED_NOW
     )
     
-    private fun getDefaultLocation() = Location(
+    private fun getDefaultLocation() = com.despaircorp.data.restaurants.dto.list.Location(
         lat = DEFAULT_RESTAURANTS_LATITUDE,
         lng = DEFAULT_RESTAURANTS_LONGITUDE,
     )
     
-    private fun providePhotoItem(): List<PhotosItem> = List(size = 1) {
-        PhotosItem(
-            photoReference = DEFAULT_PHOTO_URL
-        )
-    }
+    private fun providePhotoItem(): List<com.despaircorp.data.restaurants.dto.details.PhotosItem> =
+        List(size = 1) {
+            com.despaircorp.data.restaurants.dto.details.PhotosItem(
+                photoReference = DEFAULT_PHOTO_URL
+            )
+        }
     
     private fun provideLocationEntity() = LocationEntity(
         userLatLng = LatLng(

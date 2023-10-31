@@ -3,7 +3,7 @@ package com.despaircorp.ui.username
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.UpdateUsernameUseCase
 import com.despaircorp.domain.room.InitUserPreferencesUseCase
 import com.despaircorp.domain.room.IsNotificationsEnabledUseCase

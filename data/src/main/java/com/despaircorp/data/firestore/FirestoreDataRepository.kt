@@ -1,8 +1,9 @@
 package com.despaircorp.data.firestore
 
+import android.util.Log
 import com.despaircorp.data.firestore.dto.FirestoreUserDto
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
-import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firestore.FirestoreDomainRepository
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -65,7 +66,9 @@ class FirestoreDataRepository @Inject constructor(
                                 displayName = firestoreUserDto?.displayName ?: "none",
                                 mailAddress = firestoreUserDto?.mailAddress
                                     ?: return@addSnapshotListener,
-                                uid = firestoreUserDto.uid ?: return@addSnapshotListener
+                                uid = firestoreUserDto.uid ?: return@addSnapshotListener,
+                                currentlyEating = firestoreUserDto.currentlyEating ?: false,
+                                eatingPlaceId = firestoreUserDto.eatingPlaceId
                             )
                         )
                     }
@@ -98,13 +101,15 @@ class FirestoreDataRepository @Inject constructor(
                 } catch (e: Exception) {
                     null
                 }
-                
+                Log.i("Monokouma", userDto.toString())
                 trySend(
                     FirestoreUserEntity(
                         picture = userDto?.picture ?: return@addSnapshotListener,
                         displayName = userDto.displayName ?: return@addSnapshotListener,
                         mailAddress = userDto.mailAddress ?: return@addSnapshotListener,
-                        uid = userDto.uid ?: return@addSnapshotListener
+                        uid = userDto.uid ?: return@addSnapshotListener,
+                        currentlyEating = userDto.currentlyEating ?: return@addSnapshotListener,
+                        eatingPlaceId = userDto.eatingPlaceId
                     )
                 )
             }
@@ -143,4 +148,33 @@ class FirestoreDataRepository @Inject constructor(
                 false
             }
         }
+    
+    override fun getAllFirestoreUsers(): Flow<List<FirestoreUserEntity>> = callbackFlow {
+        val registration = firestore.collection("users")
+            .addSnapshotListener { documentSnapshot, _ ->
+                val firestoreUserEntities = mutableListOf<FirestoreUserEntity>()
+                
+                documentSnapshot?.documents?.forEach { users ->
+                    val userDto = try {
+                        users?.toObject<FirestoreUserDto>()
+                    } catch (e: Exception) {
+                        null
+                    }
+                    firestoreUserEntities.add(
+                        FirestoreUserEntity(
+                            picture = userDto?.picture ?: return@addSnapshotListener,
+                            displayName = userDto.displayName ?: return@addSnapshotListener,
+                            mailAddress = userDto.mailAddress ?: return@addSnapshotListener,
+                            uid = userDto.uid ?: return@addSnapshotListener,
+                            currentlyEating = userDto.currentlyEating ?: return@addSnapshotListener,
+                            eatingPlaceId = userDto.eatingPlaceId
+                        )
+                    )
+                }
+                
+                trySend(firestoreUserEntities)
+            }
+        
+        awaitClose { registration.remove() }
+    }.flowOn(coroutineDispatcherProvider.io)
 }

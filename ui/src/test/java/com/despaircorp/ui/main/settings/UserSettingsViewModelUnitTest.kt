@@ -4,11 +4,11 @@ import android.net.Uri
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
-import com.despaircorp.domain.firebaseAuth.UpdateAuthMailAddressUseCase
-import com.despaircorp.domain.firebaseAuth.UpdateAuthPasswordUseCase
-import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
-import com.despaircorp.domain.firebaseStorage.UpdateUserImageThenGetLinkUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.UpdateAuthMailAddressUseCase
+import com.despaircorp.domain.firebase_auth.UpdateAuthPasswordUseCase
+import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firebase_storage.UpdateUserImageThenGetLinkUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.domain.firestore.UpdateFirestoreMailAddressUseCase
 import com.despaircorp.domain.firestore.UpdateUserImageUseCase
@@ -56,7 +56,8 @@ class UserSettingsViewModelUnitTest {
         private const val DEFAULT_EMAIL = "DEFAULT_EMAIL"
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
         private val DEFAULT_PICTURE_URI = mockk<Uri>()
-        
+        private const val DEFAULT_CURRENTLY_EATING = false
+        private val DEFAULT_EATING_PLACE_IDE = null
         
         private val DEFAULT_NOTIF_STATE_NOT_KNOW = NotificationsStateEnum.NOT_KNOW
         private val DEFAULT_NOTIF_STATE_ENABLED = NotificationsStateEnum.ENABLED
@@ -72,7 +73,9 @@ class UserSettingsViewModelUnitTest {
                 DEFAULT_PICTURE,
                 DEFAULT_DISPLAY_NAME,
                 DEFAULT_EMAIL,
-                DEFAULT_UID
+                DEFAULT_UID,
+                DEFAULT_CURRENTLY_EATING,
+                DEFAULT_EATING_PLACE_IDE
             )
         )
         
@@ -374,7 +377,9 @@ class UserSettingsViewModelUnitTest {
         picture = DEFAULT_PICTURE,
         displayName = DEFAULT_DISPLAY_NAME,
         mailAddress = DEFAULT_EMAIL,
-        uid = DEFAULT_UID
+        uid = DEFAULT_UID,
+        currentlyEating = DEFAULT_CURRENTLY_EATING,
+        eatingPlaceId = DEFAULT_EATING_PLACE_IDE
     )
     //End Region IN
 }

@@ -74,6 +74,19 @@ class LocationDataRepositoryUnitTest {
         confirmVerified(fusedLocationProviderClient)
     }
     
+    @Test
+    fun `nominal test - get distance between place and user`() = testCoroutineRule.runTest {
+        
+        val result = repository.getDistanceBetweenPlaceAndUser(
+            provideLocationEntity().copy(userLatLng = LatLng(49.857920, 1.295048)),
+            DEFAULT_LATITUDE,
+            DEFAULT_LONGITUDE
+        )
+        
+        assertThat(result).isEqualTo(0)
+        
+    }
+    
     private fun provideLocationEntity() = LocationEntity(
         userLatLng = LatLng(
             DEFAULT_LATITUDE,

@@ -22,6 +22,8 @@ class GetFirestoreUserAsFlowUseCaseUnitTest {
         private const val DEFAULT_MAIL = "DEFAULT_MAIL"
         private const val DEFAULT_DISPLAY_NAME = "DEFAULT_DISPLAY_NAME"
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
+        private const val DEFAULT_CURRENTLY_EATING = false
+        private val DEFAULT_EATING_PLACE_IDE = null
         
     }
     
@@ -55,7 +57,9 @@ class GetFirestoreUserAsFlowUseCaseUnitTest {
             picture = DEFAULT_PICTURE,
             displayName = DEFAULT_DISPLAY_NAME,
             mailAddress = DEFAULT_MAIL,
-            uid = DEFAULT_UID
+            uid = DEFAULT_UID,
+            currentlyEating = DEFAULT_CURRENTLY_EATING,
+            eatingPlaceId = DEFAULT_EATING_PLACE_IDE
         )
     }
     
