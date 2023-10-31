@@ -8,6 +8,7 @@ import com.despaircorp.domain.location.GetUserLocationEntityUseCase
 import com.despaircorp.domain.location.model.LocationEntity
 import com.despaircorp.domain.restaurants.GetNearbyRestaurantsEntityUseCase
 import com.despaircorp.domain.restaurants.model.RestaurantEntity
+import com.despaircorp.ui.BuildConfig
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.NativeText
 import com.despaircorp.ui.utils.TestCoroutineRule
@@ -102,7 +103,7 @@ class RestaurantsViewModelUnitTest {
         RestaurantsViewStateItems(
             restaurantName = DEFAULT_NAME,
             restaurantDistance = "${DEFAULT_DISTANCE_BETWEEN_USER_AND_RESTAURANT}m",
-            restaurantImageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1920&maxheigth=1080&photo_reference=$DEFAULT_PHOTO_URL&key=AIzaSyDiJLrfSr0LbHYBplzQvB-IxyWzBDjGAN8",
+            restaurantImageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1920&maxheigth=1080&photo_reference=$DEFAULT_PHOTO_URL&key=${BuildConfig.MAPS_API_KEY}",
             restaurantAddressAndType = DEFAULT_VICINITY,
             workmatesInside = "$DEFAULT_WORKMATE_INSIDE",
             restaurantSchedule = NativeText.Resource(R.string.opened),
@@ -151,7 +152,7 @@ class RestaurantsViewModelUnitTest {
         RestaurantsViewStateItems(
             restaurantName = DEFAULT_NAME,
             restaurantDistance = "${DEFAULT_DISTANCE_BETWEEN_USER_AND_RESTAURANT}m",
-            restaurantImageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1920&maxheigth=1080&photo_reference=$DEFAULT_PHOTO_URL&key=AIzaSyDiJLrfSr0LbHYBplzQvB-IxyWzBDjGAN8",
+            restaurantImageUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1920&maxheigth=1080&photo_reference=$DEFAULT_PHOTO_URL&key=${BuildConfig.MAPS_API_KEY}",
             restaurantAddressAndType = DEFAULT_VICINITY,
             workmatesInside = "$DEFAULT_WORKMATE_INSIDE",
             restaurantSchedule = NativeText.Resource(R.string.closed),

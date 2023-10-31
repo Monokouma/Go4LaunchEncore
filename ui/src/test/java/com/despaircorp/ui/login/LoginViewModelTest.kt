@@ -3,13 +3,13 @@ package com.despaircorp.ui.login
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.despaircorp.domain.firebaseAuth.CreateCredentialsUserUseCase
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
-import com.despaircorp.domain.firebaseAuth.GetCurrentFacebookAccessToken
-import com.despaircorp.domain.firebaseAuth.IsUserAlreadyAuthUseCase
-import com.despaircorp.domain.firebaseAuth.IsUserWithCredentialsSignedInUseCase
-import com.despaircorp.domain.firebaseAuth.SignInTokenUserUseCase
-import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firebase_auth.CreateCredentialsUserUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.GetCurrentFacebookAccessTokenUseCase
+import com.despaircorp.domain.firebase_auth.IsUserAlreadyAuthUseCase
+import com.despaircorp.domain.firebase_auth.IsUserWithCredentialsSignedInUseCase
+import com.despaircorp.domain.firebase_auth.SignInTokenUserUseCase
+import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
 import com.despaircorp.domain.firestore.InsertUserInFirestoreUseCase
 import com.despaircorp.domain.firestore.IsFirestoreUserExistUseCase
@@ -50,7 +50,7 @@ class LoginViewModelTest {
     private val isNotificationsEnabledUseCase: IsNotificationsEnabledUseCase = mockk()
     private val initUserPreferencesUseCase: InitUserPreferencesUseCase = mockk()
     private val isUserPreferencesTableExistUseCase: IsUserPreferencesTableExistUseCase = mockk()
-    private val getCurrentFacebookAccessToken: GetCurrentFacebookAccessToken =
+    private val getCurrentFacebookAccessToken: GetCurrentFacebookAccessTokenUseCase =
         mockk()
     
     private lateinit var viewModel: LoginViewModel
@@ -62,6 +62,8 @@ class LoginViewModelTest {
         private const val DEFAULT_PASSWORD = "DEFAULT_PASSWORD"
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
         private const val DEFAULT_TOKEN = "DEFAULT_TOKEN"
+        private const val DEFAULT_CURRENTLY_EATING = false
+        private val DEFAULT_EATING_PLACE_IDE = null
         
         private const val DEFAULT_PICTURE_FACEBOOK =
             "https://graph.facebook.com${DEFAULT_PICTURE}?type=large&access_token=${DEFAULT_TOKEN}"
@@ -1073,6 +1075,8 @@ class LoginViewModelTest {
         picture = DEFAULT_PICTURE,
         displayName = DEFAULT_DISPLAY_NAME,
         mailAddress = DEFAULT_MAIL,
-        uid = DEFAULT_UID
+        uid = DEFAULT_UID,
+        currentlyEating = DEFAULT_CURRENTLY_EATING,
+        eatingPlaceId = DEFAULT_EATING_PLACE_IDE
     )
 }

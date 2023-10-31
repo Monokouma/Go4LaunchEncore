@@ -5,4 +5,6 @@ data class FirestoreUserEntity(
     val displayName: String,
     val mailAddress: String,
     val uid: String,
+    val currentlyEating: Boolean,
+    val eatingPlaceId: String?,
 )

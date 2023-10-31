@@ -3,8 +3,8 @@ package com.despaircorp.ui.main.bottom_bar
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.despaircorp.domain.firebaseAuth.DisconnectUserUseCase
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.DisconnectUserUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.despaircorp.ui.R
@@ -35,7 +35,8 @@ class BottomBarViewModelUnitTest {
         private const val DEFAULT_DISPLAY_NAME = "DEFAULT_DISPLAY_NAME"
         private const val DEFAULT_EMAIL = "DEFAULT_EMAIL"
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
-        
+        private const val DEFAULT_CURRENTLY_EATING = false
+        private val DEFAULT_EATING_PLACE_IDE = null
     }
     
     @Before
@@ -46,7 +47,9 @@ class BottomBarViewModelUnitTest {
                 DEFAULT_PICTURE,
                 DEFAULT_DISPLAY_NAME,
                 DEFAULT_EMAIL,
-                DEFAULT_UID
+                DEFAULT_UID,
+                DEFAULT_CURRENTLY_EATING,
+                DEFAULT_EATING_PLACE_IDE
             )
         )
         

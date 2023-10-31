@@ -3,7 +3,7 @@ package com.despaircorp.ui.username
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.UpdateUsernameUseCase
 import com.despaircorp.domain.room.InitUserPreferencesUseCase
 import com.despaircorp.domain.room.IsNotificationsEnabledUseCase

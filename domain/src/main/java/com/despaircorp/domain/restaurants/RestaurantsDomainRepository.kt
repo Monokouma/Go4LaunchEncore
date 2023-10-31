@@ -5,5 +5,6 @@ import com.despaircorp.domain.restaurants.model.RestaurantEntity
 
 interface RestaurantsDomainRepository {
     suspend fun getNearbyRestaurants(userLocationEntity: LocationEntity): List<RestaurantEntity>
+    suspend fun getRestaurantByPlaceId(placeId: String): RestaurantEntity?
     
 }

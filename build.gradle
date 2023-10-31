@@ -52,6 +52,9 @@ koverMerged {
                             "com.despaircorp.ui.databinding.*",
                             "com.despaircorp.go4launchencore.Go4LaunchApplication",
                             "com.despaircorp.data.room.database.*",
+                            "com.despaircorp.data.BuildConfig",
+                            "com.despaircorp.domain.BuildConfig",
+                            "com.despaircorp.ui.BuildConfig",
                             // TODO: Remove below when Kover can handle Android integration tests!
                             // Android UI
                             "*MainApplication",

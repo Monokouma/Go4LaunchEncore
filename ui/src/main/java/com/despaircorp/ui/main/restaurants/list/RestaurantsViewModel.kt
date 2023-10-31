@@ -5,6 +5,7 @@ import androidx.lifecycle.liveData
 import com.despaircorp.domain.location.GetDistanceBetweenUserAndPlacesUseCase
 import com.despaircorp.domain.location.GetUserLocationEntityUseCase
 import com.despaircorp.domain.restaurants.GetNearbyRestaurantsEntityUseCase
+import com.despaircorp.ui.BuildConfig
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.NativeText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,7 +41,7 @@ class RestaurantsViewModel @Inject constructor(
                         val pictureUrl = StringBuilder()
                             .append("https://maps.googleapis.com/maps/api/place/photo?maxwidth=1920&maxheigth=1080&photo_reference=")
                             .append(nearbyRestaurant.photoUrl)
-                            .append("&key=AIzaSyDiJLrfSr0LbHYBplzQvB-IxyWzBDjGAN8")
+                            .append("&key=${BuildConfig.MAPS_API_KEY}")
                             .toString()
                         
                         RestaurantsViewStateItems(

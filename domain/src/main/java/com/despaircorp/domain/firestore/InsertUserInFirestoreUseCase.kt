@@ -1,6 +1,6 @@
 package com.despaircorp.domain.firestore
 
-import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
 import javax.inject.Inject
 
 class InsertUserInFirestoreUseCase @Inject constructor(

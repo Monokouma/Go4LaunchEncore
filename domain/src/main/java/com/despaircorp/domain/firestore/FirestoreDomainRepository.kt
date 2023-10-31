@@ -1,6 +1,6 @@
 package com.despaircorp.domain.firestore
 
-import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -12,4 +12,5 @@ interface FirestoreDomainRepository {
     fun getUserAsFlow(uid: String): Flow<FirestoreUserEntity>
     suspend fun updateMailAddress(uid: String, newMailAddress: String): Boolean
     suspend fun updateUserImage(uid: String, pictureUrl: String): Boolean
+    fun getAllFirestoreUsers(): Flow<List<FirestoreUserEntity>>
 }

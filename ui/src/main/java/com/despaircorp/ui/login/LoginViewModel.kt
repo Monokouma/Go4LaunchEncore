@@ -3,13 +3,13 @@ package com.despaircorp.ui.login
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.despaircorp.domain.firebaseAuth.CreateCredentialsUserUseCase
-import com.despaircorp.domain.firebaseAuth.GetAuthenticatedUserUseCase
-import com.despaircorp.domain.firebaseAuth.GetCurrentFacebookAccessToken
-import com.despaircorp.domain.firebaseAuth.IsUserAlreadyAuthUseCase
-import com.despaircorp.domain.firebaseAuth.IsUserWithCredentialsSignedInUseCase
-import com.despaircorp.domain.firebaseAuth.SignInTokenUserUseCase
-import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firebase_auth.CreateCredentialsUserUseCase
+import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firebase_auth.GetCurrentFacebookAccessTokenUseCase
+import com.despaircorp.domain.firebase_auth.IsUserAlreadyAuthUseCase
+import com.despaircorp.domain.firebase_auth.IsUserWithCredentialsSignedInUseCase
+import com.despaircorp.domain.firebase_auth.SignInTokenUserUseCase
+import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firestore.GetFirestoreUserUseCase
 import com.despaircorp.domain.firestore.InsertUserInFirestoreUseCase
 import com.despaircorp.domain.firestore.IsFirestoreUserExistUseCase
@@ -38,13 +38,13 @@ class LoginViewModel @Inject constructor(
     private val isNotificationsEnabledUseCase: IsNotificationsEnabledUseCase,
     private val initUserPreferencesUseCase: InitUserPreferencesUseCase,
     private val isUserPreferencesTableExistUseCase: IsUserPreferencesTableExistUseCase,
-    private val getCurrentFacebookAccessToken: GetCurrentFacebookAccessToken,
+    private val getCurrentFacebookAccessToken: GetCurrentFacebookAccessTokenUseCase,
 ) : ViewModel() {
     private var userMailAddress: String? = null
     private var userPassword: String? = null
-
+    
     val viewAction = MutableLiveData<Event<LoginAction>>()
-
+    
     init {
         viewModelScope.launch {
             if (isUserAlreadyAuthUseCase.invoke()) {
@@ -108,15 +108,15 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
+    
     fun onMailTextChanged(mailInput: String) {
         userMailAddress = mailInput
     }
-
+    
     fun onPasswordTextChanged(passwordInput: String) {
         userPassword = passwordInput
     }
-
+    
     fun onConnectWithCredentialsClicked() {
         viewModelScope.launch {
             if (userPassword.isNullOrEmpty() || userMailAddress.isNullOrEmpty()) {
@@ -150,13 +150,13 @@ class LoginViewModel @Inject constructor(
                                         Event(LoginAction.Error(R.string.error_occurred))
                                 }
                             }
-
+                            
                         } else {
                             viewAction.value = Event(LoginAction.ChoseUsername)
                         }
                     } else {
                         if (insertUserInFirestoreUseCase.invoke(getAuthenticatedUserUseCase.invoke())) {
-
+                            
                             if (getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).displayName != "none") {
                                 //Had chose a display name can continue
                                 if (isUserPreferencesTableExistUseCase.invoke()) { //Table created
@@ -191,7 +191,7 @@ class LoginViewModel @Inject constructor(
                         )
                     ) {
                         if (insertUserInFirestoreUseCase.invoke(getAuthenticatedUserUseCase.invoke())) {
-
+                            
                             if (getFirestoreUserUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).displayName != "none") {
                                 //Had chose a display name can continue
                                 if (isUserPreferencesTableExistUseCase.invoke()) { //Table created
@@ -224,14 +224,14 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
+    
     fun onFacebookConnection(token: AccessToken) {
         viewModelScope.launch {
             viewAction.value = if (signInTokenUserUseCase.invoke(token)) {
                 val authenticatedUser = getAuthenticatedUserUseCase.invoke()
                 if (isFirestoreUserExistUseCase.invoke(authenticatedUser.uid)) {
                     //Check display name
-
+                    
                     if (getFirestoreUserUseCase.invoke(authenticatedUser.uid).displayName != "none") {
                         //Had chose a display name can continue
                         if (isUserPreferencesTableExistUseCase.invoke()) { //Table created
@@ -240,7 +240,12 @@ class LoginViewModel @Inject constructor(
                             } else {
                                 Event(LoginAction.GoToWelcome)
                             }
-                        } else if (initUserPreferencesUseCase.invoke(UserPreferencesDomainEntity(NotificationsStateEnum.NOT_KNOW))) {
+                        } else if (initUserPreferencesUseCase.invoke(
+                                UserPreferencesDomainEntity(
+                                    NotificationsStateEnum.NOT_KNOW
+                                )
+                            )
+                        ) {
                             Event(LoginAction.EnableNotifications)
                         } else {
                             Event(LoginAction.Error(R.string.error_occurred))
@@ -254,7 +259,9 @@ class LoginViewModel @Inject constructor(
                                 picture = "https://graph.facebook.com${authenticatedUser.picture}?type=large&access_token=${getCurrentFacebookAccessToken.invoke()}",
                                 displayName = authenticatedUser.displayName,
                                 mailAddress = authenticatedUser.mailAddress,
-                                uid = authenticatedUser.uid
+                                uid = authenticatedUser.uid,
+                                currentlyEating = authenticatedUser.currentlyEating,
+                                eatingPlaceId = authenticatedUser.eatingPlaceId
                             )
                         )
                     ) {

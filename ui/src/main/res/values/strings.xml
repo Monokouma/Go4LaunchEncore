@@ -42,4 +42,6 @@
     <string name="opened">Open</string>
     <string name="closed">Close\n</string>
     <string name="nearby_restaurants_count">Restaurants nearby :</string>
+    <string name="not_decided">hasn\'t decided yet</string>
+    <string name="is_eating">is eating (%1$s)</string>
 </resources>

@@ -3,7 +3,7 @@ package com.despaircorp.domain.firestore
 import assertk.assertThat
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
-import com.despaircorp.domain.firebaseAuth.model.AuthenticateUserEntity
+import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
 import com.despaircorp.domain.utils.TestCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -24,7 +24,8 @@ class InsertUserInFirestoreUseCaseUnitTest {
         private const val DEFAULT_DISPLAY_NAME = "DEFAULT_DISPLAY_NAME"
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
         private const val DEFAULT_TOKEN = "DEFAULT_TOKEN"
-        
+        private const val DEFAULT_CURRENTLY_EATING = false
+        private val DEFAULT_EATING_PLACE_IDE = null
     }
     
     private val firestoreDomainRepository: FirestoreDomainRepository = mockk()
@@ -70,6 +71,8 @@ class InsertUserInFirestoreUseCaseUnitTest {
         picture = DEFAULT_PICTURE,
         displayName = DEFAULT_DISPLAY_NAME,
         mailAddress = DEFAULT_MAIL,
-        uid = DEFAULT_UID
+        uid = DEFAULT_UID,
+        currentlyEating = DEFAULT_CURRENTLY_EATING,
+        eatingPlaceId = DEFAULT_EATING_PLACE_IDE,
     )
 }
