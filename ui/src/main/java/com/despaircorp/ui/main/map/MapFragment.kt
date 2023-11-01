@@ -19,12 +19,18 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MapFragment : SupportMapFragment() {
     private val viewModel: MapViewModel by viewModels()
-    
+
+    private val alreadyPresentMarkersForPlaceIds = mutableSetOf<String>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
         val customIcon = BitmapDescriptorFactory.fromResource(R.drawable.restaurant)
-        
+
+        savedInstanceState?.getStringArrayList("toto")?.let { list ->
+            list.forEach { alreadyPresentMarkersForPlaceIds.add(it) }
+        }
+
         getMapAsync { googleMap ->
             setGoogleMapOption(googleMap)
             
@@ -37,17 +43,19 @@ class MapFragment : SupportMapFragment() {
                 ).show()
                 
                 it.mapViewStateItems.forEach { item ->
-                    googleMap.addMarker(
-                        MarkerOptions()
-                            .title(item.name)
-                            .icon(customIcon)
-                            .position(
-                                LatLng(
-                                    item.latitude,
-                                    item.longitude,
+                    if (alreadyPresentMarkersForPlaceIds.add(item.placeId)) {
+                        googleMap.addMarker(
+                            MarkerOptions()
+                                .title(item.name)
+                                .icon(customIcon)
+                                .position(
+                                    LatLng(
+                                        item.latitude,
+                                        item.longitude,
+                                    )
                                 )
-                            )
-                    )
+                        )
+                    }
                 }
                 
                 googleMap.moveCamera(
@@ -58,6 +66,12 @@ class MapFragment : SupportMapFragment() {
                 )
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putStringArrayList("toto", ArrayList(alreadyPresentMarkersForPlaceIds))
     }
     
     private fun setGoogleMapOption(googleMap: GoogleMap) {

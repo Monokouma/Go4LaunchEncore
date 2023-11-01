@@ -14,5 +14,5 @@ interface FirestoreDomainRepository {
     suspend fun updateUserImage(uid: String, pictureUrl: String): Boolean
     fun getAllFirestoreUsers(): Flow<List<FirestoreUserEntity>>
     
-    suspend fun updateUserOnlineState(isOnline: Boolean, uid: String)
+    suspend fun updateUserPresence(uid: String, isPresent: Boolean)
 }

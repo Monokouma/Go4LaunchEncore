@@ -183,15 +183,15 @@ class FirestoreDataRepository @Inject constructor(
         awaitClose { registration.remove() }
     }.flowOn(coroutineDispatcherProvider.io)
     
-    override suspend fun updateUserOnlineState(
-        isOnline: Boolean,
-        uid: String
+    override suspend fun updateUserPresence(
+        uid: String,
+        isPresent: Boolean,
     ): Unit = withContext(coroutineDispatcherProvider.io) {
         try {
             firestore
                 .collection("users")
                 .document(uid)
-                .update("online", isOnline)
+                .update("online", isPresent)
                 .await()
         } catch (e: Exception) {
             coroutineContext.ensureActive()
