@@ -12,4 +12,5 @@ data class FirestoreUserDto(
     val uid: String? = null,
     val currentlyEating: Boolean? = null,
     val eatingPlaceId: String? = null,
+    val online: Boolean? = null
 )

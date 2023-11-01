@@ -13,4 +13,6 @@ interface FirestoreDomainRepository {
     suspend fun updateMailAddress(uid: String, newMailAddress: String): Boolean
     suspend fun updateUserImage(uid: String, pictureUrl: String): Boolean
     fun getAllFirestoreUsers(): Flow<List<FirestoreUserEntity>>
+    
+    suspend fun updateUserOnlineState(isOnline: Boolean, uid: String)
 }

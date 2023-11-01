@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.despaircorp.domain.firebase_auth.DisconnectUserUseCase
 import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
+import com.despaircorp.domain.firestore.OnOnlineOfflineChangeUseCase
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class BottomBarViewModel @Inject constructor(
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase,
     private val disconnectUserUseCase: DisconnectUserUseCase,
-    private val getFirestoreUserAsFlowUseCase: GetFirestoreUserAsFlowUseCase
+    private val getFirestoreUserAsFlowUseCase: GetFirestoreUserAsFlowUseCase,
+    private val onOnlineOfflineChangeUseCase: OnOnlineOfflineChangeUseCase
 ) : ViewModel() {
     
     val viewState = liveData<BottomBarViewState> {
@@ -42,6 +44,18 @@ class BottomBarViewModel @Inject constructor(
             } else {
                 Event(BottomBarAction.Error(R.string.error_occurred))
             }
+        }
+    }
+    
+    fun onOfflineUser() {
+        viewModelScope.launch {
+            onOnlineOfflineChangeUseCase.invoke(false, getAuthenticatedUserUseCase.invoke().uid)
+        }
+    }
+    
+    fun onOnlineUser() {
+        viewModelScope.launch {
+            onOnlineOfflineChangeUseCase.invoke(true, getAuthenticatedUserUseCase.invoke().uid)
         }
     }
 }

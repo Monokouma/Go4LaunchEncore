@@ -26,7 +26,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    
+
     buildFeatures {
         buildConfig = true
     }
@@ -55,7 +55,7 @@ android {
 dependencies {
     ksp 'androidx.room:room-compiler:2.5.2'
     implementation("androidx.room:room-ktx:2.5.2")
-    implementation 'com.google.firebase:firebase-storage:20.0.0'
+    implementation 'com.google.firebase:firebase-storage'
     // Check the latest version on Firebase website
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
@@ -72,6 +72,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
 
     // GPS-related classes : FusedLocationProviderClient
     implementation 'com.google.android.gms:play-services-location:21.0.1'

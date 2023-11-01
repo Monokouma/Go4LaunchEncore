@@ -14,6 +14,16 @@
         android:usesCleartextTraffic="true"
         >
         <activity
+            android:name=".main.chat.details.ChatDetailsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_chat_details"
+            android:theme="@style/Theme.Go4LaunchEncore"
+            />
+        <activity
+            android:name=".main.chat.menu.ChatMenuActivity"
+            android:exported="false"
+            />
+        <activity
             android:name=".main.settings.UserSettingsActivity"
             android:exported="false"
             />
@@ -39,7 +49,7 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                
+    
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

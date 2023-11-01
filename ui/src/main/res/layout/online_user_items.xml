@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+    
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/online_user_items_ShapeableImageView_user_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="8dp"
+        android:scaleType="centerCrop"
+        android:theme="@style/ShapeAppearance.M3.Sys.Shape.Corner.Full"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/user_image"
+        />
+    
+    <ImageView
+        android:id="@+id/online_user_items_ImageView_dot"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/green_circle"
+        app:layout_constraintBottom_toBottomOf="@id/online_user_items_ShapeableImageView_user_image"
+        app:layout_constraintEnd_toEndOf="@id/online_user_items_ShapeableImageView_user_image"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/online_user_items_ShapeableImageView_user_image"
+        app:layout_constraintTop_toTopOf="@id/online_user_items_ShapeableImageView_user_image"
+        app:layout_constraintVertical_bias="1.0"
+        />
+    
+    <TextView
+        android:id="@+id/online_user_items_TextView_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:fontFamily="@font/advent_pro_bold"
+        android:textColor="@color/baby_powder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/online_user_items_ShapeableImageView_user_image"
+        app:layout_constraintStart_toStartOf="@id/online_user_items_ShapeableImageView_user_image"
+        app:layout_constraintTop_toBottomOf="@id/online_user_items_ShapeableImageView_user_image"
+        tools:text="Monokouma"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
