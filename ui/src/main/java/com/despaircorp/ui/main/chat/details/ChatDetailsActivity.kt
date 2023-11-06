@@ -29,6 +29,10 @@ class ChatDetailsActivity : AppCompatActivity() {
             viewModel.onChatTextChanged(it.toString())
         }
         
+        binding.activityChatDetailsImageViewSend.setOnClickListener {
+            viewModel.onSendButtonClicked()
+        }
+        
         viewModel.viewState.observe(this) {
             binding.activityChatDetailsTextViewUserName.text = it.receiverName
             Glide.with(binding.activityChatDetailsShapeableImageViewUserImage)

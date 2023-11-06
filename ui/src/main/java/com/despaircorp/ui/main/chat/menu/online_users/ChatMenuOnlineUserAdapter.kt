@@ -1,4 +1,4 @@
-package com.despaircorp.ui.main.chat.menu
+package com.despaircorp.ui.main.chat.menu.online_users
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.despaircorp.ui.databinding.OnlineUserItemsBinding
+import com.despaircorp.ui.main.chat.menu.ChatMenuListener
 
 class ChatMenuOnlineUserAdapter(
     private val chatListener: ChatMenuListener

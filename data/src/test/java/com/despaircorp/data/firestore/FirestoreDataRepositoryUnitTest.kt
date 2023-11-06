@@ -40,6 +40,7 @@ class FirestoreDataRepositoryUnitTest {
         private const val DEFAULT_CURRENTLY_EATING = false
         private val DEFAULT_EATING_PLACE_ID = null
         private const val DEFAULT_EATING_PLACE_ID_NOT_NULL = "DEFAULT_EATING_PLACE_ID_NOT_NULL"
+        private const val DEFAULT_IS_ONLINE = false
         
     }
     
@@ -251,7 +252,8 @@ class FirestoreDataRepositoryUnitTest {
                     mailAddress = DEFAULT_MAIL,
                     uid = DEFAULT_UID,
                     currentlyEating = DEFAULT_CURRENTLY_EATING,
-                    eatingPlaceId = DEFAULT_EATING_PLACE_ID
+                    eatingPlaceId = DEFAULT_EATING_PLACE_ID,
+                    online = DEFAULT_IS_ONLINE
                 )
             )
         }
@@ -487,7 +489,11 @@ class FirestoreDataRepositoryUnitTest {
             runCurrent()
             slot.captured.onEvent(querySnapshot, null)
             cancel()
+            
+            val result = awaitItem()
             awaitComplete()
+            
+            assertThat(result).isEqualTo(provideFirestoreUsersEntity())
             
             coVerify {
                 firestore.collection("users").addSnapshotListener(any())
@@ -530,7 +536,10 @@ class FirestoreDataRepositoryUnitTest {
         picture = DEFAULT_PICTURE,
         displayName = DEFAULT_DISPLAY_NAME,
         mailAddress = DEFAULT_MAIL,
-        uid = DEFAULT_UID
+        uid = DEFAULT_UID,
+        currentlyEating = DEFAULT_CURRENTLY_EATING,
+        eatingPlaceId = DEFAULT_EATING_PLACE_ID,
+        online = DEFAULT_IS_ONLINE
     )
     
     private fun provideFirestoreUserEntity() = FirestoreUserEntity(
@@ -539,7 +548,20 @@ class FirestoreDataRepositoryUnitTest {
         mailAddress = DEFAULT_MAIL,
         uid = DEFAULT_UID,
         currentlyEating = DEFAULT_CURRENTLY_EATING,
-        eatingPlaceId = DEFAULT_EATING_PLACE_ID
+        eatingPlaceId = DEFAULT_EATING_PLACE_ID,
+        online = DEFAULT_IS_ONLINE
     )
+    
+    private fun provideFirestoreUsersEntity() = List(1) {
+        FirestoreUserEntity(
+            picture = DEFAULT_PICTURE,
+            displayName = DEFAULT_DISPLAY_NAME,
+            mailAddress = DEFAULT_MAIL,
+            uid = DEFAULT_UID,
+            currentlyEating = DEFAULT_CURRENTLY_EATING,
+            eatingPlaceId = DEFAULT_EATING_PLACE_ID,
+            online = DEFAULT_IS_ONLINE
+        )
+    }
     //End region out
 }

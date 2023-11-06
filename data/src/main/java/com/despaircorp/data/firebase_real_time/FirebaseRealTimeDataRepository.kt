@@ -1,9 +1,9 @@
 package com.despaircorp.data.firebase_real_time
 
-import com.despaircorp.data.firebase_real_time.model.ChatsDto
+import com.despaircorp.data.firebase_real_time.model.ChatDto
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
 import com.despaircorp.domain.firebase_real_time.FirebaseRealTimeDomainRepository
-import com.despaircorp.domain.firebase_real_time.model.ChatsEntity
+import com.despaircorp.domain.firebase_real_time.model.ChatEntity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -22,64 +22,104 @@ class FirebaseRealTimeDataRepository @Inject constructor(
     private val firebaseRealTime: FirebaseDatabase,
     
     ) : FirebaseRealTimeDomainRepository {
-    override suspend fun getAllConversation(
-        receiverUid: String,
+    override suspend fun getChatEntity(
         senderUid: String
-    ): Flow<List<ChatsEntity>> = callbackFlow {
-        val registration = firebaseRealTime.getReference("chat")
+    ): Flow<List<ChatEntity>> = callbackFlow {
+        val registration =
+            firebaseRealTime.getReference("chat")
         
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val chatsDto = mutableListOf<ChatsDto>()
-                val chatsEntity = mutableListOf<ChatsEntity>()
+                val chatsDto = mutableListOf<ChatDto>()
                 
-                snapshot.children.forEach { snapshotChildren ->
-                    chatsDto.add(
-                        ChatsDto(
-                            id = snapshotChildren.key ?: return@forEach,
-                            receiver = snapshotChildren.child("receiver").value as String,
-                            sender = snapshotChildren.child("receiver").value as String,
-                        )
-                    )
+                snapshot.children.forEach { children ->
+                    if (children.key?.contains(senderUid) == true) {
+                        val receiver = children.child("receiver").value as? String
+                        
+                        children.children.forEach { messageSnapshot ->
+                            if (messageSnapshot.key != "sender" && messageSnapshot.key != "receiver") {
+                                chatsDto.add(
+                                    ChatDto(
+                                        chatId = messageSnapshot.key,
+                                        value = messageSnapshot.child("value").value as? String,
+                                        timestamp = messageSnapshot.child("timestamp").value as? Long,
+                                        senderUid = messageSnapshot.child("senderUID").value as? String,
+                                        receiverUid = receiver
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
                 
-                chatsDto.forEach { chatDto ->
-                    chatsEntity.add(
-                        ChatsEntity(
-                            id = chatDto.id ?: return@forEach,
-                            receiver = chatDto.receiver ?: return@forEach,
-                            sender = chatDto.sender ?: return@forEach
+                trySend(
+                    chatsDto.map { chatDto ->
+                        ChatEntity(
+                            chatId = chatDto.chatId ?: return,
+                            value = chatDto.value ?: return,
+                            timestamp = chatDto.timestamp ?: return,
+                            senderUid = chatDto.senderUid ?: return,
+                            receiverUid = chatDto.receiverUid ?: return
                         )
-                    )
-                }
+                    }.sortedByDescending { it.timestamp }
+                )
                 
-                trySend(chatsEntity)
+                
             }
             
             override fun onCancelled(error: DatabaseError) {}
         }
         
-        registration.addListenerForSingleValueEvent(listener)
+        registration.addValueEventListener(listener)
         
         awaitClose { registration.removeEventListener(listener) }
     }.flowOn(coroutineDispatcherProvider.io)
     
-    override suspend fun createConversation(receiverUid: String, senderUid: String): Boolean =
+    override fun createConversation(receiverUid: String, uid: String): Flow<Boolean> =
+        callbackFlow<Boolean> {
+            val registration =
+                firebaseRealTime.getReference("chat").child("${uid}_${receiverUid}")
+            
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        trySend(true)
+                    } else {
+                        registration.setValue(
+                            mapOf(
+                                "receiver" to receiverUid,
+                                "sender" to uid
+                            )
+                        )
+                    }
+                }
+                
+                override fun onCancelled(error: DatabaseError) {}
+            }
+            
+            registration.addValueEventListener(listener)
+            
+            awaitClose { registration.removeEventListener(listener) }
+        }.flowOn(coroutineDispatcherProvider.io)
+    
+    override suspend fun insertMessage(chatEntity: ChatEntity): Boolean =
         withContext(coroutineDispatcherProvider.io) {
             try {
-                firebaseRealTime.getReference("chat").push().setValue(
-                    mapOf(
-                        "receiver" to receiverUid,
-                        "sender" to senderUid
-                    )
-                ).await()
+                firebaseRealTime.getReference("chat")
+                    .child("${chatEntity.senderUid}_${chatEntity.receiverUid}")
+                    .child(chatEntity.chatId)
+                    .setValue(
+                        mapOf(
+                            "senderUID" to chatEntity.value,
+                            "timestamp" to chatEntity.timestamp,
+                            "value" to chatEntity.value
+                        )
+                    ).await()
                 true
             } catch (e: Exception) {
                 coroutineContext.ensureActive()
-                e.printStackTrace()
                 false
             }
-            
         }
     
 }

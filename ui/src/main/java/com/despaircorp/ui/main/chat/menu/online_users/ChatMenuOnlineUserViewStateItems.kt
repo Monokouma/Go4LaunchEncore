@@ -1,4 +1,4 @@
-package com.despaircorp.ui.main.chat.menu
+package com.despaircorp.ui.main.chat.menu.online_users
 
 data class ChatMenuOnlineUserViewStateItems(
     val uid: String,

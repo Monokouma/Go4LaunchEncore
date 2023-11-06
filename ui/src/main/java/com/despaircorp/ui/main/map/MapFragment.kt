@@ -19,18 +19,19 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MapFragment : SupportMapFragment() {
     private val viewModel: MapViewModel by viewModels()
-
+    
     private val alreadyPresentMarkersForPlaceIds = mutableSetOf<String>()
-
+    private var isCameraPlaced = false
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
         val customIcon = BitmapDescriptorFactory.fromResource(R.drawable.restaurant)
-
+        
         savedInstanceState?.getStringArrayList("toto")?.let { list ->
             list.forEach { alreadyPresentMarkersForPlaceIds.add(it) }
         }
-
+        
         getMapAsync { googleMap ->
             setGoogleMapOption(googleMap)
             
@@ -58,19 +59,23 @@ class MapFragment : SupportMapFragment() {
                     }
                 }
                 
-                googleMap.moveCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        it.userLocation,
-                        14f
+                if (!isCameraPlaced) {
+                    googleMap.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            it.userLocation,
+                            14f
+                        )
                     )
-                )
+                    isCameraPlaced = true
+                }
+                
             }
         }
     }
-
+    
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
+        
         outState.putStringArrayList("toto", ArrayList(alreadyPresentMarkersForPlaceIds))
     }
     

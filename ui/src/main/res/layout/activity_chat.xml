@@ -47,5 +47,17 @@
         app:layout_constraintTop_toBottomOf="@id/activity_chat_AppBarLayout_root"
         tools:listitem="@layout/online_user_items"
         />
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_chat_RecyclerView_conv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_chat_RecyclerView_user_online"
+        tools:listitem="@layout/exsting_conversation_items"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

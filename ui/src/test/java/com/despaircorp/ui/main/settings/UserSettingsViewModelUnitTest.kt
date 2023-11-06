@@ -7,7 +7,6 @@ import assertk.assertions.isEqualTo
 import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firebase_auth.UpdateAuthMailAddressUseCase
 import com.despaircorp.domain.firebase_auth.UpdateAuthPasswordUseCase
-import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
 import com.despaircorp.domain.firebase_storage.UpdateUserImageThenGetLinkUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.domain.firestore.UpdateFirestoreMailAddressUseCase
@@ -17,7 +16,6 @@ import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.despaircorp.domain.room.IsNotificationsEnabledUseCase
 import com.despaircorp.domain.room.UpdateNotificationStateUseCase
 import com.despaircorp.domain.room.model.NotificationsStateEnum
-import com.despaircorp.domain.room.model.UserPreferencesDomainEntity
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.TestCoroutineRule
 import com.despaircorp.ui.utils.observeForTesting
@@ -58,6 +56,8 @@ class UserSettingsViewModelUnitTest {
         private val DEFAULT_PICTURE_URI = mockk<Uri>()
         private const val DEFAULT_CURRENTLY_EATING = false
         private val DEFAULT_EATING_PLACE_IDE = null
+        private const val DEFAULT_ONLINE = true
+        
         
         private val DEFAULT_NOTIF_STATE_NOT_KNOW = NotificationsStateEnum.NOT_KNOW
         private val DEFAULT_NOTIF_STATE_ENABLED = NotificationsStateEnum.ENABLED
@@ -70,12 +70,13 @@ class UserSettingsViewModelUnitTest {
         
         coEvery { getFirestoreUserAsFlowUseCase.invoke(DEFAULT_UID) } returns flowOf(
             FirestoreUserEntity(
-                DEFAULT_PICTURE,
-                DEFAULT_DISPLAY_NAME,
-                DEFAULT_EMAIL,
-                DEFAULT_UID,
-                DEFAULT_CURRENTLY_EATING,
-                DEFAULT_EATING_PLACE_IDE
+                picture = DEFAULT_PICTURE,
+                displayName = DEFAULT_DISPLAY_NAME,
+                mailAddress = DEFAULT_EMAIL,
+                uid = DEFAULT_UID,
+                currentlyEating = DEFAULT_CURRENTLY_EATING,
+                eatingPlaceId = DEFAULT_EATING_PLACE_IDE,
+                online = DEFAULT_ONLINE
             )
         )
         
@@ -363,23 +364,5 @@ class UserSettingsViewModelUnitTest {
         }
     }
     
-    //Region IN
-    private fun provideUserPreferencesDomainEntity(state: NotificationsStateEnum): UserPreferencesDomainEntity {
-        return when (state) {
-            NotificationsStateEnum.ENABLED -> UserPreferencesDomainEntity(isNotificationsEnabled = DEFAULT_NOTIF_STATE_ENABLED)
-            NotificationsStateEnum.DISABLED -> UserPreferencesDomainEntity(isNotificationsEnabled = DEFAULT_NOTIF_STATE_DISABLED)
-            NotificationsStateEnum.NOT_KNOW -> UserPreferencesDomainEntity(isNotificationsEnabled = DEFAULT_NOTIF_STATE_NOT_KNOW)
-            else -> UserPreferencesDomainEntity(isNotificationsEnabled = DEFAULT_NOTIF_STATE_NOT_KNOW)
-        }
-    }
     
-    private fun provideAuthenticatedUserEntity() = AuthenticateUserEntity(
-        picture = DEFAULT_PICTURE,
-        displayName = DEFAULT_DISPLAY_NAME,
-        mailAddress = DEFAULT_EMAIL,
-        uid = DEFAULT_UID,
-        currentlyEating = DEFAULT_CURRENTLY_EATING,
-        eatingPlaceId = DEFAULT_EATING_PLACE_IDE
-    )
-    //End Region IN
 }

@@ -50,7 +50,7 @@ koverMerged {
                             "com.despaircorp.data.utils.*",
                             "com.despaircorp.ui.utils.*",
                             "com.despaircorp.ui.databinding.*",
-                            "com.despaircorp.go4launchencore.Go4LaunchApplication",
+                            "com.despaircorp.go4launchencore.Go4LaunchApplication.*",
                             "com.despaircorp.data.room.database.*",
                             "com.despaircorp.data.BuildConfig",
                             "com.despaircorp.domain.BuildConfig",

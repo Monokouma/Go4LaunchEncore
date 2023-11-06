@@ -24,7 +24,7 @@ class GetFirestoreUserAsFlowUseCaseUnitTest {
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
         private const val DEFAULT_CURRENTLY_EATING = false
         private val DEFAULT_EATING_PLACE_IDE = null
-        
+        private const val DEFAULT_ONLINE = true
     }
     
     private val firestoreDomainRepository: FirestoreDomainRepository = mockk()
@@ -59,7 +59,8 @@ class GetFirestoreUserAsFlowUseCaseUnitTest {
             mailAddress = DEFAULT_MAIL,
             uid = DEFAULT_UID,
             currentlyEating = DEFAULT_CURRENTLY_EATING,
-            eatingPlaceId = DEFAULT_EATING_PLACE_IDE
+            eatingPlaceId = DEFAULT_EATING_PLACE_IDE,
+            online = DEFAULT_ONLINE
         )
     }
     

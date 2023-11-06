@@ -8,6 +8,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.despaircorp.ui.databinding.ActivityChatBinding
 import com.despaircorp.ui.main.chat.details.ChatDetailsActivity
+import com.despaircorp.ui.main.chat.menu.messages.ChatMenuMessageAdapter
+import com.despaircorp.ui.main.chat.menu.online_users.ChatMenuOnlineUserAdapter
 import com.despaircorp.ui.utils.showAsToast
 import com.despaircorp.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,12 +27,16 @@ class ChatMenuActivity : AppCompatActivity(), ChatMenuListener {
         binding.activityChatToolbarRoot.setNavigationOnClickListener {
             finish()
         }
-        val adapter = ChatMenuOnlineUserAdapter(this)
         
-        binding.activityChatRecyclerViewUserOnline.adapter = adapter
+        val onlineUserAdapter = ChatMenuOnlineUserAdapter(this)
+        val messagesAdapter = ChatMenuMessageAdapter(this)
+        
+        binding.activityChatRecyclerViewUserOnline.adapter = onlineUserAdapter
+        binding.activityChatRecyclerViewConv.adapter = messagesAdapter
         
         viewModel.viewState.observe(this) {
-            adapter.submitList(it.chatUserViewStateItems)
+            onlineUserAdapter.submitList(it.chatMenuOnlineUserViewStateItems)
+            messagesAdapter.submitList(it.chatMessagesViewStateItems)
         }
         
         viewModel.viewAction.observe(this) {
@@ -59,5 +65,14 @@ class ChatMenuActivity : AppCompatActivity(), ChatMenuListener {
     
     override fun onUserClicked(uid: String) {
         viewModel.createConversation(uid)
+    }
+    
+    override fun onConversationClicked(conversationId: String) {
+        startActivity(
+            ChatDetailsActivity.navigate(
+                this,
+                conversationId
+            )
+        )
     }
 }

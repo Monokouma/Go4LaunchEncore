@@ -1,15 +1,15 @@
 package com.despaircorp.domain.firebase_real_time
 
-import com.despaircorp.domain.firebase_real_time.model.ChatsEntity
+import com.despaircorp.domain.firebase_real_time.model.ChatEntity
 import kotlinx.coroutines.flow.Flow
 
 
 interface FirebaseRealTimeDomainRepository {
-    suspend fun getAllConversation(
-        receiverUid: String,
+    suspend fun getChatEntity(
         senderUid: String
-    ): Flow<List<ChatsEntity>>
+    ): Flow<List<ChatEntity>>
     
-    suspend fun createConversation(receiverUid: String, senderUid: String): Boolean
+    fun createConversation(receiverUid: String, uid: String): Flow<Boolean>
+    suspend fun insertMessage(chatEntity: ChatEntity): Boolean
     
 }

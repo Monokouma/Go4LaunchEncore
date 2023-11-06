@@ -1,6 +1,5 @@
 package com.despaircorp.data.firestore
 
-import android.util.Log
 import com.despaircorp.data.firestore.dto.FirestoreUserDto
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
 import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
@@ -103,7 +102,6 @@ class FirestoreDataRepository @Inject constructor(
                 } catch (e: Exception) {
                     null
                 }
-                Log.i("Monokouma", userDto.toString())
                 trySend(
                     FirestoreUserEntity(
                         picture = userDto?.picture ?: return@addSnapshotListener,
