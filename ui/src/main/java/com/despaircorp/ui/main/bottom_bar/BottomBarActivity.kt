@@ -53,9 +53,9 @@ class BottomBarActivity : AppCompatActivity() {
 
         loadFragment(MapFragment())
 
-        binding.activityBottomBarBottomBar.selectedItemId =
-            savedInstanceState?.getInt(KEY_BOTTOM_NAV_BAR_SELECTED_ITEM_ID, R.id.navigation_map)
-                ?: R.id.navigation_map
+        binding.activityBottomBarBottomBar.selectedItemId = savedInstanceState
+            ?.getInt(KEY_BOTTOM_NAV_BAR_SELECTED_ITEM_ID, R.id.navigation_map)
+            ?: R.id.navigation_map
 
         binding.activityBottomBarToolbarRoot.setNavigationOnClickListener {
             binding.activityBottomBarDrawerLayout.open()
@@ -86,6 +86,7 @@ class BottomBarActivity : AppCompatActivity() {
                     Log.i("Monokouma", "your lunch")
                     binding.activityBottomBarDrawerLayout.close()
                 }
+
                 R.id.settings -> {
                     val intent = UserSettingsActivity.navigate(this)
 

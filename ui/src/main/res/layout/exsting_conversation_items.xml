@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/exsting_conversation_items_ShapeableImageView_user_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="16dp"
+        android:scaleType="centerCrop"
+        android:theme="@style/ShapeAppearance.M3.Sys.Shape.Corner.Full"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/user_image"
+        />
+    
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/exsting_conversation_items_ConstraintLayout_infos_root"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/exsting_conversation_items_ShapeableImageView_user_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/exsting_conversation_items_ShapeableImageView_user_image"
+        app:layout_constraintTop_toTopOf="@id/exsting_conversation_items_ShapeableImageView_user_image"
+        >
+        
+        <TextView
+            android:id="@+id/exsting_conversation_items_TextView_username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/advent_pro_bold"
+            android:textColor="@color/baby_powder"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Monokouma"
+            />
+        
+        <TextView
+            android:id="@+id/exsting_conversation_items_TextView_last_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:textColor="@color/gray"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/exsting_conversation_items_TextView_username"
+            tools:text="Snoop Dogg: Holà• 1:13 PM"
+            />
+    
+    
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

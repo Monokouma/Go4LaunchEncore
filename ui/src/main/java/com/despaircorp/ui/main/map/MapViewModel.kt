@@ -14,7 +14,7 @@ class MapViewModel @Inject constructor(
     
     ) : ViewModel() {
     
-    val viewState = liveData<MapViewState> {
+    val viewState = liveData {
         val userLocation = getUserLocationEntityUseCase.invoke()
         
         emit(
@@ -28,7 +28,7 @@ class MapViewModel @Inject constructor(
                     )
                 },
                 userLocation = userLocation.userLatLng,
-                getNearbyRestaurantsEntityUseCase.invoke(userLocation).count()
+                restaurantsCount = getNearbyRestaurantsEntityUseCase.invoke(userLocation).count()
             )
         )
     }

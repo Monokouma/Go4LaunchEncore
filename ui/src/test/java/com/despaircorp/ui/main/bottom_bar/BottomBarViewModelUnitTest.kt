@@ -37,6 +37,8 @@ class BottomBarViewModelUnitTest {
         private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
         private const val DEFAULT_CURRENTLY_EATING = false
         private val DEFAULT_EATING_PLACE_IDE = null
+        private const val DEFAULT_ONLINE = true
+        
     }
     
     @Before
@@ -44,12 +46,13 @@ class BottomBarViewModelUnitTest {
         coEvery { getAuthenticatedUserUseCase.invoke().uid } returns DEFAULT_UID
         coEvery { getFirestoreUserUseCase.invoke(DEFAULT_UID) } returns flowOf(
             FirestoreUserEntity(
-                DEFAULT_PICTURE,
-                DEFAULT_DISPLAY_NAME,
-                DEFAULT_EMAIL,
-                DEFAULT_UID,
-                DEFAULT_CURRENTLY_EATING,
-                DEFAULT_EATING_PLACE_IDE
+                picture = DEFAULT_PICTURE,
+                displayName = DEFAULT_DISPLAY_NAME,
+                mailAddress = DEFAULT_EMAIL,
+                uid = DEFAULT_UID,
+                currentlyEating = DEFAULT_CURRENTLY_EATING,
+                eatingPlaceId = DEFAULT_EATING_PLACE_IDE,
+                online = DEFAULT_ONLINE
             )
         )
         

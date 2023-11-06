@@ -8,6 +8,7 @@ import com.despaircorp.data.room.database.Go4LunchRoomDatabase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
@@ -75,4 +76,10 @@ class DataProvideModule {
     @Singleton
     fun provideFirebaseStorageReference(): FirebaseStorage =
         FirebaseStorage.getInstance()
+    
+    @Provides
+    @Singleton
+    fun provideFirebaseDatabase(): FirebaseDatabase {
+        return FirebaseDatabase.getInstance()
+    }
 }

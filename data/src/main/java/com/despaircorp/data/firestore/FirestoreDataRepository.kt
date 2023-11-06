@@ -1,6 +1,5 @@
 package com.despaircorp.data.firestore
 
-import android.util.Log
 import com.despaircorp.data.firestore.dto.FirestoreUserDto
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
 import com.despaircorp.domain.firebase_auth.model.AuthenticateUserEntity
@@ -68,7 +67,9 @@ class FirestoreDataRepository @Inject constructor(
                                     ?: return@addSnapshotListener,
                                 uid = firestoreUserDto.uid ?: return@addSnapshotListener,
                                 currentlyEating = firestoreUserDto.currentlyEating ?: false,
-                                eatingPlaceId = firestoreUserDto.eatingPlaceId
+                                eatingPlaceId = firestoreUserDto.eatingPlaceId,
+                                online = firestoreUserDto.online ?: false
+                            
                             )
                         )
                     }
@@ -101,7 +102,6 @@ class FirestoreDataRepository @Inject constructor(
                 } catch (e: Exception) {
                     null
                 }
-                Log.i("Monokouma", userDto.toString())
                 trySend(
                     FirestoreUserEntity(
                         picture = userDto?.picture ?: return@addSnapshotListener,
@@ -109,7 +109,9 @@ class FirestoreDataRepository @Inject constructor(
                         mailAddress = userDto.mailAddress ?: return@addSnapshotListener,
                         uid = userDto.uid ?: return@addSnapshotListener,
                         currentlyEating = userDto.currentlyEating ?: return@addSnapshotListener,
-                        eatingPlaceId = userDto.eatingPlaceId
+                        eatingPlaceId = userDto.eatingPlaceId,
+                        online = userDto.online ?: false
+                    
                     )
                 )
             }
@@ -167,7 +169,8 @@ class FirestoreDataRepository @Inject constructor(
                             mailAddress = userDto.mailAddress ?: return@addSnapshotListener,
                             uid = userDto.uid ?: return@addSnapshotListener,
                             currentlyEating = userDto.currentlyEating ?: return@addSnapshotListener,
-                            eatingPlaceId = userDto.eatingPlaceId
+                            eatingPlaceId = userDto.eatingPlaceId,
+                            online = userDto.online ?: false
                         )
                     )
                 }
@@ -177,4 +180,20 @@ class FirestoreDataRepository @Inject constructor(
         
         awaitClose { registration.remove() }
     }.flowOn(coroutineDispatcherProvider.io)
+    
+    override suspend fun updateUserPresence(
+        uid: String,
+        isPresent: Boolean,
+    ): Unit = withContext(coroutineDispatcherProvider.io) {
+        try {
+            firestore
+                .collection("users")
+                .document(uid)
+                .update("online", isPresent)
+                .await()
+        } catch (e: Exception) {
+            coroutineContext.ensureActive()
+            e.printStackTrace()
+        }
+    }
 }

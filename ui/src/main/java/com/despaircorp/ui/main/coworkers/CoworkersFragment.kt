@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.despaircorp.ui.R
 import com.despaircorp.ui.databinding.FragmentCoworkersBinding
+import com.despaircorp.ui.main.chat.menu.ChatMenuActivity
 import com.despaircorp.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,7 +21,9 @@ class CoworkersFragment : Fragment(R.layout.fragment_coworkers) {
         val adapter = CoworkersAdapter()
         
         binding.fragmentCoworkersRecyclerViewCoworkers.adapter = adapter
-        
+        binding.fragmentCoworkersFloatingActionButtonChat.setOnClickListener {
+            startActivity(ChatMenuActivity.navigate(requireContext()))
+        }
         viewModel.viewState.observe(viewLifecycleOwner) {
             binding.fragmentCoworkersProgressIndicator.isVisible = it.isSpinnerVisible
             adapter.submitList(it.coworkersViewStateItems)

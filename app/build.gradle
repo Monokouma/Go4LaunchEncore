@@ -49,6 +49,7 @@ dependencies {
     implementation project(path: ':data')
     implementation project(path: ':domain')
 
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation 'com.google.firebase:firebase-auth-ktx' // Firebase Auth
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -56,7 +57,10 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     implementation "com.google.dagger:hilt-android:2.46.1"
+    implementation 'androidx.lifecycle:lifecycle-process:2.6.2'
     kapt "com.google.dagger:hilt-compiler:2.46.1"
+
+    
 }
 
 kover {

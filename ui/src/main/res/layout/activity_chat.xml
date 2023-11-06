@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".main.chat.menu.ChatMenuActivity"
+    >
+    
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/activity_chat_AppBarLayout_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+        
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/activity_chat_Toolbar_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:padding="4dp"
+            app:navigationIcon="@drawable/baseline_keyboard_backspace_24"
+            >
+            
+            <ImageView
+                android:id="@+id/activity_chat_ImageView_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/lunchbox_toolbar_size"
+                />
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_chat_RecyclerView_user_online"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_chat_AppBarLayout_root"
+        tools:listitem="@layout/online_user_items"
+        />
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_chat_RecyclerView_conv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_chat_RecyclerView_user_online"
+        tools:listitem="@layout/exsting_conversation_items"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,4 +7,5 @@ data class FirestoreUserEntity(
     val uid: String,
     val currentlyEating: Boolean,
     val eatingPlaceId: String?,
+    val online: Boolean
 )
