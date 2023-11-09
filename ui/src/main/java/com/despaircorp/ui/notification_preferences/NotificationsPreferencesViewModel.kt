@@ -13,8 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NotificationsPreferencesViewModel @Inject constructor(
     private val updateNotificationStateUseCase: UpdateNotificationStateUseCase,
-    
-    ) : ViewModel() {
+) : ViewModel() {
     
     val viewAction = MutableLiveData<Event<NotificationsPreferencesAction>>()
     
@@ -27,5 +26,4 @@ class NotificationsPreferencesViewModel @Inject constructor(
             }
         }
     }
-    
 }

@@ -21,6 +21,7 @@ class NotificationsPreferencesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        
         val fade = Fade().apply {
             excludeTarget(binding.activityNotificationsPreferencesImageViewLogo, true)
             duration = 2000
