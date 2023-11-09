@@ -37,18 +37,11 @@ class ChatMenuViewModel @Inject constructor(
     
     val viewAction = MutableLiveData<Event<ChatMenuAction>>()
     
-    val viewState = liveData<ChatMenuViewState> {
+    val viewState = liveData {
         combine(
             getAllCoworkersForChatUseCase.invoke(),
             getAllUserConversationUseCase.invoke()
-        ) { coworkerChatEntities, conversationEntities ->
-            val groupedConversation =
-                conversationEntities.groupBy { Pair(it.senderUid, it.receiverUid) }
-                    .values
-                    .map { group ->
-                        group.maxByOrNull { it.timestamp } ?: group.first()
-                    }
-            
+        ) { coworkerChatEntities, lastMessageEntities ->
             emit(
                 ChatMenuViewState(
                     chatMenuOnlineUserViewStateItems = coworkerChatEntities.map { coworkerChatEntity ->
@@ -70,7 +63,7 @@ class ChatMenuViewModel @Inject constructor(
                         )
                     }.sortedWith(compareBy({ !it.online }, { it.uid })),
                     
-                    chatMessagesViewStateItems = groupedConversation.map {
+                    chatMessagesViewStateItems = lastMessageEntities.map {
                         ChatMenuMessagesViewStateItems(
                             convId = it.chatId,
                             senderId = it.senderUid,
@@ -101,7 +94,7 @@ class ChatMenuViewModel @Inject constructor(
                             receiverName = getFirestoreUserUseCase.invoke(it.receiverUid).displayName,
                             timestamp = it.timestamp
                         )
-                    }.sortedByDescending { it.timestamp },
+                    },
                 )
             )
         }.collect()

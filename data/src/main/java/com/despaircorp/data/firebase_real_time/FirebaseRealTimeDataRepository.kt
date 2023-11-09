@@ -1,9 +1,9 @@
 package com.despaircorp.data.firebase_real_time
 
-import com.despaircorp.data.firebase_real_time.model.ChatDto
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
 import com.despaircorp.domain.firebase_real_time.FirebaseRealTimeDomainRepository
 import com.despaircorp.domain.firebase_real_time.model.ChatEntity
+import com.despaircorp.domain.firebase_real_time.model.ConversationParticipantsEntity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -20,66 +20,51 @@ import javax.inject.Inject
 class FirebaseRealTimeDataRepository @Inject constructor(
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
     private val firebaseRealTime: FirebaseDatabase,
-    
-    ) : FirebaseRealTimeDomainRepository {
-    override suspend fun getChatEntity(
+) : FirebaseRealTimeDomainRepository {
+//    fun getChatEntity(
+//        senderUid: String,
+//        receiverUid: String,
+//    ): Flow<List<ChatEntity>>
+
+    override fun getAllLastChatEntities(
         senderUid: String
     ): Flow<List<ChatEntity>> = callbackFlow {
-        val registration =
-            firebaseRealTime.getReference("chat")
-        
+        val registration = firebaseRealTime.getReference("chat")
+
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val chatsDto = mutableListOf<ChatDto>()
-                
-                snapshot.children.forEach { children ->
-                    if (children.key?.contains(senderUid) == true) {
-                        val receiver = children.child("receiver").value as? String
-                        
-                        children.children.forEach { messageSnapshot ->
-                            if (messageSnapshot.key != "sender" && messageSnapshot.key != "receiver") {
-                                chatsDto.add(
-                                    ChatDto(
-                                        chatId = messageSnapshot.key,
-                                        value = messageSnapshot.child("value").value as? String,
-                                        timestamp = messageSnapshot.child("timestamp").value as? Long,
-                                        senderUid = messageSnapshot.child("senderUID").value as? String,
-                                        receiverUid = receiver
-                                    )
-                                )
-                            }
+                trySend(
+                    snapshot.children.mapNotNull { conversation ->
+                        val receiver = conversation.child("receiver").value as? String ?: return@mapNotNull null
+
+                        if (conversation.key?.contains(senderUid) == true) {
+                            conversation.children
+                                .asSequence()
+                                .filter { it.key != "sender" && it.key != "receiver" }
+                                .mapNotNull { messageSnapshot ->
+                                    mapToChatEntities(messageSnapshot, receiver)
+                                }
+                                .maxByOrNull { it.timestamp }
+                        } else {
+                            null
                         }
                     }
-                }
-                
-                trySend(
-                    chatsDto.map { chatDto ->
-                        ChatEntity(
-                            chatId = chatDto.chatId ?: return,
-                            value = chatDto.value ?: return,
-                            timestamp = chatDto.timestamp ?: return,
-                            senderUid = chatDto.senderUid ?: return,
-                            receiverUid = chatDto.receiverUid ?: return
-                        )
-                    }.sortedByDescending { it.timestamp }
                 )
-                
-                
             }
-            
+
             override fun onCancelled(error: DatabaseError) {}
         }
-        
+
         registration.addValueEventListener(listener)
-        
+
         awaitClose { registration.removeEventListener(listener) }
     }.flowOn(coroutineDispatcherProvider.io)
-    
-    override fun createConversation(receiverUid: String, uid: String): Flow<Boolean> =
+
+    override fun createConversation(firstUid: String, secondUid: String): Flow<Boolean> =
         callbackFlow<Boolean> {
             val registration =
-                firebaseRealTime.getReference("chat").child("${uid}_${receiverUid}")
-            
+                firebaseRealTime.getReference("chat").child("${firstUid}_${secondUid}")
+
             val listener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -87,26 +72,26 @@ class FirebaseRealTimeDataRepository @Inject constructor(
                     } else {
                         registration.setValue(
                             mapOf(
-                                "receiver" to receiverUid,
-                                "sender" to uid
+                                "receiver" to firstUid,
+                                "sender" to secondUid
                             )
                         )
                     }
                 }
-                
+
                 override fun onCancelled(error: DatabaseError) {}
             }
-            
+
             registration.addValueEventListener(listener)
-            
+
             awaitClose { registration.removeEventListener(listener) }
         }.flowOn(coroutineDispatcherProvider.io)
-    
-    override suspend fun insertMessage(chatEntity: ChatEntity): Boolean =
+
+    override suspend fun insertMessage(firstUid: String, secondUid: String, chatEntity: ChatEntity): Boolean =
         withContext(coroutineDispatcherProvider.io) {
             try {
                 firebaseRealTime.getReference("chat")
-                    .child("${chatEntity.senderUid}_${chatEntity.receiverUid}")
+                    .child("${firstUid}_${secondUid}")
                     .child(chatEntity.chatId)
                     .setValue(
                         mapOf(
@@ -121,5 +106,17 @@ class FirebaseRealTimeDataRepository @Inject constructor(
                 false
             }
         }
-    
+
+    private fun mapToChatEntities(
+        messageSnapshot: DataSnapshot,
+        receiver: String
+    ): ChatEntity? {
+        return ChatEntity(
+            chatId = messageSnapshot.key ?: return null,
+            value = messageSnapshot.child("value").value as? String ?: return null,
+            timestamp = messageSnapshot.child("timestamp").value as? Long ?: return null,
+            senderUid = messageSnapshot.child("senderUID").value as? String ?: return null,
+            receiverUid = receiver
+        )
+    }
 }

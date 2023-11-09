@@ -78,7 +78,7 @@ class FirebaseRealTimeDataRepositoryUnitTest {
             firebaseRealTime.getReference("chat").addValueEventListener(capture(slot))
         } returns mockk()
         
-        repository.getChatEntity(DEFAULT_SENDER_UID).test {
+        repository.getAllLastChatEntities(DEFAULT_SENDER_UID).test {
             runCurrent()
             slot.captured.onDataChange(dataSnapshot)
             cancel()

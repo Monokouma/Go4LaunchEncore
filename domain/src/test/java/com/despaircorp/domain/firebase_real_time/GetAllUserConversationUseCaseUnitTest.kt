@@ -39,7 +39,7 @@ class GetAllUserConversationUseCaseUnitTest {
     @Before
     fun setup() {
         coEvery { firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid } returns DEFAULT_UID
-        coEvery { firebaseRealTimeDomainRepository.getChatEntity(DEFAULT_UID) } returns provideChatsEntities()
+        coEvery { firebaseRealTimeDomainRepository.getAllLastChatEntities(DEFAULT_UID) } returns provideChatsEntities()
     }
     
     @Test
@@ -49,7 +49,7 @@ class GetAllUserConversationUseCaseUnitTest {
             
             coVerify {
                 firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid
-                firebaseRealTimeDomainRepository.getChatEntity(DEFAULT_UID)
+                firebaseRealTimeDomainRepository.getAllLastChatEntities(DEFAULT_UID)
             }
             confirmVerified(
                 firebaseAuthDomainRepository,

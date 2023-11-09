@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.despaircorp.domain.location.GetUserLocationEntityUseCase
 import com.despaircorp.domain.restaurants.GetNearbyRestaurantsEntityUseCase
+import com.despaircorp.ui.R
+import com.despaircorp.ui.utils.NativeText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,7 +18,7 @@ class MapViewModel @Inject constructor(
     
     val viewState = liveData {
         val userLocation = getUserLocationEntityUseCase.invoke()
-        
+        val restaurantCount = getNearbyRestaurantsEntityUseCase.invoke(userLocation).count()
         emit(
             MapViewState(
                 mapViewStateItems = getNearbyRestaurantsEntityUseCase.invoke(userLocation).map {
@@ -28,7 +30,11 @@ class MapViewModel @Inject constructor(
                     )
                 },
                 userLocation = userLocation.userLatLng,
-                restaurantsCount = getNearbyRestaurantsEntityUseCase.invoke(userLocation).count()
+                restaurantsCountToast = NativeText.Plural(
+                    R.plurals.nearby_restaurants_count,
+                    restaurantCount,
+                    listOf(restaurantCount)
+                )
             )
         )
     }
