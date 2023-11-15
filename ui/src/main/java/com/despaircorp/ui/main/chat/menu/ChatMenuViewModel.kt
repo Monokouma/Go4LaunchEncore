@@ -104,10 +104,9 @@ class ChatMenuViewModel @Inject constructor(
     fun createConversation(uid: String) {
         viewModelScope.launch {
             createConversationUseCase.invoke(uid).collect {
-                viewAction.value = if (it) {
-                    Event(ChatMenuAction.Success(uid))
-                } else {
-                    Event(ChatMenuAction.Error(NativeText.Resource(R.string.error_occurred)))
+                if (!it) {
+                    viewAction.value =
+                        Event(ChatMenuAction.Error(NativeText.Resource(R.string.error_occurred)))
                 }
             }
         }

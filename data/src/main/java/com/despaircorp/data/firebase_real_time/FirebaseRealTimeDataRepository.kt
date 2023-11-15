@@ -3,7 +3,6 @@ package com.despaircorp.data.firebase_real_time
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
 import com.despaircorp.domain.firebase_real_time.FirebaseRealTimeDomainRepository
 import com.despaircorp.domain.firebase_real_time.model.ChatEntity
-import com.despaircorp.domain.firebase_real_time.model.ConversationParticipantsEntity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -25,18 +24,19 @@ class FirebaseRealTimeDataRepository @Inject constructor(
 //        senderUid: String,
 //        receiverUid: String,
 //    ): Flow<List<ChatEntity>>
-
+    
     override fun getAllLastChatEntities(
         senderUid: String
     ): Flow<List<ChatEntity>> = callbackFlow {
         val registration = firebaseRealTime.getReference("chat")
-
+        
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 trySend(
                     snapshot.children.mapNotNull { conversation ->
-                        val receiver = conversation.child("receiver").value as? String ?: return@mapNotNull null
-
+                        val receiver = conversation.child("receiver").value as? String
+                            ?: return@mapNotNull null
+                        
                         if (conversation.key?.contains(senderUid) == true) {
                             conversation.children
                                 .asSequence()
@@ -51,20 +51,20 @@ class FirebaseRealTimeDataRepository @Inject constructor(
                     }
                 )
             }
-
+            
             override fun onCancelled(error: DatabaseError) {}
         }
-
+        
         registration.addValueEventListener(listener)
-
+        
         awaitClose { registration.removeEventListener(listener) }
     }.flowOn(coroutineDispatcherProvider.io)
-
+    
     override fun createConversation(firstUid: String, secondUid: String): Flow<Boolean> =
         callbackFlow<Boolean> {
             val registration =
                 firebaseRealTime.getReference("chat").child("${firstUid}_${secondUid}")
-
+            
             val listener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -78,16 +78,20 @@ class FirebaseRealTimeDataRepository @Inject constructor(
                         )
                     }
                 }
-
+                
                 override fun onCancelled(error: DatabaseError) {}
             }
-
+            
             registration.addValueEventListener(listener)
-
+            
             awaitClose { registration.removeEventListener(listener) }
         }.flowOn(coroutineDispatcherProvider.io)
-
-    override suspend fun insertMessage(firstUid: String, secondUid: String, chatEntity: ChatEntity): Boolean =
+    
+    override suspend fun insertMessage(
+        firstUid: String,
+        secondUid: String,
+        chatEntity: ChatEntity
+    ): Boolean =
         withContext(coroutineDispatcherProvider.io) {
             try {
                 firebaseRealTime.getReference("chat")
@@ -95,7 +99,7 @@ class FirebaseRealTimeDataRepository @Inject constructor(
                     .child(chatEntity.chatId)
                     .setValue(
                         mapOf(
-                            "senderUID" to chatEntity.value,
+                            "senderUID" to chatEntity.senderUid,
                             "timestamp" to chatEntity.timestamp,
                             "value" to chatEntity.value
                         )
@@ -106,7 +110,7 @@ class FirebaseRealTimeDataRepository @Inject constructor(
                 false
             }
         }
-
+    
     private fun mapToChatEntities(
         messageSnapshot: DataSnapshot,
         receiver: String

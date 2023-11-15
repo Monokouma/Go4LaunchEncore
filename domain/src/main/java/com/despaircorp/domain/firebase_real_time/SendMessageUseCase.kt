@@ -14,7 +14,7 @@ class SendMessageUseCase @Inject constructor(
     suspend fun invoke(receiverUid: String, message: String): Boolean {
         val currentUserUid = firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid
         val (first, second) = getOrderedUidsUseCase.invoke(receiverUid, currentUserUid)
-
+        
         return firebaseRealTimeDomainRepository.insertMessage(
             firstUid = first,
             secondUid = second,
