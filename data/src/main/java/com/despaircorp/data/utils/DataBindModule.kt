@@ -6,6 +6,7 @@ import com.despaircorp.data.firebase_storage.FirebaseStorageDataRepository
 import com.despaircorp.data.firestore.FirestoreDataRepository
 import com.despaircorp.data.location.LocationDataRepository
 import com.despaircorp.data.notification.NotificationDataRepository
+import com.despaircorp.data.permission.PermissionDataRepository
 import com.despaircorp.data.restaurants.RestaurantsDataRepository
 import com.despaircorp.data.room.RoomDataRepository
 import com.despaircorp.data.workers.WorkersDataRepository
@@ -15,6 +16,7 @@ import com.despaircorp.domain.firebase_storage.FirebaseStorageDomainRepository
 import com.despaircorp.domain.firestore.FirestoreDomainRepository
 import com.despaircorp.domain.location.LocationDomainRepository
 import com.despaircorp.domain.notifications.NotificationDomainRepository
+import com.despaircorp.domain.permission.PermissionDomainRepository
 import com.despaircorp.domain.restaurants.RestaurantsDomainRepository
 import com.despaircorp.domain.room.RoomDomainRepository
 import com.despaircorp.domain.workers.WorkersDomainRepository
@@ -63,4 +65,8 @@ abstract class DataBindModule {
     @Binds
     @Singleton
     abstract fun bindNotificationRepository(impl: NotificationDataRepository): NotificationDomainRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindPermissionRepository(impl: PermissionDataRepository): PermissionDomainRepository
 }
