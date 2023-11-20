@@ -2,6 +2,7 @@ package com.despaircorp.data.utils
 
 import android.app.Application
 import android.content.res.Resources
+import androidx.work.WorkManager
 import com.despaircorp.data.retrofit.GooglePlacesApi
 import com.despaircorp.data.room.dao.UserPreferencesDao
 import com.despaircorp.data.room.database.Go4LunchRoomDatabase
@@ -81,5 +82,11 @@ class DataProvideModule {
     @Singleton
     fun provideFirebaseDatabase(): FirebaseDatabase {
         return FirebaseDatabase.getInstance()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideWorkManager(application: Application): WorkManager {
+        return WorkManager.getInstance(application)
     }
 }

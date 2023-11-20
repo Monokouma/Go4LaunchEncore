@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
     
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
     <application
         android:name=".Go4LaunchApplication"
         android:allowBackup="true"
