@@ -3,6 +3,7 @@ package com.despaircorp.go4launchencore
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import androidx.work.Configuration
 import com.despaircorp.domain.firestore.ChangePresenceUseCase
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -11,8 +12,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.EmptyCoroutineContext
 
+
 @HiltAndroidApp
-class Go4LaunchApplication : Application(), Application.ActivityLifecycleCallbacks {
+class Go4LaunchApplication : Application(), Application.ActivityLifecycleCallbacks,
+    Configuration.Provider {
+    
+    @Inject
+    lateinit var workerFactory: NotificationWorkerFactory
     
     @Inject
     lateinit var changePresenceUseCase: ChangePresenceUseCase
@@ -61,4 +67,7 @@ class Go4LaunchApplication : Application(), Application.ActivityLifecycleCallbac
     
     override fun onActivityDestroyed(activity: Activity) {
     }
+    
+    override fun getWorkManagerConfiguration(): Configuration =
+        Configuration.Builder().setWorkerFactory(workerFactory).build()
 }

@@ -92,4 +92,5 @@
     </string>
     <string name="aa">Aa</string>
     <string name="you">You</string>
+    <string name="success_worker">Notifications set with success !</string>
 </resources>
