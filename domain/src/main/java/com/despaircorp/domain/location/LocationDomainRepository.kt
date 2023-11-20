@@ -1,6 +1,7 @@
 package com.despaircorp.domain.location
 
 import com.despaircorp.domain.location.model.LocationEntity
+import kotlinx.coroutines.flow.Flow
 
 interface LocationDomainRepository {
     suspend fun getUserLocation(): LocationEntity
@@ -9,4 +10,6 @@ interface LocationDomainRepository {
         restaurantLat: Double,
         restaurantLong: Double
     ): Int
+    
+    fun getUserLocationAsFlow(): Flow<LocationEntity>
 }

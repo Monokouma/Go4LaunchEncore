@@ -2,6 +2,7 @@ package com.despaircorp.data.utils
 
 import android.app.Application
 import android.content.res.Resources
+import androidx.appcompat.app.AppCompatActivity
 import androidx.work.WorkManager
 import com.despaircorp.data.retrofit.GooglePlacesApi
 import com.despaircorp.data.room.dao.UserPreferencesDao
@@ -88,5 +89,11 @@ class DataProvideModule {
     @Singleton
     fun provideWorkManager(application: Application): WorkManager {
         return WorkManager.getInstance(application)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideAppCompatActivityManager(application: Application): AppCompatActivity {
+        return AppCompatActivity()
     }
 }
