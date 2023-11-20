@@ -41,7 +41,10 @@
     <string name="edit_password">Edit password</string>
     <string name="opened">Open</string>
     <string name="closed">Close\n</string>
-    <string name="nearby_restaurants_count">Restaurants nearby :</string>
+    <plurals name="nearby_restaurants_count">
+        <item quantity="one">Restaurant nearby : %d</item>
+        <item quantity="other">Restaurants nearby : %d</item>
+    </plurals>
     <string name="not_decided">hasn\'t decided yet</string>
     <string name="is_eating">is eating (%1$s)</string>
     <string name="title_activity_chat_details">ChatDetailsActivity</string>

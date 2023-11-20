@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
-import com.despaircorp.domain.firestore.SendMessageUseCase
+import com.despaircorp.domain.firebase_real_time.SendMessageUseCase
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.TestCoroutineRule

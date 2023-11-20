@@ -3,9 +3,9 @@ package com.despaircorp.ui.main.map
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.despaircorp.ui.R
+import com.despaircorp.ui.utils.showAsToast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -36,12 +36,7 @@ class MapFragment : SupportMapFragment() {
             setGoogleMapOption(googleMap)
             
             viewModel.viewState.observe(viewLifecycleOwner) {
-                Toast.makeText(
-                    requireContext(),
-                    StringBuilder().append(getString(R.string.nearby_restaurants_count)).append(" ")
-                        .append(it.restaurantsCount),
-                    Toast.LENGTH_SHORT
-                ).show()
+                it.restaurantsCountToast.showAsToast(requireContext())
                 
                 it.mapViewStateItems.forEach { item ->
                     if (alreadyPresentMarkersForPlaceIds.add(item.placeId)) {

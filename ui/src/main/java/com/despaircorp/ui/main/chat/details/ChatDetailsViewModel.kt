@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
-import com.despaircorp.domain.firestore.SendMessageUseCase
+import com.despaircorp.domain.firebase_real_time.SendMessageUseCase
 import com.despaircorp.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -5,6 +5,7 @@ import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import com.despaircorp.domain.firebase_auth.FirebaseAuthDomainRepository
 import com.despaircorp.domain.firebase_real_time.FirebaseRealTimeDomainRepository
+import com.despaircorp.domain.firebase_real_time.SendMessageUseCase
 import com.despaircorp.domain.firebase_real_time.model.ChatEntity
 import com.despaircorp.domain.utils.TestCoroutineRule
 import io.mockk.coEvery

@@ -42,13 +42,10 @@ class ChatMenuActivity : AppCompatActivity(), ChatMenuListener {
         viewModel.viewAction.observe(this) {
             when (val action = it.getContentIfNotHandled()) {
                 
-                is ChatMenuAction.Error -> action.error.showAsToast(this, Toast.LENGTH_SHORT).show()
-                is ChatMenuAction.Success -> startActivity(
-                    ChatDetailsActivity.navigate(
-                        this,
-                        action.uid
-                    )
-                )
+                is ChatMenuAction.Error -> {
+                    action.error.showAsToast(this, Toast.LENGTH_SHORT).show()
+                    finish()
+                }
                 
                 else -> Unit
             }
@@ -65,6 +62,12 @@ class ChatMenuActivity : AppCompatActivity(), ChatMenuListener {
     
     override fun onUserClicked(uid: String) {
         viewModel.createConversation(uid)
+        startActivity(
+            ChatDetailsActivity.navigate(
+                this,
+                uid
+            )
+        )
     }
     
     override fun onConversationClicked(conversationId: String) {
