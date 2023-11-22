@@ -7,6 +7,8 @@ import com.despaircorp.domain.location.GetUserLocationEntityUseCase
 import com.despaircorp.domain.location.model.LocationEntity
 import com.despaircorp.domain.restaurants.GetNearbyRestaurantsEntityUseCase
 import com.despaircorp.domain.restaurants.model.RestaurantEntity
+import com.despaircorp.ui.R
+import com.despaircorp.ui.utils.NativeText
 import com.despaircorp.ui.utils.TestCoroutineRule
 import com.despaircorp.ui.utils.observeForTesting
 import com.google.android.gms.maps.model.LatLng
@@ -50,7 +52,9 @@ class MapViewModelUnitTest {
         
         viewModel = MapViewModel(
             getUserLocationEntityUseCase = getUserLocationEntityUseCase,
-            getNearbyRestaurantsEntityUseCase = getNearbyRestaurantsEntityUseCase
+            getNearbyRestaurantsEntityUseCase = getNearbyRestaurantsEntityUseCase,
+            mockk(),
+            mockk(),
         )
     }
     
@@ -69,7 +73,7 @@ class MapViewModelUnitTest {
     private fun provideMapViewState() = MapViewState(
         mapViewStateItems = provideMapViewStateItems(),
         provideLocationEntity().userLatLng,
-        provideMapViewStateItems().count()
+        NativeText.Plural( R.plurals.nearby_restaurants_count, provideMapViewStateItems().count(), listOf(provideMapViewStateItems().count()))
     )
     
     private fun provideMapViewStateItems() = List(3) {

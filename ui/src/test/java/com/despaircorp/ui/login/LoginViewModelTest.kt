@@ -134,9 +134,15 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `edge case - auth with facebook unexisting user`() = testCoroutineRule.runTest {
+        coEvery {
+            insertUserInFirestoreUseCase.invoke(
+                provideAuthenticatedUserEntity().copy(
+                    picture = DEFAULT_PICTURE_FACEBOOK
+                )
+            )
+        } returns true
         coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
         coEvery { isNotificationsEnabledUseCase.invoke() } returns UserPreferencesDomainEntity(
             NotificationsStateEnum.ENABLED
@@ -177,7 +183,6 @@ class LoginViewModelTest {
         }
     }
     
-    @Ignore
     @Test
     fun `edge case - auth with facebook not existing user with none name`() =
         testCoroutineRule.runTest {
@@ -192,7 +197,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `nominal case - already auth user`() = testCoroutineRule.runTest {
         coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
@@ -205,7 +209,6 @@ class LoginViewModelTest {
         }
     }
     
-    @Ignore
     @Test
     fun `error case - already auth user insertion error`() = testCoroutineRule.runTest {
         coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
@@ -216,7 +219,6 @@ class LoginViewModelTest {
         }
     }
     
-    @Ignore
     @Test
     fun `edge case - already auth user display name`() = testCoroutineRule.runTest {
         coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
@@ -227,7 +229,6 @@ class LoginViewModelTest {
         }
     }
     
-    @Ignore
     @Test
     fun `edge case - already auth user exist`() = testCoroutineRule.runTest {
         coEvery { isUserPreferencesTableExistUseCase.invoke() } returns true
@@ -242,7 +243,6 @@ class LoginViewModelTest {
         }
     }
     
-    @Ignore
     @Test
     fun `edge case - already auth user exist none display name`() = testCoroutineRule.runTest {
         coEvery { isUserAlreadyAuthUseCase.invoke() } returns true
@@ -541,7 +541,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `nominal case - already auth user with display name and notif not know`() =
         testCoroutineRule.runTest {
@@ -560,7 +559,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `nominal case - already auth user with display name and unexisting table`() =
         testCoroutineRule.runTest {
@@ -587,7 +585,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `error case - already auth user with display name and unexisting table`() =
         testCoroutineRule.runTest {
@@ -612,7 +609,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `nominal case - not auth user with display name and notif not know`() =
         testCoroutineRule.runTest {
@@ -633,7 +629,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `nominal case - not auth user with display name and unexisting table`() =
         testCoroutineRule.runTest {
@@ -662,7 +657,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `error case - not auth user with display name and unexisting table`() =
         testCoroutineRule.runTest {
@@ -990,7 +984,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `nominal case - facebook user signed in without account and display name with table created and notification state not know`() =
         testCoroutineRule.runTest {
@@ -1038,7 +1031,6 @@ class LoginViewModelTest {
             }
         }
     
-    @Ignore
     @Test
     fun `error case - facebook user signed in without account and display name with table not created and notification state not know`() =
         testCoroutineRule.runTest {

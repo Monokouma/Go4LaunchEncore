@@ -57,7 +57,8 @@ class ChatDetailsViewModelUnitTest {
         viewModel = ChatDetailsViewModel(
             savedStateHandle = savedStateHandle,
             getFirestoreUserAsFlowUseCase = getFirestoreUserAsFlowUseCase,
-            sendMessageUseCase = sendMessageUseCase
+            sendMessageUseCase = sendMessageUseCase,
+            mockk()
         )
     }
     
