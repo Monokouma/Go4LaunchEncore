@@ -4,5 +4,6 @@ data class ChatDetailsViewState(
     val receiverName: String,
     val receiverPicture: String,
     val onlineDotResources: Int,
-    val sendImageResources: Int
+    val sendImageResources: Int,
+    val chatDetailsViewStateItems: List<ChatDetailsViewStateItems>
 )

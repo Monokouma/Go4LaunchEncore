@@ -2,10 +2,10 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.dagger.hilt.android'
-    id 'kotlin-kapt'
     id 'com.google.gms.google-services'
     id "org.jetbrains.kotlinx.kover"
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -43,12 +43,16 @@ android {
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
         ]
     }
+
+    hilt {
+        enableAggregatingTask = true
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.3'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.7.3'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.5'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
 
     implementation project(path: ':domain')
@@ -66,7 +70,7 @@ dependencies {
     // Provides lifecycle and coroutines scopes
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.2"
     // Provides 'by viewModels' delegate
-    implementation "androidx.fragment:fragment-ktx:1.6.1"
+    implementation "androidx.fragment:fragment-ktx:1.6.2"
 
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
@@ -78,15 +82,20 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.14.2'
 
-    implementation "com.google.dagger:hilt-android:2.46.1"
-    kapt "com.google.dagger:hilt-compiler:2.46.1"
+    implementation "com.google.dagger:hilt-android:2.48.1"
+    ksp 'com.google.dagger:hilt-compiler:2.48.1'
+    implementation 'androidx.hilt:hilt-work:1.1.0'
+    ksp 'androidx.hilt:hilt-compiler:1.1.0'
+
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
+    implementation 'androidx.hilt:hilt-work:1.1.0'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation("androidx.arch.core:core-testing:2.2.0") {
         // Removes the Mockito dependency bundled with arch core (wtf android ??)
         exclude group: "org.mockito", module: "mockito-core"
     }
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
     testImplementation "io.mockk:mockk:1.13.3"
     testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.25'
 }
@@ -97,7 +106,4 @@ kover {
     }
 }
 
-kapt {
-    correctErrorTypes true
-}
 apply plugin: 'com.google.gms.google-services'

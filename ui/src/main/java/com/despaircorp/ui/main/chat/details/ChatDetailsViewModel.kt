@@ -35,9 +35,8 @@ class ChatDetailsViewModel @Inject constructor(
             getFirestoreUserAsFlowUseCase.invoke(receiverUid),
             getAllUserMessagesWithSpecificUserUseCase.invoke(receiverUid)
         ) { isMessageFilled, firestoreUserEntity, allMessagesEntities ->
-            allMessagesEntities.forEach {
-                Log.i("Monokouma", it.toString())
-            }
+            Log.i("Monokouma", firestoreUserEntity.uid)
+            
             emit(
                 ChatDetailsViewState(
                     firestoreUserEntity.displayName,
@@ -51,6 +50,15 @@ class ChatDetailsViewModel @Inject constructor(
                         R.drawable.send_colored
                     } else {
                         R.drawable.send_uncolored
+                    },
+                    chatDetailsViewStateItems = allMessagesEntities.map {
+                        ChatDetailsViewStateItems(
+                            receiverId = it.receiverUid,
+                            senderId = it.senderUid,
+                            messageValue = it.value,
+                            timestamp = it.timestamp,
+                            isOnRight = it.senderUid == firestoreUserEntity.uid
+                        )
                     }
                 )
             )

@@ -2,8 +2,8 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.dagger.hilt.android'
-    id 'kotlin-kapt'
     id "org.jetbrains.kotlinx.kover"
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -43,14 +43,17 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
     implementation 'androidx.hilt:hilt-work:1.1.0'
-    kapt 'androidx.hilt:hilt-compiler:1.1.0'
+
+    ksp 'androidx.hilt:hilt-compiler:1.1.0'
+    ksp 'com.google.dagger:hilt-compiler:2.48.1'
+
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
-    implementation "com.google.dagger:hilt-android:2.46.1"
-    kapt "com.google.dagger:hilt-compiler:2.46.1"
+    implementation "com.google.dagger:hilt-android:2.48.1"
+
     implementation 'com.facebook.android:facebook-android-sdk:15.2.0' // Facebook Auth
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
     testImplementation 'app.cash.turbine:turbine:0.13.0'
     testImplementation "io.mockk:mockk:1.13.3"
     testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.25'
