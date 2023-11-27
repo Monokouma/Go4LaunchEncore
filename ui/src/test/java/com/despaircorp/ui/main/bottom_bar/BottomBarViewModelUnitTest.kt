@@ -62,6 +62,8 @@ class BottomBarViewModelUnitTest {
             getAuthenticatedUserUseCase = getAuthenticatedUserUseCase,
             disconnectUserUseCase = disconnectUserUseCase,
             getFirestoreUserAsFlowUseCase = getFirestoreUserUseCase,
+            mockk(),
+            mockk(),
         )
     }
     

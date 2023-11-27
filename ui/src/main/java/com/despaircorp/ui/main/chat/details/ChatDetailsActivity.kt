@@ -1,15 +1,19 @@
 package com.despaircorp.ui.main.chat.details
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.despaircorp.ui.databinding.ActivityChatDetailsBinding
 import com.despaircorp.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class ChatDetailsActivity : AppCompatActivity() {
@@ -20,6 +24,9 @@ class ChatDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.activityChatDetailsToolbarRoot)
+        
+        val adapter = ChatDetailsAdapter()
+        
         supportActionBar?.setDisplayShowTitleEnabled(false)
         binding.activityChatDetailsToolbarRoot.setNavigationOnClickListener {
             finish()
@@ -31,7 +38,11 @@ class ChatDetailsActivity : AppCompatActivity() {
         
         binding.activityChatDetailsImageViewSend.setOnClickListener {
             viewModel.onSendButtonClicked()
+            hideSoftKeyboard()
+            binding.activityChatDetailsTextInputEditChat.setText("")
         }
+        
+        binding.activityChatDetailsRecyclerViewChats.adapter = adapter
         
         viewModel.viewState.observe(this) {
             binding.activityChatDetailsTextViewUserName.text = it.receiverName
@@ -40,6 +51,15 @@ class ChatDetailsActivity : AppCompatActivity() {
                 .into(binding.activityChatDetailsShapeableImageViewUserImage)
             binding.activityChatDetailsImageViewSend.setImageResource(it.sendImageResources)
             binding.activityChatDetailsImageViewDot.setImageResource(it.onlineDotResources)
+            adapter.submitList(it.chatDetailsViewStateItems)
+        }
+    }
+    
+    private fun Activity.hideSoftKeyboard() {
+        currentFocus?.let {
+            val inputMethodManager =
+                ContextCompat.getSystemService(this, InputMethodManager::class.java)!!
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
         }
     }
     

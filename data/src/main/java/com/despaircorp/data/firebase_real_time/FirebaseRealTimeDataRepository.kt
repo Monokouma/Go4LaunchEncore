@@ -20,10 +20,7 @@ class FirebaseRealTimeDataRepository @Inject constructor(
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
     private val firebaseRealTime: FirebaseDatabase,
 ) : FirebaseRealTimeDomainRepository {
-//    fun getChatEntity(
-//        senderUid: String,
-//        receiverUid: String,
-//    ): Flow<List<ChatEntity>>
+    
     
     override fun getAllLastChatEntities(
         senderUid: String
@@ -110,6 +107,54 @@ class FirebaseRealTimeDataRepository @Inject constructor(
                 false
             }
         }
+    
+    override fun getMessagesBetweenCurrentUserAndSpecificUser(
+        currentUserUid: String,
+        specificUserUid: String
+    ): Flow<List<ChatEntity>> = callbackFlow<List<ChatEntity>> {
+        val registration = firebaseRealTime.getReference("chat")
+        
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = mutableListOf<ChatEntity>()
+                snapshot.children.forEach { chatSnapshot ->
+                    if ((chatSnapshot.child("sender").value as String) == currentUserUid && (chatSnapshot.child(
+                            "receiver"
+                        ).value as String) == specificUserUid
+                    ) {
+                        chatSnapshot.children.forEach {
+                            if (it.key != "receiver" && it.key != "sender") {
+                                list.add(
+                                    ChatEntity(
+                                        chatId = it.key ?: return@forEach,
+                                        value = it.child("value").value as? String
+                                            ?: return@forEach,
+                                        timestamp = it.child("timestamp").value as? Long
+                                            ?: return@forEach,
+                                        senderUid = it.child("senderUID").value as? String
+                                            ?: return@forEach,
+                                        receiverUid = specificUserUid
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+                
+                trySend(
+                    list
+                )
+            }
+            
+            override fun onCancelled(error: DatabaseError) {
+            
+            }
+            
+        }
+        
+        registration.addValueEventListener(listener)
+        awaitClose { registration.removeEventListener(listener) }
+    }.flowOn(coroutineDispatcherProvider.io)
     
     private fun mapToChatEntities(
         messageSnapshot: DataSnapshot,

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
 import android.util.Log
+import android.view.Menu
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +37,18 @@ class BottomBarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         
+        setSupportActionBar(binding.activityBottomBarToolbarRoot)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        
+        binding.activityBottomBarToolbarRoot.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.search -> {
+                    Log.i("Monokouma", "clicked")
+                }
+            }
+            
+            true
+        }
         
         val headerBinding = HeaderNavigationDrawerBinding.bind(
             binding.activityBottomBarNavigationViewProfile.getHeaderView(0)
@@ -45,11 +58,6 @@ class BottomBarActivity : AppCompatActivity() {
             duration = 2000
         }
         window.enterTransition = fade
-        
-        setSupportActionBar(binding.activityBottomBarToolbarRoot)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        
-        
         
         loadFragment(MapFragment())
         
@@ -176,6 +184,10 @@ class BottomBarActivity : AppCompatActivity() {
         }
     }
     
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.top_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
     
     companion object {
         private const val KEY_BOTTOM_NAV_BAR_SELECTED_ITEM_ID =

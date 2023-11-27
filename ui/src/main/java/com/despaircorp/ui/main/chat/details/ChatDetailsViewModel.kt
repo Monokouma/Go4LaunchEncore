@@ -1,11 +1,13 @@
 package com.despaircorp.ui.main.chat.details
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
+import com.despaircorp.domain.firebase_real_time.GetAllUserMessagesWithSpecificUserUseCase
 import com.despaircorp.domain.firebase_real_time.SendMessageUseCase
+import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +20,8 @@ import javax.inject.Inject
 class ChatDetailsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getFirestoreUserAsFlowUseCase: GetFirestoreUserAsFlowUseCase,
-    private val sendMessageUseCase: SendMessageUseCase
+    private val sendMessageUseCase: SendMessageUseCase,
+    private val getAllUserMessagesWithSpecificUserUseCase: GetAllUserMessagesWithSpecificUserUseCase
 ) : ViewModel() {
     private val isMessageFilledMutableStateFlow = MutableStateFlow(false)
     private var message: String? = null
@@ -29,8 +32,11 @@ class ChatDetailsViewModel @Inject constructor(
         
         combine(
             isMessageFilledMutableStateFlow,
-            getFirestoreUserAsFlowUseCase.invoke(receiverUid)
-        ) { isMessageFilled, firestoreUserEntity ->
+            getFirestoreUserAsFlowUseCase.invoke(receiverUid),
+            getAllUserMessagesWithSpecificUserUseCase.invoke(receiverUid)
+        ) { isMessageFilled, firestoreUserEntity, allMessagesEntities ->
+            Log.i("Monokouma", firestoreUserEntity.uid)
+            
             emit(
                 ChatDetailsViewState(
                     firestoreUserEntity.displayName,
@@ -44,6 +50,15 @@ class ChatDetailsViewModel @Inject constructor(
                         R.drawable.send_colored
                     } else {
                         R.drawable.send_uncolored
+                    },
+                    chatDetailsViewStateItems = allMessagesEntities.map {
+                        ChatDetailsViewStateItems(
+                            receiverId = it.receiverUid,
+                            senderId = it.senderUid,
+                            messageValue = it.value,
+                            timestamp = it.timestamp,
+                            isOnRight = it.senderUid == firestoreUserEntity.uid
+                        )
                     }
                 )
             )

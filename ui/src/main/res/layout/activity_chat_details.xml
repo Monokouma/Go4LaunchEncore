@@ -8,83 +8,89 @@
     tools:context=".main.chat.details.ChatDetailsActivity"
     >
     
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/activity_chat_details_AppBarLayout_root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         >
         
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/activity_chat_details_AppBarLayout_root"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/activity_chat_details_Toolbar_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/black"
+            android:padding="4dp"
+            app:navigationIcon="@drawable/baseline_keyboard_backspace_24"
             >
             
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/activity_chat_details_Toolbar_root"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/black"
-                android:padding="4dp"
-                app:navigationIcon="@drawable/baseline_keyboard_backspace_24"
                 >
                 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/activity_chat_details_ShapeableImageView_user_image"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_margin="8dp"
+                    android:scaleType="centerCrop"
+                    android:theme="@style/ShapeAppearance.M3.Sys.Shape.Corner.Full"
+                    app:chainUseRtl="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/activity_chat_details_TextView_user_name"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@drawable/user_image"
+                    />
+                
+                <ImageView
+                    android:id="@+id/activity_chat_details_ImageView_dot"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/green_circle"
+                    app:layout_constraintBottom_toBottomOf="@id/activity_chat_details_ShapeableImageView_user_image"
+                    app:layout_constraintEnd_toEndOf="@id/activity_chat_details_ShapeableImageView_user_image"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="@id/activity_chat_details_ShapeableImageView_user_image"
+                    app:layout_constraintTop_toTopOf="@id/activity_chat_details_ShapeableImageView_user_image"
+                    app:layout_constraintVertical_bias="1.0"
+                    />
+                
+                <TextView
+                    android:id="@+id/activity_chat_details_TextView_user_name"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    >
-                    
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/activity_chat_details_ShapeableImageView_user_image"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_margin="8dp"
-                        android:scaleType="centerCrop"
-                        android:theme="@style/ShapeAppearance.M3.Sys.Shape.Corner.Full"
-                        app:chainUseRtl="true"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/activity_chat_details_TextView_user_name"
-                        app:layout_constraintHorizontal_chainStyle="packed"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@drawable/user_image"
-                        />
-                    
-                    <ImageView
-                        android:id="@+id/activity_chat_details_ImageView_dot"
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:src="@drawable/green_circle"
-                        app:layout_constraintBottom_toBottomOf="@id/activity_chat_details_ShapeableImageView_user_image"
-                        app:layout_constraintEnd_toEndOf="@id/activity_chat_details_ShapeableImageView_user_image"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toStartOf="@id/activity_chat_details_ShapeableImageView_user_image"
-                        app:layout_constraintTop_toTopOf="@id/activity_chat_details_ShapeableImageView_user_image"
-                        app:layout_constraintVertical_bias="1.0"
-                        />
-                    
-                    <TextView
-                        android:id="@+id/activity_chat_details_TextView_user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:fontFamily="@font/advent_pro_bold"
-                        android:textColor="@color/baby_powder"
-                        android:textSize="24sp"
-                        app:layout_constraintBottom_toBottomOf="@id/activity_chat_details_ShapeableImageView_user_image"
-                        app:layout_constraintStart_toEndOf="@id/activity_chat_details_ShapeableImageView_user_image"
-                        app:layout_constraintTop_toTopOf="@id/activity_chat_details_ShapeableImageView_user_image"
-                        tools:text="Monokouma"
-                        />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            
-            </androidx.appcompat.widget.Toolbar>
-        </com.google.android.material.appbar.AppBarLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    android:layout_margin="8dp"
+                    android:fontFamily="@font/advent_pro_bold"
+                    android:textColor="@color/baby_powder"
+                    android:textSize="24sp"
+                    app:layout_constraintBottom_toBottomOf="@id/activity_chat_details_ShapeableImageView_user_image"
+                    app:layout_constraintStart_toEndOf="@id/activity_chat_details_ShapeableImageView_user_image"
+                    app:layout_constraintTop_toTopOf="@id/activity_chat_details_ShapeableImageView_user_image"
+                    tools:text="Monokouma"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
     
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_chat_details_RecyclerView_chats"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toTopOf="@id/activity_chat_details_ConstraintLayout_root"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_chat_details_AppBarLayout_root"
+        tools:listitem="@layout/chat_item_view"
+        />
     
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_chat_details_ConstraintLayout_root"
@@ -94,6 +100,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/activity_chat_details_RecyclerView_chats"
         >
         
         <com.google.android.material.textfield.TextInputLayout

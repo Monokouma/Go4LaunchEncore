@@ -1,5 +1,6 @@
 package com.despaircorp.ui.main.map
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.despaircorp.domain.location.GetUserLocationEntityAsFlowUseCase
@@ -21,7 +22,7 @@ class MapViewModel @Inject constructor(
     ) : ViewModel() {
     
     
-    val viewState = liveData {
+    val viewState: LiveData<MapViewState> = liveData {
         getUserLocationEntityAsFlowUseCase.invoke().collect { userLocation ->
             emit(
                 MapViewState(
@@ -34,11 +35,14 @@ class MapViewModel @Inject constructor(
                         )
                     },
                     userLocation = userLocation.userLatLng,
-                    restaurantsCountToast = NativeText.Plural(
-                        R.plurals.nearby_restaurants_count,
-                        getNearbyRestaurantsEntityUseCase.invoke(userLocation).count(),
-                        listOf(getNearbyRestaurantsEntityUseCase.invoke(userLocation).count())
-                    )
+                    restaurantsCountToast = getNearbyRestaurantsEntityUseCase.invoke(userLocation).count().let {
+                        NativeText.Plural(
+                            R.plurals.nearby_restaurants_count,
+                            it,
+                            listOf(it)
+                        )
+                    },
+                    canShowUserLocation = hasLocationPermissionUseCase.invoke()
                 )
             )
         }
