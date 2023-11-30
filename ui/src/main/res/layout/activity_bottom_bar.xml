@@ -47,6 +47,15 @@
                         android:layout_gravity="center"
                         android:src="@drawable/lunchbox_toolbar_size"
                         />
+                    
+                    <fragment
+                        android:id="@+id/activity_bottom_bar_Fragment_autocomplete"
+                        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:visibility="gone"
+                        />
                 
                 </androidx.appcompat.widget.Toolbar>
             

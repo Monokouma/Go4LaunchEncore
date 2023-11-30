@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.despaircorp.domain.location.GetUserLocationEntityAsFlowUseCase
-import com.despaircorp.domain.location.GetUserLocationEntityUseCase
 import com.despaircorp.domain.permission.AskForEssentialPermissionUseCase
 import com.despaircorp.domain.restaurants.GetNearbyRestaurantsEntityUseCase
 import com.despaircorp.ui.R
@@ -14,13 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val getUserLocationEntityUseCase: GetUserLocationEntityUseCase,
     private val getNearbyRestaurantsEntityUseCase: GetNearbyRestaurantsEntityUseCase,
-    private val askForLocationPermissionUseCase: AskForEssentialPermissionUseCase,
     private val getUserLocationEntityAsFlowUseCase: GetUserLocationEntityAsFlowUseCase,
-    
-    ) : ViewModel() {
-    
+    private val hasLocationPermissionUseCase: AskForEssentialPermissionUseCase
+) : ViewModel() {
     
     val viewState: LiveData<MapViewState> = liveData {
         getUserLocationEntityAsFlowUseCase.invoke().collect { userLocation ->
@@ -35,7 +31,8 @@ class MapViewModel @Inject constructor(
                         )
                     },
                     userLocation = userLocation.userLatLng,
-                    restaurantsCountToast = getNearbyRestaurantsEntityUseCase.invoke(userLocation).count().let {
+                    restaurantsCountToast = getNearbyRestaurantsEntityUseCase.invoke(userLocation)
+                        .count().let {
                         NativeText.Plural(
                             R.plurals.nearby_restaurants_count,
                             it,

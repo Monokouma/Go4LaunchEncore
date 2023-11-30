@@ -2,6 +2,7 @@ package com.despaircorp.data.retrofit
 
 import com.despaircorp.data.restaurants.dto.details.RestaurantDetailsDto
 import com.despaircorp.data.restaurants.dto.list.RestaurantsDto
+import com.despaircorp.data.restaurants.dto.search.RestaurantsSearchDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -19,4 +20,12 @@ interface GooglePlacesApi {
         @Query("key") apiKey: String,
         @Query("place_id") placeId: String
     ): RestaurantDetailsDto?
+    
+    @GET("maps/api/place/findplacefromtext/json")
+    suspend fun getPlacesSearchResult(
+        @Query("input") input: String,
+        @Query("inputtype") inputType: String,
+        @Query("fields") fields: String,
+        @Query("key") apiKey: String
+    ): RestaurantsSearchDto?
 }

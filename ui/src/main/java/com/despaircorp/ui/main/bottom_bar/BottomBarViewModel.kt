@@ -8,11 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.despaircorp.domain.firebase_auth.DisconnectUserUseCase
 import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
+import com.despaircorp.domain.location.GetUserLocationEntityAsFlowUseCase
 import com.despaircorp.domain.notifications.CreateNotificationChannelUseCase
 import com.despaircorp.domain.workers.EnqueueLaunchNotificationWorker
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +25,8 @@ class BottomBarViewModel @Inject constructor(
     private val disconnectUserUseCase: DisconnectUserUseCase,
     private val getFirestoreUserAsFlowUseCase: GetFirestoreUserAsFlowUseCase,
     private val enqueueLaunchNotificationWorker: EnqueueLaunchNotificationWorker,
-    private val createNotificationChannelUseCase: CreateNotificationChannelUseCase
+    private val createNotificationChannelUseCase: CreateNotificationChannelUseCase,
+    private val getUserLocationEntityAsFlowUseCase: GetUserLocationEntityAsFlowUseCase
 ) : ViewModel() {
     private val viewActionMutableLiveData: MutableLiveData<Event<BottomBarAction>> =
         MutableLiveData<Event<BottomBarAction>>()
@@ -41,15 +45,20 @@ class BottomBarViewModel @Inject constructor(
     }
     
     val viewState: LiveData<BottomBarViewState> = liveData {
-        getFirestoreUserAsFlowUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid).collect {
+        combine(
+            getFirestoreUserAsFlowUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid),
+            getUserLocationEntityAsFlowUseCase.invoke()
+        ) { user, location ->
             emit(
                 BottomBarViewState(
-                    username = it.displayName,
-                    emailAddress = it.mailAddress,
-                    userImage = it.picture,
+                    username = user.displayName,
+                    emailAddress = user.mailAddress,
+                    userImage = user.picture,
+                    userLatLn = location.userLatLng
                 )
             )
-        }
+        }.collect()
+        
     }
     
     
