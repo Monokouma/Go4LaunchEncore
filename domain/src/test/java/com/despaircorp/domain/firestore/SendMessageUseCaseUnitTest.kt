@@ -5,6 +5,7 @@ import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import com.despaircorp.domain.firebase_auth.FirebaseAuthDomainRepository
 import com.despaircorp.domain.firebase_real_time.FirebaseRealTimeDomainRepository
+import com.despaircorp.domain.firebase_real_time.GetOrderedUidsUseCase
 import com.despaircorp.domain.firebase_real_time.SendMessageUseCase
 import com.despaircorp.domain.firebase_real_time.model.ChatEntity
 import com.despaircorp.domain.utils.TestCoroutineRule
@@ -16,20 +17,29 @@ import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 
 class SendMessageUseCaseUnitTest {
     @get:Rule
     val testCoroutineRule = TestCoroutineRule()
-    
+
+
+    private val getOrderedUidsUseCase: GetOrderedUidsUseCase = mockk()
     private val firebaseAuthDomainRepository: FirebaseAuthDomainRepository = mockk()
     private val firebaseRealTimeDomainRepository: FirebaseRealTimeDomainRepository = mockk()
-    private val localDateTime = mockkStatic(LocalDateTime::class)
     
     private val useCase = SendMessageUseCase(
+        getOrderedUidsUseCase = getOrderedUidsUseCase,
         firebaseRealTimeDomainRepository = firebaseRealTimeDomainRepository,
-        firebaseAuthDomainRepository = firebaseAuthDomainRepository
+        firebaseAuthDomainRepository = firebaseAuthDomainRepository,
+        clock = Clock.fixed(
+            Instant.ofEpochSecond(1701368499), // 30/11/2023 - 19:21:39
+            ZoneOffset.UTC
+        )
     )
     
     companion object {
