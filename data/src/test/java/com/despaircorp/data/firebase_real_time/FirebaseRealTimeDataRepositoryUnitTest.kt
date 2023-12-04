@@ -9,6 +9,7 @@ import com.despaircorp.data.utils.TestCoroutineRule
 import com.despaircorp.domain.firebase_real_time.model.ChatEntity
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import io.mockk.coEvery
@@ -110,7 +111,7 @@ class FirebaseRealTimeDataRepositoryUnitTest {
                 .addValueEventListener(capture(slot))
         } returns mockk()
         
-        repository.createConversation(DEFAULT_RECEIVER_UID, DEFAULT_SENDER_UID).test {
+        repository.createConversation(DEFAULT_SENDER_UID, DEFAULT_RECEIVER_UID).test {
             runCurrent()
             slot.captured.onDataChange(dataSnapshot)
             cancel()
@@ -141,19 +142,20 @@ class FirebaseRealTimeDataRepositoryUnitTest {
             firebaseRealTime.getReference("chat")
                 .child("${DEFAULT_SENDER_UID}_${DEFAULT_RECEIVER_UID}")
                 .addValueEventListener(capture(slot))
+            
         } returns mockk()
         
         coEvery {
             firebaseRealTime.getReference("chat")
                 .child("${DEFAULT_SENDER_UID}_${DEFAULT_RECEIVER_UID}").setValue(
                     mapOf(
-                        "receiver" to DEFAULT_RECEIVER_UID,
-                        "sender" to DEFAULT_SENDER_UID
+                        "receiver" to DEFAULT_SENDER_UID,
+                        "sender" to DEFAULT_RECEIVER_UID
                     )
                 )
         } returns mockk()
         
-        repository.createConversation(DEFAULT_RECEIVER_UID, DEFAULT_SENDER_UID).test {
+        repository.createConversation(DEFAULT_SENDER_UID, DEFAULT_RECEIVER_UID).test {
             runCurrent()
             slot.captured.onDataChange(dataSnapshot)
             cancel()
@@ -167,13 +169,49 @@ class FirebaseRealTimeDataRepositoryUnitTest {
                 firebaseRealTime.getReference("chat")
                     .child("${DEFAULT_SENDER_UID}_${DEFAULT_RECEIVER_UID}").setValue(
                         mapOf(
-                            "receiver" to DEFAULT_RECEIVER_UID,
-                            "sender" to DEFAULT_SENDER_UID
+                            "receiver" to DEFAULT_SENDER_UID,
+                            "sender" to DEFAULT_RECEIVER_UID
                         )
                     )
             }
             confirmVerified(firebaseRealTime)
         }
+    }
+    
+    @Test
+    fun `nominal case - insert message success`() = testCoroutineRule.runTest {
+        coEvery {
+            firebaseRealTime.getReference("chat")
+                .child("${DEFAULT_SENDER_UID}_${DEFAULT_RECEIVER_UID}")
+                .child(DEFAULT_CHAT_SNAPSHOT_KEY)
+                .setValue(
+                    mapOf(
+                        "senderUID" to DEFAULT_SENDER_UID,
+                        "timestamp" to DEFAULT_CHAT_TIMESTAMP,
+                        "value" to DEFAULT_CHAT_VALUE
+                    )
+                )
+        } returns getDefaultSetUserTask()
+        
+        val result =
+            repository.insertMessage(
+                DEFAULT_SENDER_UID,
+                DEFAULT_RECEIVER_UID,
+                provideChatEntity().copy(senderUid = DEFAULT_SENDER_UID)
+            )
+        
+        assertThat(result).isTrue()
+        
+        coVerify {
+            firebaseRealTime.getReference("chat")
+                .child("${DEFAULT_SENDER_UID}_${DEFAULT_RECEIVER_UID}")
+                .child(DEFAULT_CHAT_SNAPSHOT_KEY)
+                .setValue(
+                    any()
+                )
+        }
+        
+        confirmVerified(firebaseRealTime)
     }
     
     @Test
@@ -192,13 +230,106 @@ class FirebaseRealTimeDataRepositoryUnitTest {
         } returns getDefaultSetUserTaskException()
         
         val result =
-            repository.insertMessage(provideChatEntity().copy(senderUid = DEFAULT_CHAT_VALUE))
+            repository.insertMessage(
+                DEFAULT_SENDER_UID,
+                DEFAULT_RECEIVER_UID,
+                provideChatEntity().copy(senderUid = DEFAULT_CHAT_VALUE)
+            )
         
         assertThat(result).isFalse()
         
+        coVerify {
+            firebaseRealTime.getReference("chat")
+                .child("${DEFAULT_SENDER_UID}_${DEFAULT_RECEIVER_UID}")
+                .child(DEFAULT_CHAT_SNAPSHOT_KEY)
+                .setValue(
+                    any()
+                )
+        }
+        
+        confirmVerified(firebaseRealTime)
     }
     
+    @Test
+    fun `nominal case - get message between current user and specific user`() =
+        testCoroutineRule.runTest {
+            val dataSnapshot: DataSnapshot = mockk() {
+                every { children } returns listOf<DataSnapshot>(
+                    mockk() {
+                        every { child("sender").value } returns DEFAULT_SENDER_UID
+                        every { child("receiver").value } returns DEFAULT_RECEIVER_UID
+                        every { children } returns listOf(
+                            mockk() {
+                                every { key } returns DEFAULT_CHAT_SNAPSHOT_KEY
+                                every { child(VALUE_NODE_KEY).value } returns DEFAULT_CHAT_VALUE
+                                every { child(TIMESTAMP_NODE_KEY).value } returns DEFAULT_CHAT_TIMESTAMP
+                                every { child(SENDER_UID_NODE_KEY).value } returns DEFAULT_SENDER_UID
+                            }
+                        )
+                    }
+                ).asIterable()
+            }
+            
+            val slot = slot<ValueEventListener>()
+            
+            coEvery {
+                firebaseRealTime.getReference("chat").addValueEventListener(capture(slot))
+            } returns mockk()
+            
+            repository.getMessagesBetweenCurrentUserAndSpecificUser(
+                DEFAULT_SENDER_UID,
+                DEFAULT_RECEIVER_UID
+            ).test {
+                runCurrent()
+                slot.captured.onDataChange(dataSnapshot)
+                cancel()
+                
+                val result = awaitItem()
+                awaitComplete()
+                
+                assertThat(result).isEqualTo(
+                    provideChatsEntity()
+                )
+                
+                coVerify {
+                    firebaseRealTime.getReference("chat").addValueEventListener(any())
+                }
+                
+                confirmVerified(firebaseRealTime)
+            }
+        }
+    
+    @Test
+    fun `error case - get message between current user and specific user`() =
+        testCoroutineRule.runTest {
+            val dataSnapshot: DatabaseError = mockk()
+            
+            val slot = slot<ValueEventListener>()
+            
+            coEvery {
+                firebaseRealTime.getReference("chat").addValueEventListener(capture(slot))
+            } returns mockk()
+            
+            repository.getMessagesBetweenCurrentUserAndSpecificUser(
+                DEFAULT_SENDER_UID,
+                DEFAULT_RECEIVER_UID
+            ).test {
+                runCurrent()
+                slot.captured.onCancelled(dataSnapshot)
+                cancel()
+                
+                awaitComplete()
+                
+                coVerify {
+                    firebaseRealTime.getReference("chat").addValueEventListener(any())
+                }
+                
+                confirmVerified(firebaseRealTime)
+            }
+        }
+    
     //Region IN
+    
     private inline fun getDefaultSetUserTask(crossinline mockkBlock: Task<Void>.() -> Unit = {}): Task<Void> =
         mockk {
             every { isComplete } returns true

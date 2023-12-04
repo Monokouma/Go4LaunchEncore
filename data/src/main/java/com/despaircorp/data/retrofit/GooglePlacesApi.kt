@@ -19,4 +19,15 @@ interface GooglePlacesApi {
         @Query("key") apiKey: String,
         @Query("place_id") placeId: String
     ): RestaurantDetailsDto?
+    
+    /*
+    @GET("maps/api/place/findplacefromtext/json")
+    suspend fun getPlacesSearchResult(
+        @Query("input") input: String,
+        @Query("inputtype") inputType: String,
+        @Query("fields") fields: String,
+        @Query("key") apiKey: String
+    ): RestaurantsSearchDto?
+    
+     */
 }

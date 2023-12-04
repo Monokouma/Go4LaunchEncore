@@ -21,6 +21,7 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runCurrent
 import org.junit.Assert.assertTrue
@@ -502,9 +503,56 @@ class FirestoreDataRepositoryUnitTest {
         }
     }
     
+    @Test
+    fun `nominal case - update user presence`() = testCoroutineRule.runTest {
+        coEvery {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("online", DEFAULT_IS_ONLINE)
+        } returns getDefaultSetUserTask()
+        
+        val result = repository.updateUserPresence(DEFAULT_UID, DEFAULT_IS_ONLINE)
+        
+        assertThat(result).isEqualTo(Unit)
+        
+        coVerify {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("online", DEFAULT_IS_ONLINE)
+        }
+        
+        confirmVerified(firestore)
+    }
+    
+    @Test
+    fun `error case - update user presence`() = testCoroutineRule.runTest {
+        coEvery {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("online", DEFAULT_IS_ONLINE)
+        } returns getDefaultSetUserTaskWithException()
+        
+        repository.updateUserPresence(DEFAULT_UID, DEFAULT_IS_ONLINE)
+        
+        assertThat(this.isActive).isEqualTo(true)
+        
+        coVerify {
+            firestore
+                .collection("users")
+                .document(DEFAULT_UID)
+                .update("online", DEFAULT_IS_ONLINE)
+        }
+        
+        confirmVerified(firestore)
+    }
+    
     //Region Out
     private inline fun getDefaultSetUserTask(crossinline mockkBlock: Task<Void>.() -> Unit = {}): Task<Void> =
         mockk {
+            every { isSuccessful } returns true
             every { isComplete } returns true
             every { exception } returns null
             every { isCanceled } returns false

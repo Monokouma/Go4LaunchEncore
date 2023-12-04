@@ -23,7 +23,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -316,7 +315,6 @@ class UserSettingsViewModelUnitTest {
         }
     }
     
-    @Ignore
     @Test
     fun `nominal case - update user image success`() = testCoroutineRule.runTest {
         coEvery {
@@ -340,7 +338,6 @@ class UserSettingsViewModelUnitTest {
         }
     }
     
-    @Ignore
     @Test
     fun `nominal case - update user image error`() = testCoroutineRule.runTest {
         coEvery {

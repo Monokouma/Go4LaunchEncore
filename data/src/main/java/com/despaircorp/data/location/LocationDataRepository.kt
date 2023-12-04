@@ -67,8 +67,10 @@ class LocationDataRepository @Inject constructor(
             }
         }
         
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 6_000L)
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 60_000L)
             .build()
+        
+        locationRequest.smallestDisplacement = 4f
         
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest,

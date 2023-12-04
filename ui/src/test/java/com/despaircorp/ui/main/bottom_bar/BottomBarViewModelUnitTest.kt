@@ -7,9 +7,14 @@ import com.despaircorp.domain.firebase_auth.DisconnectUserUseCase
 import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
+import com.despaircorp.domain.location.GetUserLocationEntityAsFlowUseCase
+import com.despaircorp.domain.location.model.LocationEntity
+import com.despaircorp.domain.notifications.CreateNotificationChannelUseCase
+import com.despaircorp.domain.workers.EnqueueLaunchNotificationWorker
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.TestCoroutineRule
 import com.despaircorp.ui.utils.observeForTesting
+import com.google.android.gms.maps.model.LatLng
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -27,6 +32,9 @@ class BottomBarViewModelUnitTest {
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase = mockk()
     private val getFirestoreUserUseCase: GetFirestoreUserAsFlowUseCase = mockk()
     private val disconnectUserUseCase: DisconnectUserUseCase = mockk()
+    private val enqueueLaunchNotificationWorker: EnqueueLaunchNotificationWorker = mockk()
+    private val createNotificationChannelUseCase: CreateNotificationChannelUseCase = mockk()
+    private val getUserLocationEntityAsFlowUseCase: GetUserLocationEntityAsFlowUseCase = mockk()
     
     private lateinit var viewModel: BottomBarViewModel
     
@@ -38,7 +46,7 @@ class BottomBarViewModelUnitTest {
         private const val DEFAULT_CURRENTLY_EATING = false
         private val DEFAULT_EATING_PLACE_IDE = null
         private const val DEFAULT_ONLINE = true
-        
+        private val DEFAULT_LATLNG = LatLng(49.857920, 1.295048)
     }
     
     @Before
@@ -58,23 +66,32 @@ class BottomBarViewModelUnitTest {
         
         coEvery { disconnectUserUseCase.invoke() } returns true
         
+        coEvery { enqueueLaunchNotificationWorker.invoke() } returns true
+        
+        coEvery { getUserLocationEntityAsFlowUseCase.invoke() } returns flowOf(provideLocationEntity())
+        
+        coEvery { createNotificationChannelUseCase.invoke() } returns true
+        
         viewModel = BottomBarViewModel(
             getAuthenticatedUserUseCase = getAuthenticatedUserUseCase,
             disconnectUserUseCase = disconnectUserUseCase,
             getFirestoreUserAsFlowUseCase = getFirestoreUserUseCase,
-            mockk(),
-            mockk(),
+            enqueueLaunchNotificationWorker = enqueueLaunchNotificationWorker,
+            createNotificationChannelUseCase = createNotificationChannelUseCase,
+            getUserLocationEntityAsFlowUseCase = getUserLocationEntityAsFlowUseCase
         )
     }
     
     @Test
     fun `nominal case - infos are correct and sign out success`() = testCoroutineRule.runTest {
+        
         viewModel.viewState.observeForTesting(this) {
             assertThat(it.value).isEqualTo(
                 BottomBarViewState(
                     username = DEFAULT_DISPLAY_NAME,
                     emailAddress = DEFAULT_EMAIL,
-                    userImage = DEFAULT_PICTURE
+                    userImage = DEFAULT_PICTURE,
+                    DEFAULT_LATLNG
                 )
             )
         }
@@ -95,7 +112,8 @@ class BottomBarViewModelUnitTest {
                 BottomBarViewState(
                     username = DEFAULT_DISPLAY_NAME,
                     emailAddress = DEFAULT_EMAIL,
-                    userImage = DEFAULT_PICTURE
+                    userImage = DEFAULT_PICTURE,
+                    userLatLn = DEFAULT_LATLNG
                 )
             )
         }
@@ -106,6 +124,10 @@ class BottomBarViewModelUnitTest {
             assertThat(it.value?.getContentIfNotHandled()).isEqualTo(BottomBarAction.Error(message = R.string.error_occurred))
         }
     }
+    
+    private fun provideLocationEntity() = LocationEntity(
+        DEFAULT_LATLNG
+    )
 }
 
 

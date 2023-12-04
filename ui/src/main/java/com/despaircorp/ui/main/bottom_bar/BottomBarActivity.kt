@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
+import android.transition.TransitionManager
 import android.util.Log
 import android.view.Menu
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -39,16 +41,6 @@ class BottomBarActivity : AppCompatActivity() {
         
         setSupportActionBar(binding.activityBottomBarToolbarRoot)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        
-        binding.activityBottomBarToolbarRoot.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.search -> {
-                    Log.i("Monokouma", "clicked")
-                }
-            }
-            
-            true
-        }
         
         val headerBinding = HeaderNavigationDrawerBinding.bind(
             binding.activityBottomBarNavigationViewProfile.getHeaderView(0)
@@ -137,6 +129,7 @@ class BottomBarActivity : AppCompatActivity() {
                 .into(headerBinding.navigationDrawerImageViewUserImage)
             headerBinding.navigationDrawerTextViewUserMail.text = it.emailAddress
             headerBinding.navigationDrawerTextViewUserName.text = it.username
+            
         }
         
         viewModel.viewAction.observe(this) {
@@ -162,6 +155,7 @@ class BottomBarActivity : AppCompatActivity() {
                 else -> Unit
             }
         }
+        
     }
     
     override fun onSaveInstanceState(outState: Bundle) {
@@ -181,6 +175,17 @@ class BottomBarActivity : AppCompatActivity() {
                 .beginTransaction()
                 .replace(binding.activityBottomBarFrameLayout.id, fragment, fragment.javaClass.name)
                 .commit()
+        }
+    }
+    
+    private fun changeVisibilityWithAnimation(view: View) {
+        val isViewActuallyVisible = view.visibility == View.VISIBLE
+        TransitionManager.endTransitions(binding.root)
+        TransitionManager.beginDelayedTransition(binding.root)
+        if (isViewActuallyVisible) {
+            view.visibility = View.GONE
+        } else {
+            view.visibility = View.VISIBLE
         }
     }
     

@@ -46,17 +46,19 @@ class ChatMenuMessageAdapter(
             }
         }
     }
+    
+    object ChatMenuMessageDiffUtil : DiffUtil.ItemCallback<ChatMenuMessagesViewStateItems>() {
+        override fun areItemsTheSame(
+            oldItem: ChatMenuMessagesViewStateItems,
+            newItem: ChatMenuMessagesViewStateItems
+        ): Boolean =
+            oldItem.convId == newItem.convId
+        
+        override fun areContentsTheSame(
+            oldItem: ChatMenuMessagesViewStateItems,
+            newItem: ChatMenuMessagesViewStateItems
+        ) = oldItem == newItem
+    }
 }
 
-object ChatMenuMessageDiffUtil : DiffUtil.ItemCallback<ChatMenuMessagesViewStateItems>() {
-    override fun areItemsTheSame(
-        oldItem: ChatMenuMessagesViewStateItems,
-        newItem: ChatMenuMessagesViewStateItems
-    ): Boolean =
-        oldItem.convId == newItem.convId
-    
-    override fun areContentsTheSame(
-        oldItem: ChatMenuMessagesViewStateItems,
-        newItem: ChatMenuMessagesViewStateItems
-    ) = oldItem == newItem
-}
+

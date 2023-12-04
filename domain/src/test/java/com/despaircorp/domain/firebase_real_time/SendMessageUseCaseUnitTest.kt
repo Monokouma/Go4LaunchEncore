@@ -1,35 +1,39 @@
-package com.despaircorp.domain.firestore
+package com.despaircorp.domain.firebase_real_time
 
 import assertk.assertThat
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
 import com.despaircorp.domain.firebase_auth.FirebaseAuthDomainRepository
-import com.despaircorp.domain.firebase_real_time.FirebaseRealTimeDomainRepository
-import com.despaircorp.domain.firebase_real_time.SendMessageUseCase
 import com.despaircorp.domain.firebase_real_time.model.ChatEntity
 import com.despaircorp.domain.utils.TestCoroutineRule
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 
 class SendMessageUseCaseUnitTest {
     @get:Rule
     val testCoroutineRule = TestCoroutineRule()
     
+    
+    private val getOrderedUidsUseCase: GetOrderedUidsUseCase = mockk()
     private val firebaseAuthDomainRepository: FirebaseAuthDomainRepository = mockk()
     private val firebaseRealTimeDomainRepository: FirebaseRealTimeDomainRepository = mockk()
-    private val localDateTime = mockkStatic(LocalDateTime::class)
     
     private val useCase = SendMessageUseCase(
+        getOrderedUidsUseCase = getOrderedUidsUseCase,
         firebaseRealTimeDomainRepository = firebaseRealTimeDomainRepository,
-        firebaseAuthDomainRepository = firebaseAuthDomainRepository
+        firebaseAuthDomainRepository = firebaseAuthDomainRepository,
+        clock = Clock.fixed(
+            Instant.ofEpochSecond(1701368499), // 30/11/2023 - 19:21:39
+            ZoneOffset.UTC
+        )
     )
     
     companion object {
@@ -37,19 +41,32 @@ class SendMessageUseCaseUnitTest {
         private const val DEFAULT_RECEIVER_UID = "DEFAULT_RECEIVER_UID"
         private const val DEFAULT_MESSAGE = "DEFAULT_MESSAGE"
         
-        private const val DEFAULT_TODAY_AT_MILLIS = 1000L
+        private const val DEFAULT_TODAY_AT_MILLIS = 1701364899000L
         private const val DEFAULT_CHAT_ID = "${DEFAULT_SENDER_UID}_$DEFAULT_TODAY_AT_MILLIS"
     }
     
     @Before
     fun setup() {
         
-        
         coEvery { firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid } returns DEFAULT_SENDER_UID
-        coEvery { firebaseRealTimeDomainRepository.insertMessage(provideChatEntity()) } returns true
+        
         coEvery {
-            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        } returns DEFAULT_TODAY_AT_MILLIS
+            firebaseRealTimeDomainRepository.insertMessage(
+                DEFAULT_RECEIVER_UID,
+                DEFAULT_SENDER_UID,
+                provideChatEntity()
+            )
+        } returns true
+        
+        coEvery {
+            getOrderedUidsUseCase.invoke(
+                DEFAULT_RECEIVER_UID,
+                DEFAULT_SENDER_UID
+            )
+        } returns Pair(
+            DEFAULT_RECEIVER_UID,
+            DEFAULT_SENDER_UID
+        )
     }
     
     @Test
@@ -59,9 +76,12 @@ class SendMessageUseCaseUnitTest {
         assertThat(result).isTrue()
         
         coVerify {
-            firebaseRealTimeDomainRepository.insertMessage(provideChatEntity())
+            firebaseRealTimeDomainRepository.insertMessage(
+                DEFAULT_RECEIVER_UID,
+                DEFAULT_SENDER_UID,
+                provideChatEntity()
+            )
             firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid
-            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         }
         
         confirmVerified(
@@ -72,16 +92,25 @@ class SendMessageUseCaseUnitTest {
     
     @Test
     fun `nominal case - send message failure`() = testCoroutineRule.runTest {
-        coEvery { firebaseRealTimeDomainRepository.insertMessage(provideChatEntity()) } returns false
+        coEvery {
+            firebaseRealTimeDomainRepository.insertMessage(
+                DEFAULT_RECEIVER_UID,
+                DEFAULT_SENDER_UID,
+                provideChatEntity()
+            )
+        } returns false
         
         val result = useCase.invoke(DEFAULT_RECEIVER_UID, DEFAULT_MESSAGE)
         
         assertThat(result).isFalse()
         
         coVerify {
-            firebaseRealTimeDomainRepository.insertMessage(provideChatEntity())
+            firebaseRealTimeDomainRepository.insertMessage(
+                DEFAULT_RECEIVER_UID,
+                DEFAULT_SENDER_UID,
+                provideChatEntity()
+            )
             firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid
-            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         }
         
         confirmVerified(

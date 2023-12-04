@@ -21,10 +21,12 @@ class CreateConversationUseCaseUnitTest {
     
     private val firebaseRealTimeDomainRepository: FirebaseRealTimeDomainRepository = mockk()
     private val firebaseAuthDomainRepository: FirebaseAuthDomainRepository = mockk()
+    private val getOrderedUidsUseCase: GetOrderedUidsUseCase = mockk()
     
     private val useCase = CreateConversationUseCase(
         firebaseRealTimeDomainRepository = firebaseRealTimeDomainRepository,
-        firebaseAuthDomainRepository = firebaseAuthDomainRepository
+        firebaseAuthDomainRepository = firebaseAuthDomainRepository,
+        getOrderedUidsUseCase = getOrderedUidsUseCase
     )
     
     companion object {
@@ -41,6 +43,11 @@ class CreateConversationUseCaseUnitTest {
                 DEFAULT_UID
             )
         } returns flowOf(true)
+        coEvery {
+            getOrderedUidsUseCase.invoke(DEFAULT_RECEIVER_UID, DEFAULT_UID)
+        } returns Pair(
+            DEFAULT_RECEIVER_UID, DEFAULT_UID
+        )
     }
     
     @Test
@@ -74,6 +81,7 @@ class CreateConversationUseCaseUnitTest {
                 DEFAULT_UID
             )
         } returns flowOf(false)
+        
         
         useCase.invoke(DEFAULT_RECEIVER_UID).test {
             val result = awaitItem()

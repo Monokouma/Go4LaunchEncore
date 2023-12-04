@@ -39,7 +39,6 @@ class ChatDetailsAdapter(
                 binding.chatItemViewTextViewReceiverValue.text =
                     chatDetailsViewStateItems.messageValue
             }
-            
         }
     }
     

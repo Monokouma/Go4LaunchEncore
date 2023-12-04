@@ -2,6 +2,7 @@ package com.despaircorp.domain.firebase_real_time
 
 import com.despaircorp.domain.firebase_auth.FirebaseAuthDomainRepository
 import com.despaircorp.domain.firebase_real_time.model.ChatEntity
+import java.time.Clock
 import java.time.LocalDateTime
 import java.time.ZoneId
 import javax.inject.Inject
@@ -9,7 +10,8 @@ import javax.inject.Inject
 class SendMessageUseCase @Inject constructor(
     private val getOrderedUidsUseCase: GetOrderedUidsUseCase,
     private val firebaseRealTimeDomainRepository: FirebaseRealTimeDomainRepository,
-    private val firebaseAuthDomainRepository: FirebaseAuthDomainRepository
+    private val firebaseAuthDomainRepository: FirebaseAuthDomainRepository,
+    private val clock: Clock,
 ) {
     suspend fun invoke(receiverUid: String, message: String): Boolean {
         val currentUserUid = firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid
@@ -20,10 +22,10 @@ class SendMessageUseCase @Inject constructor(
             secondUid = second,
             chatEntity = ChatEntity(
                 chatId = "${currentUserUid}_${
-                    LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                    LocalDateTime.now(clock).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
                 }",
                 value = message,
-                timestamp = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()
+                timestamp = LocalDateTime.now(clock).atZone(ZoneId.systemDefault()).toInstant()
                     .toEpochMilli(),
                 senderUid = currentUserUid,
                 receiverUid = receiverUid

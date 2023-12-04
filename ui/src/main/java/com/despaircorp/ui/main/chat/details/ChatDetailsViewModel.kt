@@ -1,6 +1,5 @@
 package com.despaircorp.ui.main.chat.details
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -35,7 +34,6 @@ class ChatDetailsViewModel @Inject constructor(
             getFirestoreUserAsFlowUseCase.invoke(receiverUid),
             getAllUserMessagesWithSpecificUserUseCase.invoke(receiverUid)
         ) { isMessageFilled, firestoreUserEntity, allMessagesEntities ->
-            Log.i("Monokouma", firestoreUserEntity.uid)
             
             emit(
                 ChatDetailsViewState(

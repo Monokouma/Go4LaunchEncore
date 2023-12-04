@@ -3,6 +3,7 @@ package com.despaircorp.ui.main.map
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.despaircorp.domain.location.GetUserLocationEntityAsFlowUseCase
 import com.despaircorp.domain.location.GetUserLocationEntityUseCase
 import com.despaircorp.domain.location.model.LocationEntity
 import com.despaircorp.domain.restaurants.GetNearbyRestaurantsEntityUseCase
@@ -14,6 +15,7 @@ import com.despaircorp.ui.utils.observeForTesting
 import com.google.android.gms.maps.model.LatLng
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,6 +29,7 @@ class MapViewModelUnitTest {
     
     private val getUserLocationEntityUseCase: GetUserLocationEntityUseCase = mockk()
     private val getNearbyRestaurantsEntityUseCase: GetNearbyRestaurantsEntityUseCase = mockk()
+    private val getUserLocationEntityAsFlowUseCase: GetUserLocationEntityAsFlowUseCase = mockk()
     
     private lateinit var viewModel: MapViewModel
     
@@ -49,12 +52,11 @@ class MapViewModelUnitTest {
     fun setup() {
         coEvery { getUserLocationEntityUseCase.invoke() } returns provideLocationEntity()
         coEvery { getNearbyRestaurantsEntityUseCase.invoke(provideLocationEntity()) } returns provideRestaurantsEntity()
+        coEvery { getUserLocationEntityAsFlowUseCase.invoke() } returns flowOf(provideLocationEntity())
         
         viewModel = MapViewModel(
-            getUserLocationEntityUseCase = getUserLocationEntityUseCase,
             getNearbyRestaurantsEntityUseCase = getNearbyRestaurantsEntityUseCase,
-            mockk(),
-            mockk(),
+            getUserLocationEntityAsFlowUseCase = getUserLocationEntityAsFlowUseCase,
         )
     }
     
@@ -72,8 +74,13 @@ class MapViewModelUnitTest {
     
     private fun provideMapViewState() = MapViewState(
         mapViewStateItems = provideMapViewStateItems(),
-        provideLocationEntity().userLatLng,
-        NativeText.Plural( R.plurals.nearby_restaurants_count, provideMapViewStateItems().count(), listOf(provideMapViewStateItems().count()))
+        userLocation = provideLocationEntity().userLatLng,
+        restaurantsCountToast = NativeText.Plural(
+            R.plurals.nearby_restaurants_count,
+            provideMapViewStateItems().count(),
+            listOf(provideMapViewStateItems().count())
+        ),
+        canShowUserLocation = true
     )
     
     private fun provideMapViewStateItems() = List(3) {

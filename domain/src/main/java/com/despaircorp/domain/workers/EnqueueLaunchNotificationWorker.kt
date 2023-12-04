@@ -1,27 +1,28 @@
 package com.despaircorp.domain.workers
 
-import android.util.Log
-import java.util.Calendar
+import java.time.Clock
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 class EnqueueLaunchNotificationWorker @Inject constructor(
-    private val workersDomainRepository: WorkersDomainRepository
+    private val workersDomainRepository: WorkersDomainRepository,
+    private val clock: Clock,
 ) {
     suspend fun invoke(): Boolean =
         workersDomainRepository.enqueueNotificationWorker(getInitialDelay())
     
     private fun getInitialDelay(): Long {
-        val calendar = Calendar.getInstance()
-        val now = calendar.timeInMillis
-        calendar.set(Calendar.HOUR_OF_DAY, 12)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        val nextRun = calendar.timeInMillis
-        if (nextRun < now) { // if 12 PM has already passed, schedule for next day
-            calendar.add(Calendar.DAY_OF_YEAR, 1)
+        val now = LocalDateTime.now(clock)
+        var nextRun = now.withHour(12).withMinute(0).withSecond(0)
+        
+        // If 12 PM has already passed, schedule for the next day
+        if (nextRun.isBefore(now)) {
+            nextRun = nextRun.plusDays(1)
         }
-        Log.i("Monokouma", calendar.toString())
-        return calendar.timeInMillis - now
+        
+        // Calculate delay in milliseconds
+        return ChronoUnit.MILLIS.between(now, nextRun)
     }
     
 }

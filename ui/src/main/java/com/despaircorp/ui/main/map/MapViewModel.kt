@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.despaircorp.domain.location.GetUserLocationEntityAsFlowUseCase
-import com.despaircorp.domain.location.GetUserLocationEntityUseCase
-import com.despaircorp.domain.permission.AskForEssentialPermissionUseCase
 import com.despaircorp.domain.restaurants.GetNearbyRestaurantsEntityUseCase
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.NativeText
@@ -14,19 +12,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val getUserLocationEntityUseCase: GetUserLocationEntityUseCase,
     private val getNearbyRestaurantsEntityUseCase: GetNearbyRestaurantsEntityUseCase,
-    private val askForLocationPermissionUseCase: AskForEssentialPermissionUseCase,
     private val getUserLocationEntityAsFlowUseCase: GetUserLocationEntityAsFlowUseCase,
-    
-    ) : ViewModel() {
-    
+) : ViewModel() {
     
     val viewState: LiveData<MapViewState> = liveData {
         getUserLocationEntityAsFlowUseCase.invoke().collect { userLocation ->
+            val restaurants = getNearbyRestaurantsEntityUseCase.invoke(userLocation)
             emit(
                 MapViewState(
-                    mapViewStateItems = getNearbyRestaurantsEntityUseCase.invoke(userLocation).map {
+                    mapViewStateItems = restaurants.map {
                         MapViewStateItems(
                             placeId = it.id,
                             name = it.name,
@@ -35,14 +30,14 @@ class MapViewModel @Inject constructor(
                         )
                     },
                     userLocation = userLocation.userLatLng,
-                    restaurantsCountToast = getNearbyRestaurantsEntityUseCase.invoke(userLocation).count().let {
+                    restaurantsCountToast = restaurants.count().let {
                         NativeText.Plural(
                             R.plurals.nearby_restaurants_count,
                             it,
                             listOf(it)
                         )
                     },
-                    canShowUserLocation = hasLocationPermissionUseCase.invoke()
+                    canShowUserLocation = true
                 )
             )
         }
