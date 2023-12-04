@@ -166,7 +166,7 @@ class UserSettingsViewModel @Inject constructor(
     
     fun onUserImageChange(data: Uri) {
         viewModelScope.launch {
-            if (updateUserImageUseCase.invoke(
+            viewAction.value = if (updateUserImageUseCase.invoke(
                     getAuthenticatedUserUseCase.invoke().uid,
                     updateUserImageThenGetLinkUseCase.invoke(
                         getAuthenticatedUserUseCase.invoke().uid,

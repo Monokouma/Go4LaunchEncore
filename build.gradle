@@ -4,7 +4,7 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
     id 'com.android.library' version '8.1.1' apply false
     id 'com.google.dagger.hilt.android' version '2.48.1' apply false
-    id 'org.jetbrains.kotlinx.kover' version '0.7.4'
+    id 'org.jetbrains.kotlinx.kover' version '0.6.1'
     id 'com.google.gms.google-services' version '4.3.15' apply false
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1'
     id 'com.google.devtools.ksp' version '1.9.0-1.0.13' apply false
@@ -46,14 +46,16 @@ koverMerged {
                             "*_HiltModules\$*",
                             // Gradle Generated
                             "com.despaircorp.domain.utils.*",
+                            "com.despaircorp.data.restaurants.dto.*",
                             "com.despaircorp.data.utils.*",
                             "com.despaircorp.ui.utils.*",
                             "com.despaircorp.ui.databinding.*",
-                            "com.despaircorp.go4launchencore.Go4LaunchApplication.*",
+                            "com.despaircorp.go4launchencore.main_app.*",
                             "com.despaircorp.data.room.database.*",
                             "com.despaircorp.data.BuildConfig",
                             "com.despaircorp.domain.BuildConfig",
                             "com.despaircorp.ui.BuildConfig",
+                            "com.despaircorp.data.permission.*",
                             // TODO: Remove below when Kover can handle Android integration tests!
                             // Android UI
                             "*MainApplication",

@@ -4,8 +4,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
+import com.despaircorp.domain.firebase_real_time.GetAllUserMessagesWithSpecificUserUseCase
 import com.despaircorp.domain.firebase_real_time.SendMessageUseCase
+import com.despaircorp.domain.firebase_real_time.model.ChatEntity
+import com.despaircorp.domain.firestore.GetFirestoreUserAsFlowUseCase
 import com.despaircorp.domain.firestore.model.FirestoreUserEntity
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.TestCoroutineRule
@@ -30,6 +32,8 @@ class ChatDetailsViewModelUnitTest {
     private val savedStateHandle: SavedStateHandle = mockk()
     private val getFirestoreUserAsFlowUseCase: GetFirestoreUserAsFlowUseCase = mockk()
     private val sendMessageUseCase: SendMessageUseCase = mockk()
+    private val getAllUserMessagesWithSpecificUserUseCase: GetAllUserMessagesWithSpecificUserUseCase =
+        mockk()
     
     private lateinit var viewModel: ChatDetailsViewModel
     
@@ -43,6 +47,11 @@ class ChatDetailsViewModelUnitTest {
         private const val DEFAULT_CURRENTLY_EATING = false
         private val DEFAULT_EATING_PLACE_ID = null
         private const val DEFAULT_IS_ONLINE = true
+        
+        private const val DEFAULT_CHAT_ID = "DEFAULT_CHAT_ID"
+        private const val DEFAULT_VALUE = "DEFAULT_VALUE"
+        private const val DEFAULT_TIMESTAMP = 1000L
+        private const val DEFAULT_SENDER_UID = "DEFAULT_SENDER_UID"
     }
     
     @Before
@@ -54,11 +63,15 @@ class ChatDetailsViewModelUnitTest {
         )
         coEvery { sendMessageUseCase.invoke(DEFAULT_RECEIVER_UID, DEFAULT_MESSAGE) } returns true
         
+        coEvery { getAllUserMessagesWithSpecificUserUseCase.invoke(DEFAULT_RECEIVER_UID) } returns flowOf(
+            provideChatEntity()
+        )
+        
         viewModel = ChatDetailsViewModel(
             savedStateHandle = savedStateHandle,
             getFirestoreUserAsFlowUseCase = getFirestoreUserAsFlowUseCase,
             sendMessageUseCase = sendMessageUseCase,
-            mockk()
+            getAllUserMessagesWithSpecificUserUseCase = getAllUserMessagesWithSpecificUserUseCase
         )
     }
     
@@ -126,7 +139,16 @@ class ChatDetailsViewModelUnitTest {
         receiverName = DEFAULT_DISPLAY_NAME,
         receiverPicture = DEFAULT_PICTURE,
         onlineDotResources = R.drawable.green_circle,
-        sendImageResources = R.drawable.send_uncolored
+        sendImageResources = R.drawable.send_uncolored,
+        chatDetailsViewStateItems = provideChatEntity().map {
+            ChatDetailsViewStateItems(
+                receiverId = it.receiverUid,
+                senderId = it.senderUid,
+                messageValue = it.value,
+                timestamp = it.timestamp,
+                isOnRight = it.senderUid == DEFAULT_RECEIVER_UID
+            )
+        }
     )
     
     private fun provideFirestoreUserEntity() = FirestoreUserEntity(
@@ -138,4 +160,14 @@ class ChatDetailsViewModelUnitTest {
         eatingPlaceId = DEFAULT_EATING_PLACE_ID,
         online = DEFAULT_IS_ONLINE
     )
+    
+    private fun provideChatEntity() = List(3) {
+        ChatEntity(
+            DEFAULT_CHAT_ID,
+            DEFAULT_VALUE,
+            DEFAULT_TIMESTAMP,
+            DEFAULT_SENDER_UID,
+            DEFAULT_RECEIVER_UID
+        )
+    }
 }

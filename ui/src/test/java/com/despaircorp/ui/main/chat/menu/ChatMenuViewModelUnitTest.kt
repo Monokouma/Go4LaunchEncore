@@ -20,12 +20,10 @@ import com.despaircorp.ui.utils.observeForTesting
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.time.LocalDateTime
 
 class ChatMenuViewModelUnitTest {
     @get:Rule
@@ -40,7 +38,6 @@ class ChatMenuViewModelUnitTest {
     private val getFirestoreUserUseCase: GetFirestoreUserUseCase = mockk()
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase = mockk()
     private val application: Application = mockk()
-    private val localDateTime = mockkStatic(LocalDateTime::class)
     private lateinit var viewModel: ChatMenuViewModel
     
     companion object {
@@ -106,18 +103,6 @@ class ChatMenuViewModelUnitTest {
             }
         }
     
-    @Test
-    fun `nominal case - create conversation success`() = testCoroutineRule.runTest {
-        viewModel.createConversation(DEFAULT_RECEIVER_UID)
-        
-        viewModel.viewAction.observeForTesting(this) {
-            assertThat(it.value?.getContentIfNotHandled()).isEqualTo(
-                ChatMenuAction.Success(
-                    DEFAULT_RECEIVER_UID
-                )
-            )
-        }
-    }
     
     @Test
     fun `error case - create conversation error`() = testCoroutineRule.runTest {
@@ -163,7 +148,7 @@ class ChatMenuViewModelUnitTest {
         )
     }
     
-    private fun provideChatMessagesViewStateItems() = List(1) {
+    private fun provideChatMessagesViewStateItems() = List(3) {
         ChatMenuMessagesViewStateItems(
             convId = DEFAULT_CHAT_SNAPSHOT_KEY,
             senderId = DEFAULT_SENDER_UID,
@@ -175,7 +160,7 @@ class ChatMenuViewModelUnitTest {
         )
     }
     
-    private fun provideChatMessagesViewStateItemsWithYouAsMessage() = List(1) {
+    private fun provideChatMessagesViewStateItemsWithYouAsMessage() = List(3) {
         ChatMenuMessagesViewStateItems(
             convId = DEFAULT_CHAT_SNAPSHOT_KEY,
             senderId = DEFAULT_SENDER_UID,

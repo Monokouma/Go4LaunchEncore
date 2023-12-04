@@ -1,10 +1,11 @@
-package com.despaircorp.go4launchencore
+package com.despaircorp.go4launchencore.main_app
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import androidx.work.Configuration
 import com.despaircorp.domain.firestore.ChangePresenceUseCase
+import com.despaircorp.go4launchencore.factory.NotificationWorkerFactory
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel

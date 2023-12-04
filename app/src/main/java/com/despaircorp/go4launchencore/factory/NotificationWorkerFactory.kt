@@ -1,4 +1,4 @@
-package com.despaircorp.go4launchencore
+package com.despaircorp.go4launchencore.factory
 
 import android.content.Context
 import androidx.work.ListenableWorker

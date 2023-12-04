@@ -55,8 +55,8 @@ android {
 }
 
 dependencies {
-    ksp 'androidx.room:room-compiler:2.6.0'
-    implementation 'androidx.room:room-ktx:2.6.0'
+    ksp 'androidx.room:room-compiler:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
     implementation 'com.google.firebase:firebase-storage'
     // Check the latest version on Firebase website
     implementation 'androidx.hilt:hilt-work:1.1.0'
@@ -67,8 +67,8 @@ dependencies {
 
     implementation project(path: ':domain')
 
-    implementation "androidx.room:room-runtime:2.6.0" // Room library
-    annotationProcessor "androidx.room:room-compiler:2.6.0" // Room annotation processor
+    implementation "androidx.room:room-runtime:2.6.1" // Room library
+    annotationProcessor "androidx.room:room-compiler:2.6.1" // Room annotation processor
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
 
     // Provides Tasks.await() coroutine

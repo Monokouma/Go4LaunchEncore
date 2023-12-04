@@ -65,7 +65,12 @@ dependencies {
     implementation "com.google.dagger:hilt-android:2.48.1"
     implementation 'androidx.lifecycle:lifecycle-process:2.6.2'
 
-
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.mockk:mockk:1.13.3'
+    testImplementation 'com.willowtreeapps.assertk:assertk-jvm:0.25'
+    testImplementation 'app.cash.turbine:turbine:0.13.0'
+    testImplementation 'com.squareup.retrofit2:retrofit-mock:2.9.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
 }
 
 kover {
