@@ -1,5 +1,7 @@
 package com.despaircorp.domain.workers
 
+import kotlin.time.Duration
+
 interface WorkersDomainRepository {
-    suspend fun enqueueNotificationWorker(initialD: Long): Boolean
+    fun enqueueNotificationWorker(initialDuration: Duration)
 }

@@ -1,17 +1,16 @@
 package com.despaircorp.data.notification
 
 import android.app.Application
+import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
-import assertk.assertThat
-import assertk.assertions.isFalse
-import assertk.assertions.isTrue
+import androidx.core.app.NotificationManagerCompat
+import com.despaircorp.data.R
 import com.despaircorp.data.utils.TestCoroutineRule
 import io.mockk.coVerify
 import io.mockk.confirmVerified
-import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -19,59 +18,57 @@ import org.junit.Test
 class NotificationDataRepositoryUnitTest {
     @get:Rule
     val testCoroutineRule = TestCoroutineRule()
-    
+
     private val application: Application = mockk()
-    private val notificationManager: NotificationManager = mockk()
-    private val context: Context = mockk()
-    
+    private val notificationManagerCompat: NotificationManagerCompat = mockk()
+
     private lateinit var repository: NotificationDataRepository
-    
+
     companion object {
         private const val DEFAULT_USERNAME = "DEFAULT_USERNAME"
         private const val DEFAULT_UID = "DEFAULT_UID"
     }
-    
+
     @Before
     fun setup() {
-        every { application.getSystemService(Context.NOTIFICATION_SERVICE) } returns notificationManager
-        every { application.applicationContext } returns context
-        
         repository = NotificationDataRepository(
-            dispatcherProvider = testCoroutineRule.getTestCoroutineDispatcherProvider(),
-            application = application
+            application = application,
+            notificationManagerCompat = notificationManagerCompat,
         )
     }
-    
+
     @Test
     fun `nominal case - create channel`() = testCoroutineRule.runTest {
         justRun {
-            notificationManager.createNotificationChannel(any())
+            notificationManagerCompat.createNotificationChannel(any<NotificationChannel>())
         }
-        
-        val result = repository.createChannel()
-        assertThat(result).isTrue()
-        
-        coVerify {
-            notificationManager.createNotificationChannel(any())
+
+        repository.createChannel()
+
+        verify {
+            notificationManagerCompat.createNotificationChannel(
+                NotificationChannel("Go4Lunch", "Go 4 Lunch !", NotificationManager.IMPORTANCE_DEFAULT).apply {
+                    description = ""
+                }
+            )
         }
-        
-        confirmVerified(notificationManager)
+
+        confirmVerified(notificationManagerCompat)
     }
-    
+
     @Test
-    fun `error case - create channel`() = testCoroutineRule.runTest {
-        justRun {
-            notificationManager.createNotificationChannel(mockk())
-        } andThenThrows Exception()
-        
-        val result = repository.createChannel()
-        assertThat(result).isFalse()
-        
+    fun `nominal case - notify`() = testCoroutineRule.runTest {
+        justRun { notificationManagerCompat.notify(0, any()) }
+
+        repository.notify(DEFAULT_USERNAME, DEFAULT_UID)
+
         coVerify {
-            notificationManager.createNotificationChannel(any())
+            notificationManagerCompat.notify(0, match { notification ->
+                notification.smallIcon.resId == R.drawable.lunchbox
+            })
         }
-        
-        confirmVerified(notificationManager)
+
+        confirmVerified(notificationManagerCompat)
     }
-    
+
 }

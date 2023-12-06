@@ -13,6 +13,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
+import io.mockk.justRun
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
@@ -44,12 +45,12 @@ class NotificationWorkerUnitTest {
         coEvery { firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid } returns DEFAULT_UID
         coEvery { firestoreDomainRepository.getUser(DEFAULT_UID).displayName } returns DEFAULT_DISPLAY_NAME
         coEvery { firestoreDomainRepository.getUser(DEFAULT_UID).uid } returns DEFAULT_UID
-        coEvery {
+        justRun {
             notificationDomainRepository.notify(
                 DEFAULT_DISPLAY_NAME,
                 DEFAULT_UID
             )
-        } returns true
+        }
         
         notificationWorker = NotificationWorker(
             context = application.applicationContext,
@@ -65,36 +66,6 @@ class NotificationWorkerUnitTest {
         val result = notificationWorker.doWork()
         
         assertThat(result).isEqualTo(ListenableWorker.Result.success())
-        
-        coVerify {
-            firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid
-            firestoreDomainRepository.getUser(DEFAULT_UID).displayName
-            firestoreDomainRepository.getUser(DEFAULT_UID).uid
-            notificationDomainRepository.notify(
-                DEFAULT_DISPLAY_NAME,
-                DEFAULT_UID
-            )
-        }
-        
-        confirmVerified(
-            firestoreDomainRepository,
-            firebaseAuthDomainRepository,
-            notificationDomainRepository
-        )
-    }
-    
-    @Test
-    fun `nominal case - failure`() = testCoroutineRule.runTest {
-        coEvery {
-            notificationDomainRepository.notify(
-                DEFAULT_DISPLAY_NAME,
-                DEFAULT_UID
-            )
-        } returns false
-        
-        val result = notificationWorker.doWork()
-        
-        assertThat(result).isEqualTo(ListenableWorker.Result.failure())
         
         coVerify {
             firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid
