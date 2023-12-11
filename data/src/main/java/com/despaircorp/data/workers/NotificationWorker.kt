@@ -19,17 +19,8 @@ class NotificationWorker @AssistedInject constructor(
     private val notificationDomainRepository: NotificationDomainRepository
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        
-        val username =
-            firestoreDomainRepository.getUser(firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid).displayName
-        val uid =
-            firestoreDomainRepository.getUser(firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid).uid
-        
-        return if (notificationDomainRepository.notify(username, uid)) {
-            Result.success()
-        } else {
-            Result.failure()
-        }
-        
+        val (uid, displayName) = firestoreDomainRepository.getUser(firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid)
+        notificationDomainRepository.notify(displayName, uid)
+        return Result.success()
     }
 }
