@@ -42,5 +42,9 @@
         <item name="cornerSize">12dp</item>
     </style>
     
+    <style name="SearchViewStyle" parent="android:Theme.Holo">
+        <item name="android:editTextColor">@color/baby_powder</item>
+    </style>
+    
     <style name="Theme.Go4LaunchEncore" parent="Base.Theme.Go4LaunchEncore" />
 </resources>

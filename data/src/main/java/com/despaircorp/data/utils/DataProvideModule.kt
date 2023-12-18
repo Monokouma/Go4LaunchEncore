@@ -3,8 +3,10 @@ package com.despaircorp.data.utils
 import android.app.Application
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
 import androidx.work.WorkManager
 import com.despaircorp.data.retrofit.GooglePlacesApi
+import com.despaircorp.data.room.dao.FavoritesRestaurantsDao
 import com.despaircorp.data.room.dao.UserPreferencesDao
 import com.despaircorp.data.room.database.Go4LunchRoomDatabase
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -76,6 +78,11 @@ class DataProvideModule {
     
     @Provides
     @Singleton
+    fun provideFavoritesRestaurantDao(application: Application): FavoritesRestaurantsDao =
+        Go4LunchRoomDatabase.getDatabase(application.applicationContext).favoritesRestaurantsDao()
+    
+    @Provides
+    @Singleton
     fun provideFirebaseStorageReference(): FirebaseStorage =
         FirebaseStorage.getInstance()
     
@@ -95,5 +102,11 @@ class DataProvideModule {
     @Singleton
     fun provideAppCompatActivityManager(application: Application): AppCompatActivity {
         return AppCompatActivity()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideNotificationCompatManager(application: Application): NotificationManagerCompat {
+        return NotificationManagerCompat.from(application)
     }
 }

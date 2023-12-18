@@ -11,4 +11,6 @@ data class RestaurantEntity(
     val workmateInside: Int?,
     val vicinity: String,
     val rating: Double?,
+    val webSiteUrl: String?,
+    val phoneNumber: String?
 )

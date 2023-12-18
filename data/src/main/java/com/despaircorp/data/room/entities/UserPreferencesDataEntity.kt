@@ -7,6 +7,6 @@ import com.despaircorp.domain.room.model.NotificationsStateEnum
 @Entity(tableName = "user_preferences_table")
 data class UserPreferencesDataEntity(
     @PrimaryKey(autoGenerate = false)
-    val isNotificationEnable: NotificationsStateEnum
+    val isNotificationEnable: NotificationsStateEnum,
 )
 

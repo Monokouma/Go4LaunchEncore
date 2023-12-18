@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
 import android.transition.TransitionManager
-import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.Toast
@@ -26,6 +25,7 @@ import com.despaircorp.ui.main.map.MapFragment
 import com.despaircorp.ui.main.restaurants.list.RestaurantsFragment
 import com.despaircorp.ui.main.settings.UserSettingsActivity
 import com.despaircorp.ui.utils.viewBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -49,6 +49,7 @@ class BottomBarActivity : AppCompatActivity() {
         val fade = Fade().apply {
             duration = 2000
         }
+        
         window.enterTransition = fade
         
         loadFragment(MapFragment())
@@ -80,56 +81,53 @@ class BottomBarActivity : AppCompatActivity() {
             }
         }
         
-        binding.activityBottomBarNavigationViewProfile.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.your_lunch -> {
-                    Log.i("Monokouma", "your lunch")
-                    binding.activityBottomBarDrawerLayout.close()
-                }
-                
-                R.id.settings -> {
-                    val intent = UserSettingsActivity.navigate(this)
-                    
-                    startActivity(
-                        intent,
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            this,
-                            Pair(
-                                headerBinding.navigationDrawerTextViewUserName,
-                                headerBinding.navigationDrawerTextViewUserName.transitionName
-                            ).toAndroidXPair(),
-                            Pair(
-                                headerBinding.navigationDrawerTextViewUserMail,
-                                headerBinding.navigationDrawerTextViewUserMail.transitionName
-                            ).toAndroidXPair(),
-                            Pair(
-                                headerBinding.navigationDrawerImageViewUserImage,
-                                headerBinding.navigationDrawerImageViewUserImage.transitionName
-                            ).toAndroidXPair()
-                        ).toBundle()
-                    )
-                    binding.activityBottomBarNavigationViewProfile.postDelayed(500) {
-                        binding.activityBottomBarDrawerLayout.close()
-                    }
-                }
-                
-                R.id.logout -> {
-                    viewModel.onDisconnectUser()
-                    binding.activityBottomBarDrawerLayout.close()
-                }
-            }
-            
-            true
-        }
-        
-        
-        
         viewModel.viewState.observe(this) {
             Glide.with(headerBinding.navigationDrawerImageViewUserImage).load(it.userImage)
                 .into(headerBinding.navigationDrawerImageViewUserImage)
             headerBinding.navigationDrawerTextViewUserMail.text = it.emailAddress
             headerBinding.navigationDrawerTextViewUserName.text = it.username
             
+            
+            binding.activityBottomBarNavigationViewProfile.setNavigationItemSelectedListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.your_lunch -> {
+                        makeSnackBar(it.username)
+                    }
+                    
+                    R.id.settings -> {
+                        val intent = UserSettingsActivity.navigate(this)
+                        
+                        startActivity(
+                            intent,
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                this,
+                                Pair(
+                                    headerBinding.navigationDrawerTextViewUserName,
+                                    headerBinding.navigationDrawerTextViewUserName.transitionName
+                                ).toAndroidXPair(),
+                                Pair(
+                                    headerBinding.navigationDrawerTextViewUserMail,
+                                    headerBinding.navigationDrawerTextViewUserMail.transitionName
+                                ).toAndroidXPair(),
+                                Pair(
+                                    headerBinding.navigationDrawerImageViewUserImage,
+                                    headerBinding.navigationDrawerImageViewUserImage.transitionName
+                                ).toAndroidXPair()
+                            ).toBundle()
+                        )
+                        binding.activityBottomBarNavigationViewProfile.postDelayed(500) {
+                            binding.activityBottomBarDrawerLayout.close()
+                        }
+                    }
+                    
+                    R.id.logout -> {
+                        viewModel.onDisconnectUser()
+                        binding.activityBottomBarDrawerLayout.close()
+                    }
+                }
+                
+                true
+            }
         }
         
         viewModel.viewAction.observe(this) {
@@ -156,6 +154,18 @@ class BottomBarActivity : AppCompatActivity() {
             }
         }
         
+    }
+    
+    private fun makeSnackBar(username: String) {
+        val snackBar = Snackbar.make(binding.root, username, Snackbar.LENGTH_INDEFINITE)
+            .setActionTextColor(getColor(R.color.dark_purple))
+            .setTextColor(getColor(R.color.baby_powder))
+        
+        snackBar.setAction(getString(R.string.dismiss)) {
+            snackBar.dismiss()
+        }
+        
+        snackBar.show()
     }
     
     override fun onSaveInstanceState(outState: Bundle) {

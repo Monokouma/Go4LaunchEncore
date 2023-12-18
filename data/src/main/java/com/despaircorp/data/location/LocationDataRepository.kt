@@ -2,6 +2,7 @@ package com.despaircorp.data.location
 
 import android.annotation.SuppressLint
 import android.location.Location
+import android.util.Log
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
 import com.despaircorp.domain.location.LocationDomainRepository
 import com.despaircorp.domain.location.model.LocationEntity
@@ -58,6 +59,7 @@ class LocationDataRepository @Inject constructor(
         val locationCallback: LocationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let {
+                    Log.i("Monokouma", "Location send")
                     trySend(
                         LocationEntity(
                             userLatLng = LatLng(it.latitude, it.longitude)

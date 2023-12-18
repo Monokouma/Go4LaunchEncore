@@ -9,7 +9,7 @@ class ChangePresenceUseCase @Inject constructor(
 ) {
     suspend fun invoke(isPresent: Boolean) {
         firestoreDomainRepository.updateUserPresence(
-            uid = firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid, // TODO MONO
+            uid = firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid,
             isPresent = isPresent
         )
     }

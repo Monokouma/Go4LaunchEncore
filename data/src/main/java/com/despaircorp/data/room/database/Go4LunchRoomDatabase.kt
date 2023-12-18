@@ -4,13 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.despaircorp.data.room.dao.FavoritesRestaurantsDao
 import com.despaircorp.data.room.dao.UserPreferencesDao
+import com.despaircorp.data.room.entities.FavoritesRestaurantsDataEntity
 import com.despaircorp.data.room.entities.UserPreferencesDataEntity
 
 
 @Database(
     entities = [
         UserPreferencesDataEntity::class,
+        FavoritesRestaurantsDataEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -18,6 +21,8 @@ import com.despaircorp.data.room.entities.UserPreferencesDataEntity
 public abstract class Go4LunchRoomDatabase : RoomDatabase() {
     
     abstract fun userPreferencesDao(): UserPreferencesDao
+    
+    abstract fun favoritesRestaurantsDao(): FavoritesRestaurantsDao
     
     
     companion object {

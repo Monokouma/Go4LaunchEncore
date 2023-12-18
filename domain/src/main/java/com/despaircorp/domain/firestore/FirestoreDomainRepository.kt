@@ -15,4 +15,5 @@ interface FirestoreDomainRepository {
     fun getAllFirestoreUsers(): Flow<List<FirestoreUserEntity>>
     
     suspend fun updateUserPresence(uid: String, isPresent: Boolean)
+    suspend fun updateCurrentEatingRestaurant(placeId: String, uid: String): Boolean
 }

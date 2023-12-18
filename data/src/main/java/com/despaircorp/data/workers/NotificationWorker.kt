@@ -21,6 +21,7 @@ class NotificationWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         val (uid, displayName) = firestoreDomainRepository.getUser(firebaseAuthDomainRepository.getCurrentAuthenticatedUser().uid)
         notificationDomainRepository.notify(displayName, uid)
+        
         return Result.success()
     }
 }

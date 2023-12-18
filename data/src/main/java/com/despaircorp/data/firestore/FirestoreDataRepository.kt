@@ -196,4 +196,27 @@ class FirestoreDataRepository @Inject constructor(
             e.printStackTrace()
         }
     }
+    
+    override suspend fun updateCurrentEatingRestaurant(placeId: String, uid: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            try {
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("eatingPlaceId", placeId)
+                    .await()
+                
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("currentlyEating", true)
+                    .await()
+                
+                true
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
+                false
+            }
+        }
+    
 }
