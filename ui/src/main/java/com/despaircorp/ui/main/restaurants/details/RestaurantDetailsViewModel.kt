@@ -1,6 +1,5 @@
 package com.despaircorp.ui.main.restaurants.details
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -125,13 +124,12 @@ class RestaurantDetailsViewModel @Inject constructor(
                     ARG_PLACE_ID
                 ) ?: return@launch
             ).collect {
-                
-                Log.i("Monokouma", it.toString())
-                
                 if (it) {
+                    
                     viewStateMutableLiveData.value = viewState.value?.copy(
                         likeIcon = R.drawable.star__1_,
                     )
+                    
                 } else {
                     if (addRestaurantsToFavoritesUseCase.invoke(
                             savedStateHandle.get<String>(
