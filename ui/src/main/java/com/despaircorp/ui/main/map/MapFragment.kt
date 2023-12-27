@@ -40,7 +40,26 @@ class MapFragment : SupportMapFragment() {
         savedInstanceState?.getBoolean(ARGS_IS_CAMERA_PLACED).let {
             isCameraPlaced = it ?: false
         }
-        getLocationPermission()
+        
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ),
+                0
+            )
+            return
+        }
+        
         getMapAsync { googleMap ->
             setGoogleMapOption(googleMap)
             
@@ -81,32 +100,13 @@ class MapFragment : SupportMapFragment() {
         }
     }
     
+    
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean(ARGS_IS_CAMERA_PLACED, isCameraPlaced)
         outState.putStringArrayList(ARGS_MARKER_ID, ArrayList(alreadyPresentMarkersForPlaceIds))
     }
     
-    private fun getLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ),
-                0
-            )
-            return
-        }
-    }
     
     private fun setGoogleMapOption(googleMap: GoogleMap) {
         googleMap.uiSettings.isMapToolbarEnabled = true

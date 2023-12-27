@@ -10,8 +10,6 @@ import com.despaircorp.domain.firestore.GetCoworkersForSpecificRestaurantUseCase
 import com.despaircorp.domain.firestore.GetCurrentEatingRestaurantForAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.UpdateCurrentEatingRestaurantUseCase
 import com.despaircorp.domain.restaurants.GetRestaurantDetailsByPlaceIdUseCase
-import com.despaircorp.domain.room.AddRestaurantsToFavoritesUseCase
-import com.despaircorp.domain.room.IsCurrentRestaurantsInFavoriteUseCase
 import com.despaircorp.ui.BuildConfig
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.NativeText
@@ -28,8 +26,6 @@ class RestaurantDetailsViewModel @Inject constructor(
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase,
     private val getCurrentEatingRestaurantForAuthenticatedUserUseCase: GetCurrentEatingRestaurantForAuthenticatedUserUseCase,
     private val getCoworkersForSpecificRestaurantUseCase: GetCoworkersForSpecificRestaurantUseCase,
-    private val addRestaurantsToFavoritesUseCase: AddRestaurantsToFavoritesUseCase,
-    private val isCurrentRestaurantsInFavoriteUseCase: IsCurrentRestaurantsInFavoriteUseCase
 ) : ViewModel() {
     
     private val viewStateMutableLiveData: MutableLiveData<RestaurantDetailsViewState> =
@@ -40,10 +36,6 @@ class RestaurantDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             
             val coworkerList = getCoworkersForSpecificRestaurantUseCase.invoke(
-                savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@launch
-            ).first()
-            
-            val isRestaurantInFav = isCurrentRestaurantsInFavoriteUseCase.invoke(
                 savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@launch
             ).first()
             
@@ -81,11 +73,9 @@ class RestaurantDetailsViewModel @Inject constructor(
                 } else {
                     R.drawable.cursor
                 },
-                if (isRestaurantInFav) {
-                    R.drawable.star__2_
-                } else {
-                    R.drawable.star__1_
-                }
+                
+                R.drawable.star__2_
+            
             )
         }
     }
@@ -117,42 +107,6 @@ class RestaurantDetailsViewModel @Inject constructor(
         }
     }
     
-    fun onFavoritesButtonClicked() {
-        viewModelScope.launch {
-            isCurrentRestaurantsInFavoriteUseCase.invoke(
-                savedStateHandle.get<String>(
-                    ARG_PLACE_ID
-                ) ?: return@launch
-            ).collect {
-                if (it) {
-                    
-                    viewStateMutableLiveData.value = viewState.value?.copy(
-                        likeIcon = R.drawable.star__1_,
-                    )
-                    
-                } else {
-                    if (addRestaurantsToFavoritesUseCase.invoke(
-                            savedStateHandle.get<String>(
-                                ARG_PLACE_ID
-                            ) ?: return@collect
-                        )
-                    ) {
-                        viewStateMutableLiveData.value = viewState.value?.copy(
-                            likeIcon = R.drawable.star__2_,
-                        )
-                    } else {
-                        viewStateMutableLiveData.value = viewState.value?.copy(
-                            isSnackBarVisible = true,
-                            snackBarMessage = NativeText.Resource(R.string.error_occurred),
-                            snackBarColor = R.color.rusty_red,
-                        )
-                    }
-                    
-                }
-            }
-            
-        }
-    }
     
     companion object {
         private const val ARG_PLACE_ID = "ARG_PLACE_ID"

@@ -73,7 +73,7 @@ class RestaurantDetailsActivity : AppCompatActivity() {
             binding.restaurantDetailsImageViewStar.setImageResource(viewState.likeIcon)
             
             binding.restaurantDetailsViewStar.setOnClickListener {
-                viewModel.onFavoritesButtonClicked()
+            
             }
             
             binding.restaurantDetailsViewPhone.setOnClickListener {
