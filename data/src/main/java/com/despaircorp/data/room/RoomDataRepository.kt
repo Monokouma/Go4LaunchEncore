@@ -10,7 +10,7 @@ import com.despaircorp.domain.room.model.ClickedRestaurantsEntity
 import com.despaircorp.domain.room.model.NotificationsStateEnum
 import com.despaircorp.domain.room.model.UserPreferencesDomainEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class RoomDataRepository @Inject constructor(
                 userPreferencesDao.getUserPreferences().isNotificationEnable
             )
         }
-    
+
     override suspend fun insertUserPreferences(userPreferencesDomainEntity: UserPreferencesDomainEntity) =
         withContext(coroutineDispatcherProvider.io) {
             userPreferencesDao.insertUserPreferencesEntity(
@@ -34,16 +34,16 @@ class RoomDataRepository @Inject constructor(
                 )
             )
         }
-    
+
     override suspend fun exist(): Boolean = withContext(coroutineDispatcherProvider.io) {
         userPreferencesDao.exist()
     }
-    
+
     override suspend fun updateNotificationPreferences(notificationState: NotificationsStateEnum): Int =
         withContext(coroutineDispatcherProvider.io) {
             userPreferencesDao.updateUserPreferencesNotification(notificationState)
         }
-    
+
     override suspend fun insertNewClickedRestaurantToFavorite(clickedRestaurantsEntity: ClickedRestaurantsEntity): Long =
         withContext(coroutineDispatcherProvider.io) {
             favoriteRestaurantDao.insert(
@@ -52,21 +52,17 @@ class RoomDataRepository @Inject constructor(
                 )
             )
         }
-    
+
     override suspend fun removeClickedRestaurantToFavorite(clickedRestaurantsEntity: ClickedRestaurantsEntity): Int =
         withContext(coroutineDispatcherProvider.io) {
             favoriteRestaurantDao.remove(clickedRestaurantsEntity.placeId)
         }
-    
+
     override fun getFavoriteRestaurants(): Flow<List<ClickedRestaurantsEntity>> =
-        favoriteRestaurantDao.getFavoriteRestaurantsAsFlow().transform { favoritesRestaurants ->
-            val list = mutableListOf<ClickedRestaurantsEntity>()
-            favoritesRestaurants.forEach {
-                list.add(
-                    ClickedRestaurantsEntity(it.placeId)
-                )
+        favoriteRestaurantDao.getFavoriteRestaurantsAsFlow().map { favoritesRestaurants ->
+            favoritesRestaurants.map {
+                ClickedRestaurantsEntity(it.placeId)
             }
-            emit(list)
         }
-    
+
 }

@@ -14,5 +14,6 @@ data class RestaurantDetailsViewState(
     val snackBarMessage: NativeText?,
     val snackBarColor: Int,
     val fabIcon: Int,
-    val likeIcon: Int
+    val likeIcon: Int,
+    val onFabClicked: () -> Unit,
 )

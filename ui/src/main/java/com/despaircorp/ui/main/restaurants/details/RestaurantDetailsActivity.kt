@@ -65,9 +65,9 @@ class RestaurantDetailsActivity : AppCompatActivity() {
             } else {
                 snackBar.dismiss()
             }
-            
+
             binding.restaurantDetailsFloatingActionButtonEatHere.setOnClickListener {
-                viewModel.onEatButtonClicked()
+                viewState.onFabClicked.invoke()
             }
             
             binding.restaurantDetailsImageViewStar.setImageResource(viewState.likeIcon)

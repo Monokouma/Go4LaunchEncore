@@ -18,12 +18,13 @@ import com.despaircorp.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RestaurantDetailsViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val getRestaurantDetailsByPlaceIdUseCase: GetRestaurantDetailsByPlaceIdUseCase,
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase,
     private val getCoworkersForSpecificRestaurantUseCase: GetCoworkersForSpecificRestaurantUseCase,
@@ -33,25 +34,20 @@ class RestaurantDetailsViewModel @Inject constructor(
     private val removeCurrentEatingRestaurantUseCase: RemoveCurrentEatingRestaurantUseCase,
     private val addCurrentEatingRestaurantUseCase: AddCurrentEatingRestaurantUseCase
 ) : ViewModel() {
-    
+
+    private val placeId = requireNotNull(savedStateHandle.get<String>(ARG_PLACE_ID)) {
+        "Please give a Place ID when opening the RestaurantDetails screen!"
+    }
+
     val viewState: LiveData<RestaurantDetailsViewState> = liveData {
-        
-        val restaurantEntity = getRestaurantDetailsByPlaceIdUseCase.invoke(
-            savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
-        ) ?: return@liveData
+        val restaurantEntity = getRestaurantDetailsByPlaceIdUseCase.invoke(placeId) ?: return@liveData
+
         combine(
-            getCoworkersForSpecificRestaurantUseCase.invoke(
-                placeId = savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
-            ),
-            isClickedRestaurantInFavoritesUseCase.invoke(
-                placeId = savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
-            ),
-            isUserEatingInClickedRestaurantUseCase.invoke(
-                uid = getAuthenticatedUserUseCase.invoke().uid,
-                placeId = savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
-            )
+            getCoworkersForSpecificRestaurantUseCase.invoke(placeId),
+            isClickedRestaurantInFavoritesUseCase.invoke(placeId),
+            isUserEatingInClickedRestaurantUseCase.invoke(placeId)
         ) { coworkersEntities, isClickedRestaurantInFavorite, isUserEatingInClickedRestaurant ->
-            
+
             emit(
                 RestaurantDetailsViewState(
                     name = restaurantEntity.name,
@@ -83,47 +79,28 @@ class RestaurantDetailsViewModel @Inject constructor(
                         R.drawable.star__2_
                     } else {
                         R.drawable.star__1_
+                    },
+                    onFabClicked = {
+                        viewModelScope.launch {
+                            if (isUserEatingInClickedRestaurant) {
+                                if (!removeCurrentEatingRestaurantUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid)) {
+                                    //Error
+                                }
+                            } else if (!addCurrentEatingRestaurantUseCase.invoke(placeId, uid = getAuthenticatedUserUseCase.invoke().uid)) {
+                                //Error
+                            }
+                        }
                     }
                 )
             )
         }.collect()
-        
-        
     }
-    
-    fun onEatButtonClicked() {
-        viewModelScope.launch {
-            isUserEatingInClickedRestaurantUseCase.invoke(
-                uid = getAuthenticatedUserUseCase.invoke().uid,
-                placeId = savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@launch
-            ).collect {
-                if (it) {
-                    if (removeCurrentEatingRestaurantUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid)) {
-                        //Success
-                    } else {
-                        //Error
-                    }
-                } else {
-                    if (addCurrentEatingRestaurantUseCase.invoke(
-                            placeId = savedStateHandle.get<String>(
-                                ARG_PLACE_ID
-                            ) ?: return@collect, uid = getAuthenticatedUserUseCase.invoke().uid
-                        )
-                    ) {
-                        //Success
-                    } else {
-                        //Error
-                    }
-                }
-            }
-        }
-    }
-    
+
     fun onFavButtonClicked(placeId: String) {
         viewModelScope.launch {
             isClickedRestaurantInFavoritesUseCase.invoke(placeId).collect {
                 if (it) {
-                    
+
                     if (addOrDeleteClickedRestaurantFromFavoriteUseCase.invoke(
                             hadToAddClickedRestaurant = false,
                             placeId
@@ -147,8 +124,8 @@ class RestaurantDetailsViewModel @Inject constructor(
             }
         }
     }
-    
-    
+
+
     companion object {
         private const val ARG_PLACE_ID = "ARG_PLACE_ID"
     }
