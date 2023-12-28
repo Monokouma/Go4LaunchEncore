@@ -219,4 +219,70 @@ class FirestoreDataRepository @Inject constructor(
             }
         }
     
+    override fun getCurrentEatingRestaurantForAuthenticatedUser(uid: String): Flow<String?> =
+        callbackFlow {
+            val registration = firestore.collection("users")
+                .document(uid)
+                .addSnapshotListener { documentSnapshot, _ ->
+                    val userDto = try {
+                        documentSnapshot?.toObject<FirestoreUserDto>()
+                    } catch (e: Exception) {
+                        null
+                    }
+                    trySend(
+                        if (userDto?.currentlyEating == true) {
+                            userDto.eatingPlaceId
+                        } else {
+                            null
+                        }
+                    )
+                }
+            
+            awaitClose { registration.remove() }
+        }.flowOn(coroutineDispatcherProvider.io)
+    
+    override suspend fun removeCurrentEatingRestaurant(uid: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            try {
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("eatingPlaceId", null)
+                    .await()
+                
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("currentlyEating", false)
+                    .await()
+                
+                true
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
+                false
+            }
+        }
+    
+    override suspend fun addCurrentEatingRestaurant(placeId: String, uid: String): Boolean =
+        withContext(coroutineDispatcherProvider.io) {
+            try {
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("eatingPlaceId", placeId)
+                    .await()
+                
+                firestore
+                    .collection("users")
+                    .document(uid)
+                    .update("currentlyEating", true)
+                    .await()
+                
+                true
+            } catch (e: Exception) {
+                coroutineContext.ensureActive()
+                false
+            }
+        }
+    
 }

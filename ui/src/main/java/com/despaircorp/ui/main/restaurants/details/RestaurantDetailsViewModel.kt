@@ -6,9 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
+import com.despaircorp.domain.firestore.AddCurrentEatingRestaurantUseCase
 import com.despaircorp.domain.firestore.GetCoworkersForSpecificRestaurantUseCase
-import com.despaircorp.domain.firestore.GetCurrentEatingRestaurantForAuthenticatedUserUseCase
-import com.despaircorp.domain.firestore.UpdateCurrentEatingRestaurantUseCase
+import com.despaircorp.domain.firestore.IsUserEatingInClickedRestaurantUseCase
+import com.despaircorp.domain.firestore.RemoveCurrentEatingRestaurantUseCase
 import com.despaircorp.domain.restaurants.GetRestaurantDetailsByPlaceIdUseCase
 import com.despaircorp.domain.room.AddOrDeleteClickedRestaurantFromFavoriteUseCase
 import com.despaircorp.domain.room.IsClickedRestaurantInFavoritesUseCase
@@ -24,12 +25,13 @@ import javax.inject.Inject
 class RestaurantDetailsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getRestaurantDetailsByPlaceIdUseCase: GetRestaurantDetailsByPlaceIdUseCase,
-    private val updateCurrentEatingRestaurantUseCase: UpdateCurrentEatingRestaurantUseCase,
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase,
-    private val getCurrentEatingRestaurantForAuthenticatedUserUseCase: GetCurrentEatingRestaurantForAuthenticatedUserUseCase,
     private val getCoworkersForSpecificRestaurantUseCase: GetCoworkersForSpecificRestaurantUseCase,
     private val isClickedRestaurantInFavoritesUseCase: IsClickedRestaurantInFavoritesUseCase,
-    private val addOrDeleteClickedRestaurantFromFavoriteUseCase: AddOrDeleteClickedRestaurantFromFavoriteUseCase
+    private val addOrDeleteClickedRestaurantFromFavoriteUseCase: AddOrDeleteClickedRestaurantFromFavoriteUseCase,
+    private val isUserEatingInClickedRestaurantUseCase: IsUserEatingInClickedRestaurantUseCase,
+    private val removeCurrentEatingRestaurantUseCase: RemoveCurrentEatingRestaurantUseCase,
+    private val addCurrentEatingRestaurantUseCase: AddCurrentEatingRestaurantUseCase
 ) : ViewModel() {
     
     val viewState: LiveData<RestaurantDetailsViewState> = liveData {
@@ -39,12 +41,16 @@ class RestaurantDetailsViewModel @Inject constructor(
         ) ?: return@liveData
         combine(
             getCoworkersForSpecificRestaurantUseCase.invoke(
-                savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
+                placeId = savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
             ),
             isClickedRestaurantInFavoritesUseCase.invoke(
-                savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
+                placeId = savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
+            ),
+            isUserEatingInClickedRestaurantUseCase.invoke(
+                uid = getAuthenticatedUserUseCase.invoke().uid,
+                placeId = savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@liveData
             )
-        ) { coworkersEntities, isClickedRestaurantInFavorite ->
+        ) { coworkersEntities, isClickedRestaurantInFavorite, isUserEatingInClickedRestaurant ->
             
             emit(
                 RestaurantDetailsViewState(
@@ -68,16 +74,11 @@ class RestaurantDetailsViewModel @Inject constructor(
                     isSnackBarVisible = false,
                     snackBarMessage = null,
                     snackBarColor = R.color.rusty_red,
-                    fabIcon = if (getCurrentEatingRestaurantForAuthenticatedUserUseCase.invoke(
-                            getAuthenticatedUserUseCase.invoke().uid,
-                            savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@combine
-                        )
-                    ) {
+                    fabIcon = if (isUserEatingInClickedRestaurant) {
                         R.drawable.check_mark
                     } else {
                         R.drawable.cursor
                     },
-                    
                     likeIcon = if (isClickedRestaurantInFavorite) {
                         R.drawable.star__2_
                     } else {
@@ -92,30 +93,29 @@ class RestaurantDetailsViewModel @Inject constructor(
     
     fun onEatButtonClicked() {
         viewModelScope.launch {
-            /*
-            if (updateCurrentEatingRestaurantUseCase.invoke(
-                    savedStateHandle.get<String>(
-                        ARG_PLACE_ID
-                    ) ?: return@launch, getAuthenticatedUserUseCase.invoke().uid
-                )
-            ) {
-                
-                viewStateMutableLiveData.value = viewState.value?.copy(
-                    isSnackBarVisible = true,
-                    snackBarMessage = NativeText.Resource(R.string.saved_restaurant),
-                    snackBarColor = R.color.shamrock_green,
-                    fabIcon = R.drawable.check_mark
-                )
-            } else {
-                viewStateMutableLiveData.value = viewState.value?.copy(
-                    isSnackBarVisible = true,
-                    snackBarMessage = NativeText.Resource(R.string.error_occurred),
-                    snackBarColor = R.color.rusty_red,
-                    fabIcon = R.drawable.cursor
-                )
+            isUserEatingInClickedRestaurantUseCase.invoke(
+                uid = getAuthenticatedUserUseCase.invoke().uid,
+                placeId = savedStateHandle.get<String>(ARG_PLACE_ID) ?: return@launch
+            ).collect {
+                if (it) {
+                    if (removeCurrentEatingRestaurantUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid)) {
+                        //Success
+                    } else {
+                        //Error
+                    }
+                } else {
+                    if (addCurrentEatingRestaurantUseCase.invoke(
+                            placeId = savedStateHandle.get<String>(
+                                ARG_PLACE_ID
+                            ) ?: return@collect, uid = getAuthenticatedUserUseCase.invoke().uid
+                        )
+                    ) {
+                        //Success
+                    } else {
+                        //Error
+                    }
+                }
             }
-            
-             */
         }
     }
     

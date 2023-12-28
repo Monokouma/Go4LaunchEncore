@@ -1,7 +1,7 @@
 package com.despaircorp.domain.room
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 class IsClickedRestaurantInFavoritesUseCase @Inject constructor(
@@ -9,11 +9,12 @@ class IsClickedRestaurantInFavoritesUseCase @Inject constructor(
     
     ) {
     fun invoke(placeId: String): Flow<Boolean> =
-        roomDomainRepository.getFavoriteRestaurants().mapLatest { list ->
-            var occurrence = false
+        roomDomainRepository.getFavoriteRestaurants().transform { list ->
             list.forEach {
-                occurrence = it.placeId == placeId
+                if (it.placeId == placeId) {
+                    emit(true)
+                }
             }
-            occurrence
+            emit(false)
         }
 }
