@@ -4,13 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.despaircorp.data.room.dao.FavoriteRestaurantDao
 import com.despaircorp.data.room.dao.UserPreferencesDao
+import com.despaircorp.data.room.entities.FavoriteRestaurantEntity
 import com.despaircorp.data.room.entities.UserPreferencesDataEntity
 
 
 @Database(
     entities = [
         UserPreferencesDataEntity::class,
+        FavoriteRestaurantEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -19,6 +22,7 @@ public abstract class Go4LunchRoomDatabase : RoomDatabase() {
     
     abstract fun userPreferencesDao(): UserPreferencesDao
     
+    abstract fun favoritesRestaurantDao(): FavoriteRestaurantDao
     
     companion object {
         // Singleton prevents multiple instances of database opening at the

@@ -73,7 +73,9 @@ class RestaurantDetailsActivity : AppCompatActivity() {
             binding.restaurantDetailsImageViewStar.setImageResource(viewState.likeIcon)
             
             binding.restaurantDetailsViewStar.setOnClickListener {
-            
+                viewModel.onFavButtonClicked(
+                    intent.getStringExtra(ARG_PLACE_ID) ?: return@setOnClickListener
+                )
             }
             
             binding.restaurantDetailsViewPhone.setOnClickListener {
