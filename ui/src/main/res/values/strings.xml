@@ -102,4 +102,5 @@
     <string name="no_restaurant_selected">No lunch planned</string>
     <string name="alone">alone</string>
     <string name="with">with\n</string>
+    <string name="zero">0</string>
 </resources>
