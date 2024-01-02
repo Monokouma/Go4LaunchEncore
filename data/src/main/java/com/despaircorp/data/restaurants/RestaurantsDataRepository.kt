@@ -32,7 +32,7 @@ class RestaurantsDataRepository @Inject constructor(
                     latitude = result.geometry?.location?.lat ?: return@mapNotNull null,
                     longitude = result.geometry.location.lng ?: return@mapNotNull null,
                     isOpenedNow = result.openingHours?.openNow == true,
-                    workmateInside = 4,
+                    workmateInside = 0,
                     vicinity = result.vicinity ?: return@mapNotNull null,
                     rating = result.rating as Double?,
                     null,
