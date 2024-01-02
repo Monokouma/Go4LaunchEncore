@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +26,7 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.FirebaseApp
@@ -34,14 +36,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private val binding by viewBinding { ActivityLoginBinding.inflate(it) }
+    
     private val viewModel: LoginViewModel by viewModels()
+    
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var callbackManager: CallbackManager
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        
         
         FirebaseApp.initializeApp(this)
         FacebookSdk.setApplicationId("675979727605735")
@@ -50,10 +53,12 @@ class LoginActivity : AppCompatActivity() {
         
         callbackManager = CallbackManager.Factory.create()
         
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
         
-        binding.activityLoginMaterialButtonGithub.setOnClickListener {
-        
-        }
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
         
         binding.activityLoginMaterialButtonFacebook.setOnClickListener {
             LoginManager.getInstance()
@@ -76,7 +81,8 @@ class LoginActivity : AppCompatActivity() {
         }
         
         binding.activityLoginMaterialButtonGoogle.setOnClickListener {
-        
+            val signInIntent = googleSignInClient.signInIntent
+            startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
         }
         
         binding.activityLoginMaterialButtonMailPassword.setOnClickListener {
@@ -167,7 +173,7 @@ class LoginActivity : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)!!
-                
+                Log.i("Monokouma", account.toString())
             } catch (e: ApiException) {
                 e.printStackTrace()
             }
