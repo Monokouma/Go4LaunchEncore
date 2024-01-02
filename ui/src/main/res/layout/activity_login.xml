@@ -124,31 +124,11 @@
             app:cornerRadius="8dp"
             app:icon="@drawable/google_icon"
             app:iconGravity="start"
-            app:layout_constraintBottom_toTopOf="@id/activity_login_MaterialButton_github"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activity_login_MaterialButton_facebook"
             app:rippleColor="@color/google_color"
-            />
-        
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/activity_login_MaterialButton_github"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/github_background"
-            android:fontFamily="@font/advent_pro_bold"
-            android:text="@string/sign_in_with_github"
-            android:textSize="16sp"
-            app:backgroundTint="@null"
-            app:cornerRadius="8dp"
-            app:icon="@drawable/github_icon"
-            app:iconGravity="start"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/activity_login_MaterialButton_google"
-            app:rippleColor="@color/github_color"
             />
     
     </androidx.constraintlayout.widget.ConstraintLayout>
