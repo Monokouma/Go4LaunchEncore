@@ -5,11 +5,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.getSystemService
 import com.despaircorp.data.R
-import com.despaircorp.data.utils.CoroutineDispatcherProvider
 import com.despaircorp.domain.notifications.NotificationDomainRepository
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class NotificationDataRepository @Inject constructor(
@@ -25,15 +22,15 @@ class NotificationDataRepository @Inject constructor(
         }
         notificationManagerCompat.createNotificationChannel(channel)
     }
-
-    override fun notify(username: String, uid: String) {
+    
+    override fun notify(username: String, sentence: String) {
         val builder = NotificationCompat.Builder(application, "Go4Lunch")
             .setSmallIcon(R.drawable.lunchbox)
             .setContentTitle("Bonjour $username")
-            .setContentText("Voici ton UID : $uid")
+            .setContentText(sentence)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-
+        
         notificationManagerCompat.notify(0, builder.build())
     }
-
+    
 }

@@ -6,5 +6,6 @@ data class BottomBarViewState(
     val username: String,
     val emailAddress: String,
     val userImage: String,
-    val userLatLn: LatLng
+    val userLatLn: LatLng,
+    val yourLunchSentence: String,
 )

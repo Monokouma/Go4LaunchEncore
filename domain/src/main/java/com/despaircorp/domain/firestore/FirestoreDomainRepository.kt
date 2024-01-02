@@ -12,11 +12,12 @@ interface FirestoreDomainRepository {
     fun getUserAsFlow(uid: String): Flow<FirestoreUserEntity>
     suspend fun updateMailAddress(uid: String, newMailAddress: String): Boolean
     suspend fun updateUserImage(uid: String, pictureUrl: String): Boolean
-    fun getAllFirestoreUsers(): Flow<List<FirestoreUserEntity>>
+    fun getAllFirestoreUsersAsFlow(): Flow<List<FirestoreUserEntity>>
     
     suspend fun updateUserPresence(uid: String, isPresent: Boolean)
     suspend fun updateCurrentEatingRestaurant(placeId: String, uid: String): Boolean
     fun getCurrentEatingRestaurantForAuthenticatedUser(uid: String): Flow<String?>
     suspend fun removeCurrentEatingRestaurant(uid: String): Boolean
     suspend fun addCurrentEatingRestaurant(placeId: String, uid: String): Boolean
+    
 }

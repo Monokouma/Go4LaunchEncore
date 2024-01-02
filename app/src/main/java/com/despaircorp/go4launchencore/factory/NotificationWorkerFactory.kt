@@ -7,13 +7,17 @@ import androidx.work.WorkerParameters
 import com.despaircorp.data.workers.NotificationWorker
 import com.despaircorp.domain.firebase_auth.FirebaseAuthDomainRepository
 import com.despaircorp.domain.firestore.FirestoreDomainRepository
+import com.despaircorp.domain.firestore.GetCoworkersForSpecificRestaurantAsFlowUseCase
 import com.despaircorp.domain.notifications.NotificationDomainRepository
+import com.despaircorp.domain.restaurants.GetRestaurantDetailsByPlaceIdUseCase
 import javax.inject.Inject
 
 class NotificationWorkerFactory @Inject constructor(
     private val firebaseAuthDomainRepository: FirebaseAuthDomainRepository,
     private val firestoreDomainRepository: FirestoreDomainRepository,
-    private val notificationDomainRepository: NotificationDomainRepository
+    private val notificationDomainRepository: NotificationDomainRepository,
+    private val getCoworkersForSpecificRestaurantAsFlowUseCase: GetCoworkersForSpecificRestaurantAsFlowUseCase,
+    private val getRestaurantDetailsByPlaceIdUseCase: GetRestaurantDetailsByPlaceIdUseCase
 ) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
@@ -24,7 +28,9 @@ class NotificationWorkerFactory @Inject constructor(
         workerParameters,
         firebaseAuthDomainRepository,
         firestoreDomainRepository,
-        notificationDomainRepository
+        notificationDomainRepository,
+        getRestaurantDetailsByPlaceIdUseCase,
+        getCoworkersForSpecificRestaurantAsFlowUseCase
     )
     
 }

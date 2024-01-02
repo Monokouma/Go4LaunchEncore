@@ -80,6 +80,7 @@ class BottomBarActivity : AppCompatActivity() {
         }
         
         viewModel.viewState.observe(this) {
+            
             Glide.with(headerBinding.navigationDrawerImageViewUserImage).load(it.userImage)
                 .into(headerBinding.navigationDrawerImageViewUserImage)
             headerBinding.navigationDrawerTextViewUserMail.text = it.emailAddress
@@ -89,7 +90,7 @@ class BottomBarActivity : AppCompatActivity() {
             binding.activityBottomBarNavigationViewProfile.setNavigationItemSelectedListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.your_lunch -> {
-                        makeSnackBar(it.username)
+                        makeSnackBar(it.yourLunchSentence)
                     }
                     
                     R.id.settings -> {
@@ -103,14 +104,17 @@ class BottomBarActivity : AppCompatActivity() {
                                     headerBinding.navigationDrawerTextViewUserName,
                                     headerBinding.navigationDrawerTextViewUserName.transitionName
                                 ).toAndroidXPair(),
+                                
                                 Pair(
                                     headerBinding.navigationDrawerTextViewUserMail,
                                     headerBinding.navigationDrawerTextViewUserMail.transitionName
                                 ).toAndroidXPair(),
+                                
                                 Pair(
                                     headerBinding.navigationDrawerImageViewUserImage,
                                     headerBinding.navigationDrawerImageViewUserImage.transitionName
                                 ).toAndroidXPair()
+                            
                             ).toBundle()
                         )
                         binding.activityBottomBarNavigationViewProfile.postDelayed(500) {

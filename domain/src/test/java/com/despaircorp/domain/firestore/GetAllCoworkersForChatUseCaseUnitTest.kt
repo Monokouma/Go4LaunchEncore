@@ -44,7 +44,7 @@ class GetAllCoworkersForChatUseCaseUnitTest {
     
     @Before
     fun setup() {
-        coEvery { firestoreDomainRepository.getAllFirestoreUsers() } returns provideFirestoreUserEntitiesAsFlow()
+        coEvery { firestoreDomainRepository.getAllFirestoreUsersAsFlow() } returns provideFirestoreUserEntitiesAsFlow()
         coEvery { firebaseAuthDomainRepository.getCurrentAuthenticatedUser() } returns provideAuthenticatedUserEntity()
         
     }
@@ -58,7 +58,7 @@ class GetAllCoworkersForChatUseCaseUnitTest {
             assertThat(result).isEqualTo(provideCoworkersChatEntities())
             
             coVerify {
-                firestoreDomainRepository.getAllFirestoreUsers()
+                firestoreDomainRepository.getAllFirestoreUsersAsFlow()
                 firebaseAuthDomainRepository.getCurrentAuthenticatedUser()
             }
             

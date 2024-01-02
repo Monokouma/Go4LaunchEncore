@@ -5,11 +5,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetCoworkersForSpecificRestaurantUseCase @Inject constructor(
+class GetCoworkersForSpecificRestaurantAsFlowUseCase @Inject constructor(
     private val firestoreDomainRepository: FirestoreDomainRepository
 ) {
     fun invoke(placeId: String): Flow<List<CoworkersEntity>> = flow {
-        firestoreDomainRepository.getAllFirestoreUsers().collect { userEntities ->
+        firestoreDomainRepository.getAllFirestoreUsersAsFlow().collect { userEntities ->
             val list = mutableListOf<CoworkersEntity>()
             userEntities.forEach {
                 if (it.currentlyEating) {

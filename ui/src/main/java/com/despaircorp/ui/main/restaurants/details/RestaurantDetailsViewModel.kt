@@ -7,7 +7,7 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.despaircorp.domain.firebase_auth.GetAuthenticatedUserUseCase
 import com.despaircorp.domain.firestore.AddCurrentEatingRestaurantUseCase
-import com.despaircorp.domain.firestore.GetCoworkersForSpecificRestaurantUseCase
+import com.despaircorp.domain.firestore.GetCoworkersForSpecificRestaurantAsFlowUseCase
 import com.despaircorp.domain.firestore.IsUserEatingInClickedRestaurantUseCase
 import com.despaircorp.domain.firestore.RemoveCurrentEatingRestaurantUseCase
 import com.despaircorp.domain.restaurants.GetRestaurantDetailsByPlaceIdUseCase
@@ -26,7 +26,7 @@ class RestaurantDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getRestaurantDetailsByPlaceIdUseCase: GetRestaurantDetailsByPlaceIdUseCase,
     private val getAuthenticatedUserUseCase: GetAuthenticatedUserUseCase,
-    private val getCoworkersForSpecificRestaurantUseCase: GetCoworkersForSpecificRestaurantUseCase,
+    private val getCoworkersForSpecificRestaurantUseCase: GetCoworkersForSpecificRestaurantAsFlowUseCase,
     private val isClickedRestaurantInFavoritesUseCase: IsClickedRestaurantInFavoritesUseCase,
     private val addOrDeleteClickedRestaurantFromFavoriteUseCase: AddOrDeleteClickedRestaurantFromFavoriteUseCase,
     private val isUserEatingInClickedRestaurantUseCase: IsUserEatingInClickedRestaurantUseCase,
