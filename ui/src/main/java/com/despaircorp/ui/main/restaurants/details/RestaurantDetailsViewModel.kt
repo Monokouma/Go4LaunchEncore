@@ -18,7 +18,6 @@ import com.despaircorp.ui.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,20 +33,22 @@ class RestaurantDetailsViewModel @Inject constructor(
     private val removeCurrentEatingRestaurantUseCase: RemoveCurrentEatingRestaurantUseCase,
     private val addCurrentEatingRestaurantUseCase: AddCurrentEatingRestaurantUseCase
 ) : ViewModel() {
-
+    
     private val placeId = requireNotNull(savedStateHandle.get<String>(ARG_PLACE_ID)) {
         "Please give a Place ID when opening the RestaurantDetails screen!"
     }
-
+    
     val viewState: LiveData<RestaurantDetailsViewState> = liveData {
-        val restaurantEntity = getRestaurantDetailsByPlaceIdUseCase.invoke(placeId) ?: return@liveData
-
+        val restaurantEntity =
+            getRestaurantDetailsByPlaceIdUseCase.invoke(placeId) ?: return@liveData
+        val authenticatedUserEntity = getAuthenticatedUserUseCase.invoke()
+        
         combine(
             getCoworkersForSpecificRestaurantUseCase.invoke(placeId),
             isClickedRestaurantInFavoritesUseCase.invoke(placeId),
             isUserEatingInClickedRestaurantUseCase.invoke(placeId)
         ) { coworkersEntities, isClickedRestaurantInFavorite, isUserEatingInClickedRestaurant ->
-
+            
             emit(
                 RestaurantDetailsViewState(
                     name = restaurantEntity.name,
@@ -83,11 +84,37 @@ class RestaurantDetailsViewModel @Inject constructor(
                     onFabClicked = {
                         viewModelScope.launch {
                             if (isUserEatingInClickedRestaurant) {
-                                if (!removeCurrentEatingRestaurantUseCase.invoke(getAuthenticatedUserUseCase.invoke().uid)) {
+                                if (!removeCurrentEatingRestaurantUseCase.invoke(
+                                        authenticatedUserEntity.uid
+                                    )
+                                ) {
                                     //Error
                                 }
-                            } else if (!addCurrentEatingRestaurantUseCase.invoke(placeId, uid = getAuthenticatedUserUseCase.invoke().uid)) {
+                            } else if (!addCurrentEatingRestaurantUseCase.invoke(
+                                    placeId,
+                                    uid = authenticatedUserEntity.uid
+                                )
+                            ) {
                                 //Error
+                            }
+                        }
+                    },
+                    onLikeClicked = {
+                        viewModelScope.launch {
+                            if (isClickedRestaurantInFavorite) {
+                                if (!addOrDeleteClickedRestaurantFromFavoriteUseCase.invoke(
+                                        hadToAddClickedRestaurant = false,
+                                        placeId
+                                    )
+                                ) {
+                                    //Error
+                                }
+                            } else if (!addOrDeleteClickedRestaurantFromFavoriteUseCase.invoke(
+                                    hadToAddClickedRestaurant = true,
+                                    placeId
+                                )
+                            ) {
+                                
                             }
                         }
                     }
@@ -95,37 +122,7 @@ class RestaurantDetailsViewModel @Inject constructor(
             )
         }.collect()
     }
-
-    fun onFavButtonClicked(placeId: String) {
-        viewModelScope.launch {
-            isClickedRestaurantInFavoritesUseCase.invoke(placeId).collect {
-                if (it) {
-
-                    if (addOrDeleteClickedRestaurantFromFavoriteUseCase.invoke(
-                            hadToAddClickedRestaurant = false,
-                            placeId
-                        )
-                    ) {
-                        //Success
-                    } else {
-                        //error
-                    }
-                } else {
-                    if (addOrDeleteClickedRestaurantFromFavoriteUseCase.invoke(
-                            hadToAddClickedRestaurant = true,
-                            placeId
-                        )
-                    ) {
-                        //Success
-                    } else {
-                        //error
-                    }
-                }
-            }
-        }
-    }
-
-
+    
     companion object {
         private const val ARG_PLACE_ID = "ARG_PLACE_ID"
     }

@@ -16,4 +16,5 @@ data class RestaurantDetailsViewState(
     val fabIcon: Int,
     val likeIcon: Int,
     val onFabClicked: () -> Unit,
+    val onLikeClicked: () -> Unit
 )
