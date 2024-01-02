@@ -41,6 +41,7 @@ class WelcomeActivity : AppCompatActivity() {
                             "activity_login_ImageView_logo"
                         ).toBundle()
                     )
+                    finishAfterTransition()
                 }
                 
                 else -> Unit

@@ -93,4 +93,9 @@
     <string name="aa">Aa</string>
     <string name="you">You</string>
     <string name="success_worker">Notifications set with success !</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="website">Website</string>
+    <string name="like">Like</string>
+    <string name="call">Call</string>
+    <string name="saved_restaurant">Restaurant saved</string>
 </resources>

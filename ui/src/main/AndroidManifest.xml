@@ -16,6 +16,10 @@
         android:usesCleartextTraffic="true"
         >
         <activity
+            android:name=".main.restaurants.details.RestaurantDetailsActivity"
+            android:exported="false"
+            />
+        <activity
             android:name=".main.chat.details.ChatDetailsActivity"
             android:exported="false"
             android:label="@string/title_activity_chat_details"

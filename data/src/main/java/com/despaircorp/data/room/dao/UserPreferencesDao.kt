@@ -24,4 +24,5 @@ interface UserPreferencesDao {
     
     @Query("UPDATE user_preferences_table SET isNotificationEnable=:isNotificationEnabled")
     suspend fun updateUserPreferencesNotification(isNotificationEnabled: NotificationsStateEnum): Int
+    
 }

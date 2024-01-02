@@ -34,13 +34,8 @@ class BottomBarViewModel @Inject constructor(
     
     init {
         viewModelScope.launch {
-            viewActionMutableLiveData.value =
-                if (enqueueLaunchNotificationWorker.invoke() && createNotificationChannelUseCase.invoke()) {
-                    Event(BottomBarAction.SuccessWorker)
-                } else {
-                    Event(BottomBarAction.Error(R.string.error_occurred))
-                }
-            
+            createNotificationChannelUseCase.invoke()
+            enqueueLaunchNotificationWorker.invoke()
         }
     }
     

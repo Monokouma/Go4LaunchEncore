@@ -1,5 +1,6 @@
 package com.despaircorp.data.restaurants
 
+import android.util.Log
 import com.despaircorp.data.BuildConfig
 import com.despaircorp.data.retrofit.GooglePlacesApi
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
@@ -22,7 +23,7 @@ class RestaurantsDataRepository @Inject constructor(
                 apiKey = BuildConfig.MAPS_API_KEY,
                 type = "restaurant"
             )
-            
+            Log.i("Monokouma", "Places called")
             dto.results.mapNotNull { result ->
                 RestaurantEntity(
                     id = result.placeId ?: return@mapNotNull null,
@@ -33,7 +34,9 @@ class RestaurantsDataRepository @Inject constructor(
                     isOpenedNow = result.openingHours?.openNow == true,
                     workmateInside = 4,
                     vicinity = result.vicinity ?: return@mapNotNull null,
-                    rating = result.rating as Double?
+                    rating = result.rating as Double?,
+                    null,
+                    null
                 )
             }
         }
@@ -45,6 +48,7 @@ class RestaurantsDataRepository @Inject constructor(
                 placeId = placeId
             )
             
+            Log.i("Monokouma", "Places called")
             RestaurantEntity(
                 id = dto?.result?.placeId ?: return@withContext null,
                 name = dto.result.name ?: return@withContext null,
@@ -54,7 +58,9 @@ class RestaurantsDataRepository @Inject constructor(
                 isOpenedNow = true,
                 workmateInside = 4,
                 vicinity = dto.result.vicinity ?: return@withContext null,
-                rating = dto.result.rating as Double?
+                rating = dto.result.rating as Double?,
+                dto.result.website ?: return@withContext null,
+                dto.result.formattedPhoneNumber ?: return@withContext null
             )
         }
     

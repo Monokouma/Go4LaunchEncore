@@ -1,13 +1,13 @@
 package com.despaircorp.ui.main.restaurants.list
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.despaircorp.ui.R
 import com.despaircorp.ui.databinding.FragmentRestaurantsBinding
+import com.despaircorp.ui.main.restaurants.details.RestaurantDetailsActivity
 import com.despaircorp.ui.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,6 +32,6 @@ class RestaurantsFragment : Fragment(R.layout.fragment_restaurants), Restaurants
     }
     
     override fun onRestaurantClick(placeId: String) {
-        Log.i("Monokouma", placeId)
+        startActivity(RestaurantDetailsActivity.navigate(requireContext(), placeId))
     }
 }
