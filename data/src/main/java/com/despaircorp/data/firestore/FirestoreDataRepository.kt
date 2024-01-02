@@ -151,7 +151,7 @@ class FirestoreDataRepository @Inject constructor(
             }
         }
     
-    override fun getAllFirestoreUsers(): Flow<List<FirestoreUserEntity>> = callbackFlow {
+    override fun getAllFirestoreUsersAsFlow(): Flow<List<FirestoreUserEntity>> = callbackFlow {
         val registration = firestore.collection("users")
             .addSnapshotListener { documentSnapshot, _ ->
                 val firestoreUserEntities = mutableListOf<FirestoreUserEntity>()
@@ -284,5 +284,6 @@ class FirestoreDataRepository @Inject constructor(
                 false
             }
         }
+    
     
 }

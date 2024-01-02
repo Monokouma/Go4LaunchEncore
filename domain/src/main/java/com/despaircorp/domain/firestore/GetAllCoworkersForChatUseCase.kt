@@ -11,7 +11,7 @@ class GetAllCoworkersForChatUseCase @Inject constructor(
     private val firebaseAuthDomainRepository: FirebaseAuthDomainRepository
 ) {
     fun invoke(): Flow<List<CoworkersChatEntity>> =
-        firestoreDomainRepository.getAllFirestoreUsers().mapLatest { firestoreUserEntities ->
+        firestoreDomainRepository.getAllFirestoreUsersAsFlow().mapLatest { firestoreUserEntities ->
             val currentUser = firebaseAuthDomainRepository.getCurrentAuthenticatedUser()
             val coworkerEntities = mutableListOf<CoworkersChatEntity>()
             

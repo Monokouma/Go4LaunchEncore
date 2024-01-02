@@ -486,7 +486,7 @@ class FirestoreDataRepositoryUnitTest {
         }
         coEvery { firestore.collection("users").addSnapshotListener(capture(slot)) } returns mockk()
         
-        repository.getAllFirestoreUsers().test {
+        repository.getAllFirestoreUsersAsFlow().test {
             runCurrent()
             slot.captured.onEvent(querySnapshot, null)
             cancel()
