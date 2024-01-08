@@ -549,6 +549,329 @@ class FirestoreDataRepositoryUnitTest {
         confirmVerified(firestore)
     }
     
+    @Test
+    fun `nominal case - update current eating restaurant with success`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", true)
+            } returns getDefaultSetUserTask()
+            
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", DEFAULT_EATING_PLACE_ID_NOT_NULL)
+            } returns getDefaultSetUserTask()
+            
+            val result = repository.updateCurrentEatingRestaurant(
+                DEFAULT_EATING_PLACE_ID_NOT_NULL,
+                DEFAULT_UID
+            )
+            
+            assertThat(result).isTrue()
+            
+            coVerify {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", true)
+                
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", DEFAULT_EATING_PLACE_ID_NOT_NULL)
+            }
+            
+            confirmVerified(firestore)
+        }
+    
+    @Test
+    fun `error case - update current eating restaurant with success`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", true)
+            } returns getDefaultSetUserTaskWithException()
+            
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", DEFAULT_EATING_PLACE_ID_NOT_NULL)
+            } returns getDefaultSetUserTaskWithException()
+            
+            val result = repository.updateCurrentEatingRestaurant(
+                DEFAULT_EATING_PLACE_ID_NOT_NULL,
+                DEFAULT_UID
+            )
+            
+            assertThat(result).isFalse()
+            assertThat(this.isActive).isTrue()
+            
+            coVerify {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", true)
+                
+            }
+            
+            confirmVerified(firestore)
+        }
+    
+    @Test
+    fun `nominal case - add current eating restaurant with success`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", true)
+            } returns getDefaultSetUserTask()
+            
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", DEFAULT_EATING_PLACE_ID_NOT_NULL)
+            } returns getDefaultSetUserTask()
+            
+            val result = repository.addCurrentEatingRestaurant(
+                DEFAULT_EATING_PLACE_ID_NOT_NULL,
+                DEFAULT_UID
+            )
+            
+            assertThat(result).isTrue()
+            
+            coVerify {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", true)
+                
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", DEFAULT_EATING_PLACE_ID_NOT_NULL)
+            }
+            
+            confirmVerified(firestore)
+        }
+    
+    @Test
+    fun `error case - add current eating restaurant with success`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", true)
+            } returns getDefaultSetUserTaskWithException()
+            
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", DEFAULT_EATING_PLACE_ID_NOT_NULL)
+            } returns getDefaultSetUserTaskWithException()
+            
+            val result = repository.addCurrentEatingRestaurant(
+                DEFAULT_EATING_PLACE_ID_NOT_NULL,
+                DEFAULT_UID
+            )
+            
+            assertThat(result).isFalse()
+            assertThat(this.isActive).isTrue()
+            
+            coVerify {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", true)
+                
+            }
+            
+            confirmVerified(firestore)
+        }
+    
+    @Test
+    fun `nominal case - remove current eating restaurant with success`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", false)
+            } returns getDefaultSetUserTask()
+            
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", null)
+            } returns getDefaultSetUserTask()
+            
+            val result = repository.removeCurrentEatingRestaurant(
+                DEFAULT_UID
+            )
+            
+            assertThat(result).isTrue()
+            
+            coVerify {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", false)
+                
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", null)
+            }
+            
+            confirmVerified(firestore)
+        }
+    
+    @Test
+    fun `error case - remove current eating restaurant with success`() =
+        testCoroutineRule.runTest {
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", false)
+            } returns getDefaultSetUserTaskWithException()
+            
+            coEvery {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("eatingPlaceId", null)
+            } returns getDefaultSetUserTaskWithException()
+            
+            val result = repository.removeCurrentEatingRestaurant(
+                DEFAULT_UID
+            )
+            
+            assertThat(result).isFalse()
+            assertThat(this.isActive).isTrue()
+            
+            coVerify {
+                firestore
+                    .collection("users")
+                    .document(DEFAULT_UID)
+                    .update("currentlyEating", false)
+                
+            }
+            
+            confirmVerified(firestore)
+        }
+    
+    @Test
+    fun `nominal case - get current eating restaurant should not be null`() =
+        testCoroutineRule.runTest {
+            val slot = slot<EventListener<DocumentSnapshot>>()
+            val documentSnapshot = mockk<DocumentSnapshot>() {
+                every { toObject(FirestoreUserDto::class.java) } returns provideFirestoreUserDto().copy(
+                    currentlyEating = true,
+                    eatingPlaceId = DEFAULT_EATING_PLACE_ID_NOT_NULL
+                )
+            }
+            
+            every {
+                firestore.collection("users").document(DEFAULT_UID)
+                    .addSnapshotListener(capture(slot))
+            } returns mockk()
+            
+            repository.getCurrentEatingRestaurantForAuthenticatedUser(DEFAULT_UID).test {
+                runCurrent()
+                slot.captured.onEvent(documentSnapshot, null)
+                cancel()
+                val result = awaitItem()
+                awaitComplete()
+                
+                assertThat(result).isEqualTo(
+                    DEFAULT_EATING_PLACE_ID_NOT_NULL
+                )
+                
+                coVerify {
+                    firestore.collection("users").document(DEFAULT_UID).addSnapshotListener(any())
+                }
+                confirmVerified(firestore)
+            }
+        }
+    
+    @Test
+    fun `edge case - get current eating restaurant should be null`() =
+        testCoroutineRule.runTest {
+            val slot = slot<EventListener<DocumentSnapshot>>()
+            val documentSnapshot = mockk<DocumentSnapshot>() {
+                every { toObject(FirestoreUserDto::class.java) } returns provideFirestoreUserDto().copy(
+                    currentlyEating = false,
+                    eatingPlaceId = null
+                )
+            }
+            
+            every {
+                firestore.collection("users").document(DEFAULT_UID)
+                    .addSnapshotListener(capture(slot))
+            } returns mockk()
+            
+            repository.getCurrentEatingRestaurantForAuthenticatedUser(DEFAULT_UID).test {
+                runCurrent()
+                slot.captured.onEvent(documentSnapshot, null)
+                cancel()
+                val result = awaitItem()
+                awaitComplete()
+                
+                assertThat(result).isEqualTo(
+                    null
+                )
+                
+                coVerify {
+                    firestore.collection("users").document(DEFAULT_UID).addSnapshotListener(any())
+                }
+                confirmVerified(firestore)
+            }
+        }
+    
+    @Test
+    fun `error case - get current eating restaurant should throw exception`() =
+        testCoroutineRule.runTest {
+            val slot = slot<EventListener<DocumentSnapshot>>()
+            val documentSnapshot = mockk<DocumentSnapshot>() {
+                every { toObject(FirestoreUserDto::class.java) } throws Exception()
+            }
+            
+            every {
+                firestore.collection("users").document(DEFAULT_UID)
+                    .addSnapshotListener(capture(slot))
+            } returns mockk()
+            
+            repository.getCurrentEatingRestaurantForAuthenticatedUser(DEFAULT_UID).test {
+                runCurrent()
+                slot.captured.onEvent(documentSnapshot, null)
+                cancel()
+                val result = awaitItem()
+                awaitComplete()
+                
+                assertThat(result).isEqualTo(
+                    null
+                )
+                
+                coVerify {
+                    firestore.collection("users").document(DEFAULT_UID).addSnapshotListener(any())
+                }
+                confirmVerified(firestore)
+            }
+        }
+    
+    
     //Region Out
     private inline fun getDefaultSetUserTask(crossinline mockkBlock: Task<Void>.() -> Unit = {}): Task<Void> =
         mockk {

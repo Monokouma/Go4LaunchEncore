@@ -203,13 +203,13 @@ class FirestoreDataRepository @Inject constructor(
                 firestore
                     .collection("users")
                     .document(uid)
-                    .update("eatingPlaceId", placeId)
+                    .update("currentlyEating", true)
                     .await()
                 
                 firestore
                     .collection("users")
                     .document(uid)
-                    .update("currentlyEating", true)
+                    .update("eatingPlaceId", placeId)
                     .await()
                 
                 true
@@ -247,13 +247,13 @@ class FirestoreDataRepository @Inject constructor(
                 firestore
                     .collection("users")
                     .document(uid)
-                    .update("eatingPlaceId", null)
+                    .update("currentlyEating", false)
                     .await()
                 
                 firestore
                     .collection("users")
                     .document(uid)
-                    .update("currentlyEating", false)
+                    .update("eatingPlaceId", null)
                     .await()
                 
                 true
@@ -269,14 +269,15 @@ class FirestoreDataRepository @Inject constructor(
                 firestore
                     .collection("users")
                     .document(uid)
-                    .update("eatingPlaceId", placeId)
+                    .update("currentlyEating", true)
                     .await()
                 
                 firestore
                     .collection("users")
                     .document(uid)
-                    .update("currentlyEating", true)
+                    .update("eatingPlaceId", placeId)
                     .await()
+                
                 
                 true
             } catch (e: Exception) {

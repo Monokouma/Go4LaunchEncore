@@ -29,10 +29,11 @@ class GetRestaurantDetailsByPlaceIdUseCaseUnitTest {
         private const val DEFAULT_RESTAURANTS_LATITUDE = 10.0
         private const val DEFAULT_RESTAURANTS_LONGITUDE = 20.0
         private const val DEFAULT_IS_OPENED_NOW = true
-        private const val DEFAULT_WORKMATE_INSIDE = 2
+        private const val DEFAULT_WORKMATE_INSIDE = 0
         private const val DEFAULT_VICINITY = "DEFAULT_VICINITY"
         private const val DEFAULT_RATING = 3.0
-        
+        private const val DEFAULT_WEBSITE_URL = "DEFAULT_WEBSITE_URL"
+        private const val DEFAULT_PHONE_NUMBER = "DEFAULT_PHONE_NUMBER"
     }
     
     @Before
@@ -63,6 +64,8 @@ class GetRestaurantDetailsByPlaceIdUseCaseUnitTest {
         workmateInside = DEFAULT_WORKMATE_INSIDE,
         vicinity = DEFAULT_VICINITY,
         rating = DEFAULT_RATING,
+        DEFAULT_WEBSITE_URL,
+        DEFAULT_PHONE_NUMBER
     )
     
 }

@@ -1,6 +1,5 @@
 package com.despaircorp.domain.firestore
 
-import android.util.Log
 import com.despaircorp.domain.firebase_auth.FirebaseAuthDomainRepository
 import com.despaircorp.domain.firestore.model.CoworkersEntity
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +45,7 @@ class GetCoworkersForSpecificRestaurantAsFlowUseCase @Inject constructor(
                     currentUser.displayName
                 )
             )
-            Log.i("Monokouma", list.toString())
+            
             emit(list)
         }
     }

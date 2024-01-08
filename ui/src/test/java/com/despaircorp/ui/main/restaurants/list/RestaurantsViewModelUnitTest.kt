@@ -1,8 +1,11 @@
 package com.despaircorp.ui.main.restaurants.list
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.despaircorp.domain.firestore.GetCoworkersForSpecificRestaurantAsFlowUseCase
+import com.despaircorp.domain.firestore.model.CoworkersEntity
 import com.despaircorp.domain.location.GetDistanceBetweenUserAndPlacesUseCase
 import com.despaircorp.domain.location.GetUserLocationEntityUseCase
 import com.despaircorp.domain.location.model.LocationEntity
@@ -16,6 +19,7 @@ import com.despaircorp.ui.utils.observeForTesting
 import com.google.android.gms.maps.model.LatLng
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,6 +36,10 @@ class RestaurantsViewModelUnitTest {
     private val getDistanceBetweenUserAndPlacesUseCase: GetDistanceBetweenUserAndPlacesUseCase =
         mockk()
     
+    private val getCoworkersForSpecificRestaurantAsFlowUseCase: GetCoworkersForSpecificRestaurantAsFlowUseCase =
+        mockk()
+    private val application: Application = mockk()
+    
     private lateinit var viewModel: RestaurantsViewModel
     
     companion object {
@@ -41,13 +49,24 @@ class RestaurantsViewModelUnitTest {
         private const val DEFAULT_RESTAURANTS_LATITUDE = 10.0
         private const val DEFAULT_RESTAURANTS_LONGITUDE = 20.0
         private const val DEFAULT_IS_OPENED_NOW = true
-        private const val DEFAULT_WORKMATE_INSIDE = 2
+        private const val DEFAULT_WORKMATE_INSIDE = 3
         private const val DEFAULT_VICINITY = "DEFAULT_VICINITY"
         private const val DEFAULT_RATING = 3.0
         
         private const val DEFAULT_DISTANCE_BETWEEN_USER_AND_RESTAURANT = 100
         private const val DEFAULT_USER_LATITUDE = 10.0
         private const val DEFAULT_USER_LONGITUDE = 20.0
+        private const val DEFAULT_WEBSITE_URL = "DEFAULT_WEBSITE_URL"
+        private const val DEFAULT_PHONE_NUMBER = "DEFAULT_PHONE_NUMBER"
+        
+        private const val DEFAULT_UID = "DEFAULT_UID"
+        private const val DEFAULT_OTHER_UID = "DEFAULT_OTHER_UID"
+        private const val DEFAULT_MAIL = "DEFAULT_MAIL"
+        private const val DEFAULT_DISPLAY_NAME = "DEFAULT_DISPLAY_NAME"
+        private const val DEFAULT_PICTURE = "DEFAULT_PICTURE"
+        private const val DEFAULT_CURRENTLY_EATING = false
+        private val DEFAULT_EATING_PLACE_ID = null
+        private const val DEFAULT_IS_ONLINE = false
     }
     
     @Before
@@ -62,12 +81,16 @@ class RestaurantsViewModelUnitTest {
         
         coEvery { getUserLocationEntityUseCase.invoke() } returns provideLocationEntity()
         coEvery { getNearbyRestaurantsEntityUseCase.invoke(provideLocationEntity()) } returns provideRestaurantsEntity()
-        
+        coEvery { getCoworkersForSpecificRestaurantAsFlowUseCase.invoke(DEFAULT_ID) } returns flowOf(
+            provideCoworkersEntities()
+        )
         
         viewModel = RestaurantsViewModel(
             getUserLocationEntityUseCase = getUserLocationEntityUseCase,
             getNearbyRestaurantsEntityUseCase = getNearbyRestaurantsEntityUseCase,
-            getDistanceBetweenUserAndPlacesUseCase = getDistanceBetweenUserAndPlacesUseCase
+            getDistanceBetweenUserAndPlacesUseCase = getDistanceBetweenUserAndPlacesUseCase,
+            getCoworkersForSpecificRestaurantAsFlowUseCase,
+            application
         )
     }
     
@@ -131,6 +154,8 @@ class RestaurantsViewModelUnitTest {
             workmateInside = DEFAULT_WORKMATE_INSIDE,
             vicinity = DEFAULT_VICINITY,
             rating = DEFAULT_RATING,
+            DEFAULT_WEBSITE_URL,
+            DEFAULT_PHONE_NUMBER
         )
     }
     
@@ -145,6 +170,8 @@ class RestaurantsViewModelUnitTest {
             workmateInside = DEFAULT_WORKMATE_INSIDE,
             vicinity = DEFAULT_VICINITY,
             rating = DEFAULT_RATING,
+            DEFAULT_WEBSITE_URL,
+            DEFAULT_PHONE_NUMBER
         )
     }
     
@@ -159,6 +186,16 @@ class RestaurantsViewModelUnitTest {
             restaurantStar = DEFAULT_RATING,
             openedTextColorRes = R.color.rusty_red,
             placeId = DEFAULT_ID
+        )
+    }
+    
+    private fun provideCoworkersEntities() = List(3) {
+        CoworkersEntity(
+            uid = DEFAULT_UID,
+            isEating = DEFAULT_CURRENTLY_EATING,
+            eatingPlaceId = DEFAULT_EATING_PLACE_ID,
+            pictureUrl = DEFAULT_PICTURE,
+            name = DEFAULT_DISPLAY_NAME
         )
     }
 }

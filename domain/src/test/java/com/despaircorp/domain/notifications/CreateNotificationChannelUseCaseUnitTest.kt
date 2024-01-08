@@ -1,10 +1,7 @@
 package com.despaircorp.domain.notifications
 
-import assertk.assertThat
-import assertk.assertions.isFalse
-import assertk.assertions.isTrue
 import com.despaircorp.domain.utils.TestCoroutineRule
-import io.mockk.coEvery
+import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
@@ -24,14 +21,12 @@ class CreateNotificationChannelUseCaseUnitTest {
     
     @Before
     fun setup() {
-        coEvery { notificationDomainRepository.createChannel() } returns true
+        coJustRun { notificationDomainRepository.createChannel() }
     }
     
     @Test
     fun `nominal case - creation success`() = testCoroutineRule.runTest {
-        val result = useCase.invoke()
-        
-        assertThat(result).isTrue()
+        useCase.invoke()
         
         coVerify {
             notificationDomainRepository.createChannel()
@@ -42,11 +37,9 @@ class CreateNotificationChannelUseCaseUnitTest {
     
     @Test
     fun `nominal case - creation failure`() = testCoroutineRule.runTest {
-        coEvery { notificationDomainRepository.createChannel() } returns false
+        coJustRun { notificationDomainRepository.createChannel() }
         
-        val result = useCase.invoke()
-        
-        assertThat(result).isFalse()
+        useCase.invoke()
         
         coVerify {
             notificationDomainRepository.createChannel()

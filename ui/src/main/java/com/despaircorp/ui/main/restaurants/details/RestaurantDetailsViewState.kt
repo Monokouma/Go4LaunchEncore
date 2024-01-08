@@ -1,5 +1,6 @@
 package com.despaircorp.ui.main.restaurants.details
 
+import com.despaircorp.ui.utils.EquatableCallback
 import com.despaircorp.ui.utils.NativeText
 
 data class RestaurantDetailsViewState(
@@ -15,6 +16,6 @@ data class RestaurantDetailsViewState(
     val snackBarColor: Int,
     val fabIcon: Int,
     val likeIcon: Int,
-    val onFabClicked: () -> Unit,
-    val onLikeClicked: () -> Unit
+    val onFabClicked: EquatableCallback,
+    val onLikeClicked: EquatableCallback
 )
