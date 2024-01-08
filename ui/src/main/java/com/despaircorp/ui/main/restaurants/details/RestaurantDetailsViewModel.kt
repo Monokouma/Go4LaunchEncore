@@ -1,6 +1,7 @@
 package com.despaircorp.ui.main.restaurants.details
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -15,6 +16,8 @@ import com.despaircorp.domain.room.AddOrDeleteClickedRestaurantFromFavoriteUseCa
 import com.despaircorp.domain.room.IsClickedRestaurantInFavoritesUseCase
 import com.despaircorp.ui.BuildConfig
 import com.despaircorp.ui.R
+import com.despaircorp.ui.utils.EquatableCallback
+import com.despaircorp.ui.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -37,6 +40,10 @@ class RestaurantDetailsViewModel @Inject constructor(
     private val placeId = requireNotNull(savedStateHandle.get<String>(ARG_PLACE_ID)) {
         "Please give a Place ID when opening the RestaurantDetails screen!"
     }
+    
+    private val viewActionMutableLiveData = MutableLiveData<Event<RestaurantDetailsAction>>()
+    val viewAction: LiveData<Event<RestaurantDetailsAction>> = viewActionMutableLiveData
+    
     
     val viewState: LiveData<RestaurantDetailsViewState> = liveData {
         val restaurantEntity =
@@ -81,25 +88,27 @@ class RestaurantDetailsViewModel @Inject constructor(
                     } else {
                         R.drawable.star__1_
                     },
-                    onFabClicked = {
+                    onFabClicked = EquatableCallback("onFabClicked") {
                         viewModelScope.launch {
                             if (isUserEatingInClickedRestaurant) {
                                 if (!removeCurrentEatingRestaurantUseCase.invoke(
                                         authenticatedUserEntity.uid
                                     )
                                 ) {
-                                    //Error
+                                    viewActionMutableLiveData.value =
+                                        Event(RestaurantDetailsAction.Error(R.string.error_occurred))
                                 }
                             } else if (!addCurrentEatingRestaurantUseCase.invoke(
                                     placeId,
                                     uid = authenticatedUserEntity.uid
                                 )
                             ) {
-                                //Error
+                                viewActionMutableLiveData.value =
+                                    Event(RestaurantDetailsAction.Error(R.string.error_occurred))
                             }
                         }
                     },
-                    onLikeClicked = {
+                    onLikeClicked = EquatableCallback("onLikeClicked") {
                         viewModelScope.launch {
                             if (isClickedRestaurantInFavorite) {
                                 if (!addOrDeleteClickedRestaurantFromFavoriteUseCase.invoke(
@@ -107,14 +116,16 @@ class RestaurantDetailsViewModel @Inject constructor(
                                         placeId
                                     )
                                 ) {
-                                    //Error
+                                    viewActionMutableLiveData.value =
+                                        Event(RestaurantDetailsAction.Error(R.string.error_occurred))
                                 }
                             } else if (!addOrDeleteClickedRestaurantFromFavoriteUseCase.invoke(
                                     hadToAddClickedRestaurant = true,
                                     placeId
                                 )
                             ) {
-                                
+                                viewActionMutableLiveData.value =
+                                    Event(RestaurantDetailsAction.Error(R.string.error_occurred))
                             }
                         }
                     }

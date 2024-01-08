@@ -79,6 +79,8 @@ class GetNearbyRestaurantsEntityUseCaseUnitTest {
             workmateInside = DEFAULT_WORKMATE_INSIDE + it,
             vicinity = DEFAULT_VICINITY + it,
             rating = DEFAULT_RATING + it,
+            null,
+            null
         )
     }
 }

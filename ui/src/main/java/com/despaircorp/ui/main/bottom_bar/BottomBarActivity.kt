@@ -146,12 +146,6 @@ class BottomBarActivity : AppCompatActivity() {
                     finishAffinity()
                 }
                 
-                BottomBarAction.SuccessWorker -> Toast.makeText(
-                    this,
-                    getString(R.string.success_worker),
-                    Toast.LENGTH_SHORT
-                ).show()
-                
                 else -> Unit
             }
         }

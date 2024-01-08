@@ -41,7 +41,7 @@ class RestaurantsDataRepositoryUnitTest {
         private const val DEFAULT_RESTAURANTS_LATITUDE = 10.0
         private const val DEFAULT_RESTAURANTS_LONGITUDE = 20.0
         private const val DEFAULT_IS_OPENED_NOW = true
-        private const val DEFAULT_WORKMATE_INSIDE = 4
+        private const val DEFAULT_WORKMATE_INSIDE = 0
         private const val DEFAULT_VICINITY = "DEFAULT_VICINITY"
         private const val DEFAULT_RATING = 3.0
         
@@ -71,7 +71,6 @@ class RestaurantsDataRepositoryUnitTest {
     @Test
     fun `nominal case - get restaurants entity`() = testCoroutineRule.runTest {
         val result = repository.getNearbyRestaurants(provideLocationEntity())
-        
         assertThat(result).isEqualTo(
             provideRestaurantsEntityAsList()
         )
@@ -99,7 +98,14 @@ class RestaurantsDataRepositoryUnitTest {
         
         val result = repository.getRestaurantByPlaceId(DEFAULT_PLACE_ID)
         
-        assertThat(result).isEqualTo(provideRestaurantsEntity().copy(id = DEFAULT_PLACE_ID))
+        assertThat(result).isEqualTo(
+            provideRestaurantsEntity().copy(
+                id = DEFAULT_PLACE_ID,
+                webSiteUrl = DEFAULT_WEBSITE_URL,
+                phoneNumber = DEFAULT_PHONE_NUMBER,
+                workmateInside = 4
+            )
+        )
         
         coVerify {
             googlePlacesApi.getPlacesDetails(
@@ -119,6 +125,8 @@ class RestaurantsDataRepositoryUnitTest {
             name = DEFAULT_NAME,
             rating = DEFAULT_RATING,
             vicinity = DEFAULT_VICINITY,
+            website = DEFAULT_WEBSITE_URL,
+            formattedPhoneNumber = DEFAULT_PHONE_NUMBER,
             photos = listOf(
                 PhotosItem(
                     photoReference = DEFAULT_PHOTO_URL
@@ -143,6 +151,8 @@ class RestaurantsDataRepositoryUnitTest {
         workmateInside = DEFAULT_WORKMATE_INSIDE,
         vicinity = DEFAULT_VICINITY,
         rating = DEFAULT_RATING,
+        null,
+        null
     )
     
     
@@ -157,6 +167,8 @@ class RestaurantsDataRepositoryUnitTest {
             workmateInside = DEFAULT_WORKMATE_INSIDE,
             vicinity = DEFAULT_VICINITY,
             rating = DEFAULT_RATING,
+            null,
+            null
         )
     }
     

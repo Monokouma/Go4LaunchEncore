@@ -1,10 +1,7 @@
 package com.despaircorp.domain.workers
 
-import assertk.assertThat
-import assertk.assertions.isFalse
-import assertk.assertions.isTrue
 import com.despaircorp.domain.utils.TestCoroutineRule
-import io.mockk.coEvery
+import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
@@ -36,29 +33,26 @@ class EnqueueLaunchNotificationWorkerUnitTest {
     
     @Before
     fun setup() {
-        coEvery { workersDomainRepository.enqueueNotificationWorker(DEFAULT_INITIAL_D) } returns true
+        coJustRun { workersDomainRepository.enqueueNotificationWorker(any()) }
     }
     
     @Test
     fun `nominal case - success`() = testCoroutineRule.runTest {
         val result = useCase.invoke()
         
-        assertThat(result).isTrue()
-        
-        coVerify { workersDomainRepository.enqueueNotificationWorker(DEFAULT_INITIAL_D) }
+        coVerify { workersDomainRepository.enqueueNotificationWorker(any()) }
         
         confirmVerified(workersDomainRepository)
     }
     
     @Test
     fun `error case - failure`() = testCoroutineRule.runTest {
-        coEvery { workersDomainRepository.enqueueNotificationWorker(DEFAULT_INITIAL_D) } returns false
+        coJustRun { workersDomainRepository.enqueueNotificationWorker(any()) }
         
-        val result = useCase.invoke()
+        useCase.invoke()
         
-        assertThat(result).isFalse()
         
-        coVerify { workersDomainRepository.enqueueNotificationWorker(DEFAULT_INITIAL_D) }
+        coVerify { workersDomainRepository.enqueueNotificationWorker(any()) }
         
         confirmVerified(workersDomainRepository)
     }

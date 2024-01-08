@@ -1,18 +1,23 @@
 package com.despaircorp.data.room
 
+import app.cash.turbine.test
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
+import com.despaircorp.data.room.dao.FavoriteRestaurantDao
 import com.despaircorp.data.room.dao.UserPreferencesDao
+import com.despaircorp.data.room.entities.FavoriteRestaurantEntity
 import com.despaircorp.data.room.entities.UserPreferencesDataEntity
 import com.despaircorp.data.utils.TestCoroutineRule
+import com.despaircorp.domain.room.model.ClickedRestaurantsEntity
 import com.despaircorp.domain.room.model.NotificationsStateEnum
 import com.despaircorp.domain.room.model.UserPreferencesDomainEntity
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,15 +28,18 @@ class RoomDataRepositoryUnitTest {
     
     private val userPreferencesDao: UserPreferencesDao = mockk()
     
+    private val favoriteRestaurantDao: FavoriteRestaurantDao = mockk()
+    
     private val repository = RoomDataRepository(
         coroutineDispatcherProvider = testCoroutineRule.getTestCoroutineDispatcherProvider(),
-        userPreferencesDao = userPreferencesDao
+        userPreferencesDao = userPreferencesDao,
+        favoriteRestaurantDao = favoriteRestaurantDao
     )
     
     companion object {
         private val DEFAULT_NOTIF_STATE_NOT_KNOW = NotificationsStateEnum.NOT_KNOW
         private val DEFAULT_NOTIF_STATE_ENABLED = NotificationsStateEnum.ENABLED
-        
+        private const val DEFAULT_PLACE_ID = "DEFAULT_PLACE_ID"
     }
     
     @Before
@@ -167,7 +175,80 @@ class RoomDataRepositoryUnitTest {
         confirmVerified(userPreferencesDao)
     }
     
+    @Test
+    fun `nominal case - insert new clicked restaurant to favorite`() = testCoroutineRule.runTest {
+        coEvery {
+            favoriteRestaurantDao.insert(
+                FavoriteRestaurantEntity(
+                    provideClickedRestaurantEntity().placeId
+                )
+            )
+        } returns 1L
+        
+        val result = repository.insertNewClickedRestaurantToFavorite(
+            provideClickedRestaurantEntity()
+        )
+        
+        assertThat(result).isEqualTo(1L)
+        
+        coVerify {
+            favoriteRestaurantDao.insert(FavoriteRestaurantEntity(provideClickedRestaurantEntity().placeId))
+        }
+        
+        confirmVerified(favoriteRestaurantDao)
+    }
+    
+    @Test
+    fun `nominal case - remove clicked restaurant from favorite`() = testCoroutineRule.runTest {
+        coEvery { favoriteRestaurantDao.remove(DEFAULT_PLACE_ID) } returns 1
+        
+        val result = repository.removeClickedRestaurantToFavorite(provideClickedRestaurantEntity())
+        
+        assertThat(result).isEqualTo(1)
+        
+        coVerify { favoriteRestaurantDao.remove(DEFAULT_PLACE_ID) }
+        
+        confirmVerified(favoriteRestaurantDao)
+    }
+    
+    @Test
+    fun `nominal case - get favorite restaurant entities`() = testCoroutineRule.runTest {
+        coEvery { favoriteRestaurantDao.getFavoriteRestaurantsAsFlow() } returns flowOf(
+            provideFavoriteRestaurantEntities()
+        )
+        
+        repository.getFavoriteRestaurants().test {
+            val result = awaitItem()
+            awaitComplete()
+            
+            assertThat(result).isEqualTo(provideClickedRestaurantEntities())
+            
+            coVerify {
+                favoriteRestaurantDao.getFavoriteRestaurantsAsFlow()
+            }
+            
+            confirmVerified(favoriteRestaurantDao)
+        }
+        
+    }
+    
     //Region Out
+    private fun provideClickedRestaurantEntities() = List(3) {
+        ClickedRestaurantsEntity(
+            DEFAULT_PLACE_ID
+        )
+    }
+    
+    private fun provideFavoriteRestaurantEntities() = List(3) {
+        FavoriteRestaurantEntity(
+            DEFAULT_PLACE_ID
+        )
+    }
+    
+    private fun provideClickedRestaurantEntity() = ClickedRestaurantsEntity(
+        DEFAULT_PLACE_ID
+    )
+    
     private fun provideUserPreferencesDataEntity(state: NotificationsStateEnum): UserPreferencesDataEntity {
         return when (state) {
             NotificationsStateEnum.ENABLED -> UserPreferencesDataEntity(isNotificationEnable = NotificationsStateEnum.ENABLED)

@@ -4,5 +4,4 @@ sealed class BottomBarAction {
     object OnDisconnect : BottomBarAction()
     
     data class Error(val message: Int) : BottomBarAction()
-    object SuccessWorker : BottomBarAction()
 }
