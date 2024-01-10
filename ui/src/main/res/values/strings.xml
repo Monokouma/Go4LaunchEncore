@@ -3,9 +3,7 @@
     <string name="find_a_nice_restaurant_and_invite_your_co_workers_for_lunch">Find a nice restaurant and invite your co-workers for lunch !</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="sign_in_with_facebook">Sign in with Facebook</string>
-    <string name="sign_in_with_github">Sign in with Github</string>
     <string name="sign_in_with_mail_and_password">Sign in with mail and password</string>
-    <string name="connect_with_mail_password">Connect with mail/password</string>
     <string name="connect">Connect</string>
     <string name="password">Password</string>
     <string name="mail">Mail</string>
@@ -25,7 +23,7 @@
     <string name="logout">Logout</string>
     <string name="your_lunch">Your lunch</string>
     <string name="search">Search</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="get_notified">Get notified !</string>
     <string name="allows_go4lunch_to_keep_you_informed">Allows Go4Lunch to keep you informed</string>
     <string name="allow">Allow</string>
@@ -47,14 +45,14 @@
     </plurals>
     <string name="not_decided">hasn\'t decided yet</string>
     <string name="is_eating">is eating (%1$s)</string>
-    <string name="title_activity_chat_details">ChatDetailsActivity</string>
+    <string name="title_activity_chat_details" translatable="false">ChatDetailsActivity</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="first_fragment_label" translatable="false">First Fragment</string>
+    <string name="second_fragment_label" translatable="false">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     
-    <string name="lorem_ipsum">
+    <string name="lorem_ipsum" translatable="false">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
         dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
@@ -90,7 +88,7 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
-    <string name="aa">Aa</string>
+    <string name="aa" translatable="false">Aa</string>
     <string name="you">You</string>
     <string name="success_worker">Notifications set with success !</string>
     <string name="dismiss">Dismiss</string>
@@ -102,5 +100,7 @@
     <string name="no_restaurant_selected">No lunch planned</string>
     <string name="alone">alone</string>
     <string name="with">with\n</string>
-    <string name="zero">0</string>
+    <string name="zero" translatable="false">0</string>
+    <string name="sign_in_with_github">Sign in with Github</string>
+    <string name="connect_with_mail_password">Connect with mail/password</string>
 </resources>
