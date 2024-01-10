@@ -17,6 +17,8 @@ import com.despaircorp.domain.restaurants.GetRestaurantDetailsByPlaceIdUseCase
 import com.despaircorp.domain.workers.EnqueueLaunchNotificationWorker
 import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.Event
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -77,11 +79,25 @@ class BottomBarViewModel @Inject constructor(
                         
                     } else {
                         application.getString(R.string.no_restaurant_selected)
-                    }
+                    },
+                    autoCompleteSearchAreaLatLngBounds = getLatLngBounds(location.userLatLng)
                 )
             )
         }.collect()
         
+    }
+    
+    private fun getLatLngBounds(userLatLng: LatLng): LatLngBounds {
+        val earthRadius = 6371.0
+        val radius = 1.0
+        
+        val latChange = Math.toDegrees(radius / earthRadius)
+        val lngChange =
+            Math.toDegrees(radius / earthRadius / Math.cos(Math.toRadians(userLatLng.latitude)))
+        
+        val southwest = LatLng(userLatLng.latitude - latChange, userLatLng.longitude - lngChange)
+        val northeast = LatLng(userLatLng.latitude + latChange, userLatLng.longitude + lngChange)
+        return LatLngBounds(southwest, northeast)
     }
     
     private fun mapCoworkerSentence(coworkers: List<CoworkersEntity>): String {

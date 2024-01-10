@@ -59,8 +59,8 @@ class RestaurantsDataRepository @Inject constructor(
                 workmateInside = 4,
                 vicinity = dto.result.vicinity ?: return@withContext null,
                 rating = dto.result.rating as Double?,
-                dto.result.website ?: return@withContext null,
-                dto.result.formattedPhoneNumber ?: return@withContext null
+                dto.result.website ?: "",
+                dto.result.formattedPhoneNumber ?: ""
             )
         }
     

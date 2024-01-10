@@ -20,6 +20,7 @@ import com.despaircorp.ui.R
 import com.despaircorp.ui.utils.TestCoroutineRule
 import com.despaircorp.ui.utils.observeForTesting
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.every
@@ -58,6 +59,10 @@ class BottomBarViewModelUnitTest {
         private const val DEFAULT_EATING_PLACE_IDE = "DEFAULT_EATING_PLACE_IDE"
         private const val DEFAULT_ONLINE = true
         private val DEFAULT_LATLNG = LatLng(49.857920, 1.295048)
+        private val DEFAULT_LAT_LNG_BOUND = LatLngBounds(
+            LatLng(49.84892678394081, 1.2810982218889557),
+            LatLng(49.86691321605919, 1.3089977781110442)
+        )
         
         private const val DEFAULT_NAME = "DEFAULT_NAME"
         private const val DEFAULT_PHOTO_URL = "DEFAULT_PHOTO_URL"
@@ -125,7 +130,8 @@ class BottomBarViewModelUnitTest {
                     emailAddress = DEFAULT_EMAIL,
                     userImage = DEFAULT_PICTURE,
                     DEFAULT_LATLNG,
-                    "You eat at $DEFAULT_NAME with$DEFAULT_DISPLAY_NAME, $DEFAULT_DISPLAY_NAME, $DEFAULT_DISPLAY_NAME"
+                    "You eat at $DEFAULT_NAME with$DEFAULT_DISPLAY_NAME, $DEFAULT_DISPLAY_NAME, $DEFAULT_DISPLAY_NAME",
+                    DEFAULT_LAT_LNG_BOUND
                 )
             )
         }
@@ -148,7 +154,8 @@ class BottomBarViewModelUnitTest {
                     emailAddress = DEFAULT_EMAIL,
                     userImage = DEFAULT_PICTURE,
                     userLatLn = DEFAULT_LATLNG,
-                    "You eat at $DEFAULT_NAME with$DEFAULT_DISPLAY_NAME, $DEFAULT_DISPLAY_NAME, $DEFAULT_DISPLAY_NAME"
+                    "You eat at $DEFAULT_NAME with$DEFAULT_DISPLAY_NAME, $DEFAULT_DISPLAY_NAME, $DEFAULT_DISPLAY_NAME",
+                    DEFAULT_LAT_LNG_BOUND
                 )
             )
         }
@@ -182,7 +189,8 @@ class BottomBarViewModelUnitTest {
                     emailAddress = DEFAULT_EMAIL,
                     userImage = DEFAULT_PICTURE,
                     userLatLn = DEFAULT_LATLNG,
-                    "No lunch planned"
+                    "No lunch planned",
+                    DEFAULT_LAT_LNG_BOUND
                 )
             )
         }
@@ -208,7 +216,8 @@ class BottomBarViewModelUnitTest {
                     emailAddress = DEFAULT_EMAIL,
                     userImage = DEFAULT_PICTURE,
                     userLatLn = DEFAULT_LATLNG,
-                    "You eat at $DEFAULT_NAME Alone"
+                    "You eat at $DEFAULT_NAME Alone",
+                    DEFAULT_LAT_LNG_BOUND
                 )
             )
         }
