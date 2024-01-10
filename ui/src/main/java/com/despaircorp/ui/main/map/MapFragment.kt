@@ -6,15 +6,16 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.despaircorp.ui.R
-import com.despaircorp.ui.utils.showAsToast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -60,13 +61,19 @@ class MapFragment : SupportMapFragment() {
             return
         }
         
+        
+        val snackBar = Snackbar.make(requireView(), "", Snackbar.LENGTH_SHORT)
+        snackBar.setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.dark_purple))
+        snackBar.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        
         getMapAsync { googleMap ->
             setGoogleMapOption(googleMap)
             
             viewModel.viewState.observe(viewLifecycleOwner) {
                 if (!toastHasBeenShowed) {
-                    it.restaurantsCountToast.showAsToast(requireContext())
                     toastHasBeenShowed = true
+                    snackBar.show()
+                    snackBar.setText(it.restaurantsCountToast.toCharSequence(requireContext()))
                 }
                 googleMap.isMyLocationEnabled = true
                 it.mapViewStateItems.forEach { item ->

@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.work.Configuration
 import com.despaircorp.domain.firestore.ChangePresenceUseCase
 import com.despaircorp.go4launchencore.factory.NotificationWorkerFactory
+import com.despaircorp.ui.BuildConfig
+import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -29,6 +31,9 @@ class Go4LaunchApplication : Application(), Application.ActivityLifecycleCallbac
     
     override fun onCreate() {
         super.onCreate()
+        if (!Places.isInitialized()) {
+            Places.initialize(this, BuildConfig.MAPS_API_KEY);
+        }
         
         registerActivityLifecycleCallbacks(this)
     }
