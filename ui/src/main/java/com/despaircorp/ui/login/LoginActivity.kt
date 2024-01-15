@@ -83,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
         binding.activityLoginMaterialButtonGoogle.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
+            
         }
         
         binding.activityLoginMaterialButtonMailPassword.setOnClickListener {
@@ -112,6 +113,7 @@ class LoginActivity : AppCompatActivity() {
             duration = 2000
         }
         window.exitTransition = fade
+        window.enterTransition = fade
         
         viewModel.viewAction.observe(this) {
             when (val action = it.getContentIfNotHandled()) {
@@ -129,8 +131,6 @@ class LoginActivity : AppCompatActivity() {
                             "activity_login_ImageView_logo"
                         ).toBundle()
                     )
-                    
-                    
                 }
                 
                 LoginAction.ChoseUsername -> {
