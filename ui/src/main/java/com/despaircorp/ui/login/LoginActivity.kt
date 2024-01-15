@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
         callbackManager = CallbackManager.Factory.create()
         
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken("57559716164-h9apvc16smva5vkc8fs25dhs800a8801.apps.googleusercontent.com")
             .requestEmail()
             .build()
         
