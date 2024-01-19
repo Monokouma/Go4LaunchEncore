@@ -36,7 +36,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private val binding by viewBinding { ActivityLoginBinding.inflate(it) }
-    
     private val viewModel: LoginViewModel by viewModels()
     
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -47,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         
         FirebaseApp.initializeApp(this)
+        
         FacebookSdk.setApplicationId("675979727605735")
         FacebookSdk.setClientToken("fbc31c3fd2d7c940b43b233a417d098d")
         FacebookSdk.sdkInitialize(this)

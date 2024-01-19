@@ -25,7 +25,6 @@
     <string name="logout">Logout</string>
     <string name="your_lunch">Your lunch</string>
     <string name="search">Search</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="get_notified">Get notified !</string>
     <string name="allows_go4lunch_to_keep_you_informed">Allows Go4Lunch to keep you informed</string>
     <string name="allow">Allow</string>
@@ -102,4 +101,5 @@
     <string name="no_restaurant_selected">No lunch planned</string>
     <string name="alone">alone</string>
     <string name="with">with\n</string>
+    <string name="hello">Hello</string>
 </resources>

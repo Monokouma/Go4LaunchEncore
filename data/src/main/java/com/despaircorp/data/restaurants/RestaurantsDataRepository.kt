@@ -13,8 +13,8 @@ import javax.inject.Inject
 class RestaurantsDataRepository @Inject constructor(
     private val googlePlacesApi: GooglePlacesApi,
     private val coroutineDispatcherProvider: CoroutineDispatcherProvider,
+) : RestaurantsDomainRepository {
     
-    ) : RestaurantsDomainRepository {
     override suspend fun getNearbyRestaurants(userLocationEntity: LocationEntity): List<RestaurantEntity> =
         withContext(coroutineDispatcherProvider.io) {
             val dto = googlePlacesApi.getPlaces(
@@ -23,7 +23,9 @@ class RestaurantsDataRepository @Inject constructor(
                 apiKey = BuildConfig.MAPS_API_KEY,
                 type = "restaurant"
             )
+            
             Log.i("Monokouma", "Places called")
+            
             dto.results.mapNotNull { result ->
                 RestaurantEntity(
                     id = result.placeId ?: return@mapNotNull null,

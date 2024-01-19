@@ -13,22 +13,30 @@ class NotificationDataRepository @Inject constructor(
     private val application: Application,
     private val notificationManagerCompat: NotificationManagerCompat,
 ) : NotificationDomainRepository {
+    
     override fun createChannel() {
-        val name = "Go 4 Lunch !"
+        val name = application.getString(R.string.app_name)
         val descriptionText = ""
         val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel("Go4Lunch", name, importance).apply {
-            description = descriptionText
-        }
+        val channel =
+            NotificationChannel(application.getString(R.string.app_name), name, importance).apply {
+                description = descriptionText
+            }
         notificationManagerCompat.createNotificationChannel(channel)
     }
     
     override fun notify(username: String, sentence: String) {
-        val builder = NotificationCompat.Builder(application, "Go4Lunch")
-            .setSmallIcon(R.drawable.lunchbox)
-            .setContentTitle("Bonjour $username")
-            .setContentText(sentence)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+        val builder =
+            NotificationCompat.Builder(application, application.getString(R.string.app_name))
+                .setSmallIcon(R.drawable.lunchbox)
+                .setContentTitle(
+                    StringBuilder()
+                        .append(R.string.hello)
+                        .append(" ")
+                        .append(username)
+                )
+                .setContentText(sentence)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
         
         notificationManagerCompat.notify(0, builder.build())
     }
