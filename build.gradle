@@ -59,7 +59,7 @@ koverMerged {
                             "com.despaircorp.go4launchencore.factory.*",
                             "com.despaircorp.ui.splash.*",
                             "com.despaircorp.domain.firebase_real_time.SendMessageUseCase",
-                            "com.despaircorp.ui.main.chat.menu.ChatMenuViewModel",
+                            "com.despaircorp.ui.main.chat.menu.*",
                             // TODO: Remove below when Kover can handle Android integration tests!
                             // Android UI
                             "*MainApplication",
