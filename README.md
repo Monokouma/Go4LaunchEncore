@@ -1,5 +1,5 @@
 <p align=center> 
-  <img src="https://firebasestorage.googleapis.com/v0/b/go4lunch-89f10.appspot.com/o/lunch-box.png?alt=media&token=a5ae7552-9c2b-4ac1-adeb-e2b2fcc020eb" width="500" height="600">
+  <img src="https://firebasestorage.googleapis.com/v0/b/go4lunch-89f10.appspot.com/o/lunch-box.png?alt=media&token=a5ae7552-9c2b-4ac1-adeb-e2b2fcc020eb" width="100" height="100">
 </p>
 
 # Todoc - Un gestionnaire de tâches 
