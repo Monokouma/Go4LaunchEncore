@@ -120,6 +120,7 @@
             android:fontFamily="@font/advent_pro_bold"
             android:text="@string/sign_in_with_google"
             android:textSize="16sp"
+            android:visibility="gone"
             app:backgroundTint="@null"
             app:cornerRadius="8dp"
             app:icon="@drawable/google_icon"

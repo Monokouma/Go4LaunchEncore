@@ -1,6 +1,5 @@
 package com.despaircorp.data.restaurants
 
-import android.util.Log
 import com.despaircorp.data.BuildConfig
 import com.despaircorp.data.retrofit.GooglePlacesApi
 import com.despaircorp.data.utils.CoroutineDispatcherProvider
@@ -24,7 +23,6 @@ class RestaurantsDataRepository @Inject constructor(
                 type = "restaurant"
             )
             
-            Log.i("Monokouma", "Places called")
             
             dto.results.mapNotNull { result ->
                 RestaurantEntity(
@@ -50,7 +48,6 @@ class RestaurantsDataRepository @Inject constructor(
                 placeId = placeId
             )
             
-            Log.i("Monokouma", "Places called")
             RestaurantEntity(
                 id = dto?.result?.placeId ?: return@withContext null,
                 name = dto.result.name ?: return@withContext null,

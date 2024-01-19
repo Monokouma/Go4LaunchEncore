@@ -5,11 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.transition.Fade
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import com.despaircorp.ui.BuildConfig
 import com.despaircorp.ui.R
 import com.despaircorp.ui.databinding.ActivityLoginBinding
 import com.despaircorp.ui.databinding.LoginPopUpBinding
@@ -47,14 +47,14 @@ class LoginActivity : AppCompatActivity() {
         
         FirebaseApp.initializeApp(this)
         
-        FacebookSdk.setApplicationId("675979727605735")
-        FacebookSdk.setClientToken("fbc31c3fd2d7c940b43b233a417d098d")
+        FacebookSdk.setApplicationId(BuildConfig.FACEBOOK_APP_ID)
+        FacebookSdk.setClientToken(BuildConfig.FACEBOOK_CLIENT_TOKEN)
         FacebookSdk.sdkInitialize(this)
         
         callbackManager = CallbackManager.Factory.create()
         
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("57559716164-h9apvc16smva5vkc8fs25dhs800a8801.apps.googleusercontent.com")
+            .requestIdToken(BuildConfig.GSO_SERVER_CLIENT_ID)
             .requestEmail()
             .build()
         
@@ -173,7 +173,7 @@ class LoginActivity : AppCompatActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)!!
-                Log.i("Monokouma", account.toString())
+                
             } catch (e: ApiException) {
                 e.printStackTrace()
             }
