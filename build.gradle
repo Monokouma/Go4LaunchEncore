@@ -57,6 +57,7 @@ koverMerged {
                             "com.despaircorp.ui.BuildConfig",
                             "com.despaircorp.data.permission.*",
                             "com.despaircorp.go4launchencore.factory.*",
+                            "com.despaircorp.ui.splash.*",
                             // TODO: Remove below when Kover can handle Android integration tests!
                             // Android UI
                             "*MainApplication",

@@ -31,7 +31,7 @@ class NotificationDataRepository @Inject constructor(
                 .setSmallIcon(R.drawable.lunchbox)
                 .setContentTitle(
                     StringBuilder()
-                        .append(R.string.hello)
+                        .append(application.getString(R.string.hello))
                         .append(" ")
                         .append(username)
                 )
