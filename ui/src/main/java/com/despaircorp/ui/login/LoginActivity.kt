@@ -36,7 +36,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     private val binding by viewBinding { ActivityLoginBinding.inflate(it) }
-    
     private val viewModel: LoginViewModel by viewModels()
     
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -47,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         
         FirebaseApp.initializeApp(this)
+        
         FacebookSdk.setApplicationId("675979727605735")
         FacebookSdk.setClientToken("fbc31c3fd2d7c940b43b233a417d098d")
         FacebookSdk.sdkInitialize(this)
@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
         callbackManager = CallbackManager.Factory.create()
         
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken("57559716164-h9apvc16smva5vkc8fs25dhs800a8801.apps.googleusercontent.com")
             .requestEmail()
             .build()
         
@@ -83,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
         binding.activityLoginMaterialButtonGoogle.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
+            
         }
         
         binding.activityLoginMaterialButtonMailPassword.setOnClickListener {
@@ -112,6 +113,7 @@ class LoginActivity : AppCompatActivity() {
             duration = 2000
         }
         window.exitTransition = fade
+        window.enterTransition = fade
         
         viewModel.viewAction.observe(this) {
             when (val action = it.getContentIfNotHandled()) {
@@ -129,8 +131,6 @@ class LoginActivity : AppCompatActivity() {
                             "activity_login_ImageView_logo"
                         ).toBundle()
                     )
-                    
-                    
                 }
                 
                 LoginAction.ChoseUsername -> {

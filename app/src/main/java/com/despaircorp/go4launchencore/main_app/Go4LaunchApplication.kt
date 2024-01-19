@@ -31,6 +31,7 @@ class Go4LaunchApplication : Application(), Application.ActivityLifecycleCallbac
     
     override fun onCreate() {
         super.onCreate()
+        
         if (!Places.isInitialized()) {
             Places.initialize(this, BuildConfig.MAPS_API_KEY);
         }
