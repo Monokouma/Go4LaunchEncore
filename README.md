@@ -28,7 +28,7 @@ MacBook-Pro:~ Monokouma$ git clone https://github.com/Monokouma/Go4LunchEncore.g
 ```
 - Une fois le projet cloné, ouvrez le avec android studio puis, synchroniser le .gradle pour télécharger les librairies
 - Kover
-- ```console
+```console
 MacBook-Pro:~ Monokouma$ ./gradlew kMHR
 ```
 ***
